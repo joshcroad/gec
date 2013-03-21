@@ -1,2 +1,6 @@
 .DS_Store
 .HTACCESS
+
+node_modules/**/*
+package.json
+Gruntfile.js
