@@ -5,20 +5,10 @@
  */
 header("Content-type: application/json");
 
-global $is_api;
-$is_api = true;
-
 /**
- * Configure the file.
+ * Configure the API.
  */
-if(file_exists('../../../inc/config.php'))
-    require_once('../../../inc/config.php');
-else 
-    echo 'Cannot configure the API';
-
-/**
- * Set database object visible.
- */
+require_once('../../../inc/api_config.php');
 global $db;
 
 /**

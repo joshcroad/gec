@@ -3,18 +3,13 @@
 /**
  * The header content.
  */
-header("Content-type: application/json");
-
-global $is_api;
-$is_api = true;
+//header("Content-type: application/json");
 
 /**
- * Configure the file.
+ * Configure the API.
  */
-if(file_exists( '../../../inc/config.php'))
-    require_once('../../../inc/config.php');
-else 
-    echo 'Cannot configure the API';
+require_once('../../../inc/api_config.php');
+global $db;
 
 /**
  * The table to count.
@@ -27,21 +22,13 @@ $show = $_GET['show'];
 switch($show) {
     case 'product':
         $table = 'product';
-        $id = 'sku';
-        break;
+        $id = 'sku'; break;
     case 'category':
         $table = 'category';
-        $id = 'ID';
-        break;
+        $id = 'ID'; break;
     default:
-        $table = 'product';
-        break;
+        $table = 'product'; break;
 }
-
-/**
- * Set database object visible.
- */
-global $db;
 
 /**
  * The number of products in the database.
