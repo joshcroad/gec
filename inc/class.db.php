@@ -150,9 +150,159 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product 
             (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
             VALUES
-            ('Dummy Product',
+            ('Aeroplane',
             'This is a dummy product, please delete it and start adding your own.',
             'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Bear',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Cat',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Dog',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Elephant',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Fish',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','4.99','1','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Gorilla',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Helicopter',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Igloo',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Jack-in-the-box',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Kite',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Lizard',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Mot',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Nest',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Ocean',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Parrot',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Quilt',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Rainbox',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Sailboat',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Tree',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Umbrella',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Vacuum Cleaner',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Waterfall',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Xylophone',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Yarn',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
+        $this->insert("INSERT INTO $this->db_name.product 
+            (title, content, post_status, post_date, price, reduced_price, stock, categoryID) 
+            VALUES
+            ('Zebra',
+            'This is a dummy product, please delete it and start adding your own.',
+            'publish',NOW(),'9.99','','10','1')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', 'http://localhost:8888/Shop/')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('description', 'This is a description.')");
