@@ -1,0 +1,186 @@
+/***********************
+ ***** RESET STYLE *****
+ ***********************/
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*************************
+ ***** GLOBAL STYLES *****
+ *************************/
+
+$blue: #6298b3;
+$dark-blue: #456F85;
+
+* {
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; // Firefox
+    -webkit-box-sizing:border-box; // Safari
+    color: #333;
+}
+
+html, body {
+    width: 60em;
+    margin: 0 auto;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+/* TYPOGRAPHY */
+
+h1 {
+    font: {
+        weight: bold;
+        size: 2em;
+    }
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+del {
+    text-decoration: line-through;
+    color: rgba(200, 50, 42, 1);
+}
+
+a {
+    color: $blue;
+    text-decoration: none;
+}
+
+a:hover {
+    color: $dark-blue;
+}
+
+/* RAPPER */
+
+#jay-z {
+    width: 100%;
+}
+
+/* HEADER */
+
+ header {
+     /* NAVIGATION */
+    nav {
+        ul {
+            li {
+                display: inline;
+            }
+        }
+    }
+ }
+
+/* PRODUCTS TABLE */
+
+#products_list {
+    display: table;
+    width: 100%;
+    li {
+        display: table-row;
+        background: rgba(150, 150, 150, 0.1);
+        .product-sku,
+        .product-title,
+        .product-price,
+        .product-stock,
+        .product-post-status {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 0.5em 1em;
+        }
+
+        .product-sku {
+            width: 3em;
+        }
+
+        .product-price {
+            width: 9em;
+        }
+
+        .product-stock {
+            width: 6em;
+        }
+
+        .product-post-status {
+            width: 7em;
+        }
+    }
+    li:nth-child(odd) {
+        background: rgba(150, 150, 150, 0.2);
+    }
+    li:first-child {
+        background: rgba(150, 150, 150, 0.4);
+    }
+}
+
+#pagination {
+    margin: 2em 0;
+    text-align: center;
+    li {
+        display: inline;
+        a {
+            padding: 1em;
+        }
+    }
+    .pagItemInactive {
+        padding: 1em;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

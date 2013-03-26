@@ -11,40 +11,56 @@
 require_once('../../../inc/api_config.php');
 global $db;
 
-/**
- * The table to count.
- */
-$show = $_GET['show'];
+if(!$db || isset($db)) {
+    /**
+     * The table to count.
+     */
+    $show = $_GET['show'];
+    $status = $_GET['status'];
 
-/**
- * Validate which table to search. Default is 'products'.
- */
-switch($show) {
-    case 'product':
-        $table = 'product';
-        $id = 'sku'; break;
-    case 'category':
-        $table = 'category';
-        $id = 'ID'; break;
-    default:
-        $table = 'product'; break;
+    /**
+     * Validate which table to search. Default is 'products'.
+     */
+    switch($show) {
+        case 'category':
+            $table = 'category';
+            $id = 'ID'; break;
+        default:
+            $table = 'product';
+            $id = 'sku'; break;
+    }
+
+    /**
+     * Return on results the user has specified. Default is all.
+     */
+    switch($status) {
+        case 'publish':
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'publish'"); break;
+        case 'trash':
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'trash'"); break;
+        case 'draft':
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'draft'"); break;
+        case 'not-trash':
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status <> 'trash'"); break;
+        default:
+            $products_query = $db->select("SELECT COUNT($id) FROM $table"); break;
+    }
+
+    /**
+     * Calculate the number of pages requred.
+     */
+    $count = $products_query->fetch_assoc();
+
+    /**
+     * Generate the response array.
+     */
+    $response['count'] = $count['COUNT('.$id.')'];
+    $response['show'] = $table;
+    $response['status'] = ($status === null ? 'all' : $status);
+} else {
+    $response['error']['thrown'] = true;
+    $response['error']['message'] = 'Unable to connect to the database.';
 }
-
-/**
- * The number of products in the database.
- */
-$products_query = $db->select("SELECT COUNT($id) FROM $table");
-
-/**
- * Calculate the number of pages requred.
- */
-$product_count = $products_query->fetch_assoc();
-
-/**
- * Generate the response array.
- */
-$response['count'] = $product_count['COUNT('.$id.')'];
-$response['table'] = $table;
 
 /**
  * Return the encoded JSON object.

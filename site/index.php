@@ -1,32 +1,35 @@
-<!--
-Options +FollowSymLinks
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^.*$ admin/index.php
-
-RewriteRule ^admin($|/) - [L]
-RewriteRule ^js($|/) - [L]
---> 
 <!DOCTYPE html>
 <html>
-
     <head>
-        <title>This is the title</title>
-        <script src="js/functions.js"></script>
-        <script src="js/products_list.js"></script>
-        <script src="js/history.js"></script>
+        <title>GEC - Admin</title>
+        <!-- BEGIN meta -->
+        <meta charset="utf8" />
     </head>
+
+    <!-- BEGIN body -->
     <body>
+        <!-- BEGIN header -->
         <header>
-            <h1>SITE</h1>
-            <a href="home">Homepage</a>
-            <a href="products">Products</a>
+            <h1><a href="homepage">Shop Area</a></h1>
+            <!-- BEGIN nav -->
+            <nav>
+                <ul>
+                    <li><a href="products">Products</a></li>
+                </ul>
+            <!-- END nav -->
+            </nav>
+        <!-- END header -->
         </header>
 
-        <section id="content">
-            THis is SITE.
-        </section>
+        <!-- BEGIN #jay-z -->
+        <section id="jay-z"></section>
+        <!-- END #jay-z -->
 
+        <!-- BEGIN scripts -->
+        <script src="../js/functions.js"></script>
+        <script src="../js/history.js"></script>
+        <!-- END scripts -->
+    <!-- END body -->
     </body>
 
 </html>

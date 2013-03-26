@@ -1,32 +1,29 @@
-var getPage, winLoaded;
+var getPage, windowLoaded;
 
-getPage = function(href) {
-    var success, failed, stateChanged,
-        url = "./template/"+href.split("/").pop()+".html",
+getPage = function(href_) {
+    var success, stateChanged, url,
         xhr = new XMLHttpRequest(),
-        content = document.getElementById("content");
+        content = document.getElementById("content"),
+        href = getPageString(href_);
 
-    success = function () {
+        url = "./"+href+".html";
+
+    success = function() {
         var obj = xhr.responseText;
         content.innerHTML = obj;
-        if(href.split("/").pop() === 'products') {
-            showProducts(1, 20);
-        }
+
+        addDynamicContent();
     };
 
-    stateChanged = function () {
+    stateChanged = function() {
         if (xhr.readyState === 4) {
             switch (xhr.status) {
                 case 200:
                     success(); break;
                 case 404:
                     failed("404 Not found"); break;
-                case 403:
-                    failed("403 Forbidden"); break;
-                case 304:
-                    failed("304 Not modified"); break;
-                case 0:
-                    failed("Successful, however 0 returned"); break;
+                case 500:
+                    failed("500 Internal Server Error"); break;
                 default:
                     failed("Unknown Reason"); break;
             }
@@ -39,28 +36,25 @@ getPage = function(href) {
 };
 
 windowLoaded = function() {
-    var a = document.getElementsByClassName("nav");
+    var navLinks = document.querySelectorAll("nav a");
 
-    function addLink(link) {
-        link.addEventListener("click", function(e) {
-            history.pushState(null, null, link.href);
-            getPage(link.href);
+    function addLink(item) {
+        item.addEventListener("click", function(e) {
             e.preventDefault();
-        }, false);
+            history.pushState(null, null, item.href);
+            getPage(item.href);
+        })
     }
 
-    for(var i=0, len=a.length; i<len; i++) {
-        addLink(a[i]);
+    for(var i=0, len=navLinks.length; i<len; i++) {
+        addLink(navLinks[i]);
     }
 };
 
 if(window.addEventListener) {
     window.addEventListener("load", windowLoaded, false);
 
-    window.addEventListener("popstate", function() {
-        var href = document.location.href.split("/").pop();
-        if(!href || 0 === href.length)
-            href = 'home';
-        getPage(href);
-    });
+    window.addEventListener("popstate", function(e) {
+       getPage(document.URL);
+    }, false);
 }

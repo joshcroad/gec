@@ -1,22 +1,18 @@
-var showProducts, showPagination, eventsFired = 0;
+var showProducts, productsEventHandler, showPagination, eventsFired = 0;
+
+getProduct = function(productID) {
+    // Ajax call to get single product information.
+}
 
 showProducts = function(pageNo, perPage) {
-    var products_content = document.getElementById("products_content");
-    if(products_content) {
-        showList(pageNo, perPage);
-        showPagination(pageNo, perPage);
-        // This prevents mulitple event listenered from being added.
-        if(eventsFired === 0)
-            productsEventHandler();
-    }
+    showPagination(pageNo, perPage);
 };
 
+// Add event listeners to all recently added buttons.
 productsEventHandler = function() {
     var pagItems = document.getElementsByClassName("pagItem"),
         twenty = document.getElementById("twenty"),
         all = document.getElementById("all");
-
-    eventsFired++;
 
     if(twenty)
         twenty.addEventListener("click", function(e) {
@@ -32,6 +28,7 @@ productsEventHandler = function() {
 
     function addLink(item) {
         item.addEventListener("click", function(e) {
+            e.preventDefault();
             history.pushState(null, null, item.href);
             showProducts(item.dataset.pageno, item.dataset.perpage);
         }, true);
@@ -40,15 +37,13 @@ productsEventHandler = function() {
     for(var i=0, len=pagItems.length; i<len; i++) {
         addLink(pagItems[i]);
     }
-}
-
+};
 
 // Display list of products.
-showList = function(pageNo, perPage) {
-    console.log(pageNo, perPage);
+showList = function(pageNo, perPage, table, status) {
     var success, stateChanged, start = '', url = '',
         xhr = new XMLHttpRequest(),
-        content = document.getElementById("products_content"),
+        content = document.getElementById("products_list"),
         loading = document.getElementById("loading");
 
     // Initialising variables if not already.
@@ -59,40 +54,48 @@ showList = function(pageNo, perPage) {
     else
         start = (pageNo - 1) * perPage;
 
-    url = '../api/v.1/view/range.php?start='+start+'&show='+perPage,
+    url = '../api/v.1/view/range.php';
+    url += '?show='+table+'&status='+status+'&start='+start+'&show='+perPage;
 
     // Show loader.
     // loading.style.display = 'block';
 
     success = function() {
-        var response = JSON.parse(xhr.responseText), tbody = '';
+        var response = JSON.parse(xhr.responseText), li = '';
 
         if(response.error.thrown) { // If API returns error.
             failed('No results found.');
         } else { // Otherwise.
+            li += '<li class="product-list thead">';
+            li += '<div class="product-sku">SKU</div>';
+            li += '<div class="product-title">Title</div>';
+            li += '<div class="product-price">Price</div>';
+            li += '<div class="product-stock">Stock</div>';
+            li += '<div class="product-post-status">Status</div>';
+            li += '</li>';
             // Loop through each result.
             for(i in response.product) {
                 product = response.product[i];
                 // Set up table body.
-                tbody += '<tr class="body_row">';
-                tbody += '<td>' + product.sku + '</td>';
-                tbody += '<td><a href="" class="product-item" data-sku="' + product.sku + '">' + product.title + '</a></td>';
+                li += '<li class="product-list '+product.sku+'">';
+                li += '<div class="product-sku">' + product.sku + '</div>';
+                li += '<div class="product-title"><a href="product/'+product.sku+'" class="product-item" data-sku="' + product.sku + '">' + product.title + '</a></div>';
                 if (product.reduced_price != 0.00) {
-                    tbody += '<td>' + product.reduced_price;
-                    tbody += ' <span class="strike">' + product.price + '</span></td>';
+                    li += '<div class="product-price">' + product.reduced_price;
+                    li += ' <del>' + product.price + '</del></div>';
                 } else {
-                    tbody += '<td>' + product.price + '</td>';
+                    li += '<div class="product-price">' + product.price + '</div>';
                 }
-                tbody += '<td>' + product.stock + '</td>';
-                tbody += '<td>' + product.post_status + '</td>';
-                tbody += '</tr>';
+                li += '<div class="product-stock">' + product.stock + '</div>';
+                li += '<div class="product-post-status">' + product.post_status + '</div>';
+                li += '</li>';
             }
         }
 
         // Hide loader.
         // loading.style.display = 'none';
 
-        content.innerHTML = tbody;
+        content.innerHTML = li;
     };
 
     stateChanged = function() {
@@ -120,17 +123,20 @@ showList = function(pageNo, perPage) {
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
 
+    productsEventHandler();
+
 };
 
 // So pagination links.
 showPagination = function(pageNo, perPage) {
     var success, stateChanged,
-        url = '../api/v.1/view/count.php?show=product';
+        url = '../api/v.1/view/count.php';
+        url += '?show=product';
         xhr = new XMLHttpRequest(),
         pageNo = parseInt(pageNo);
 
     if(perPage === undefined)
-        perPage = 10; // Default items per page.
+        perPage = 20; // Default items per page.
     if(pageNo === undefined)
         pageNo = 1; // Default page number.
 
@@ -140,11 +146,13 @@ showPagination = function(pageNo, perPage) {
             ul = document.getElementById('pagination'),
             pages = Math.ceil(response.count / perPage);
 
-        pagNav = '<li><a href="#1" class="pagItem" data-pageNo="1" data-perPage="'+perPage+'">&laquo;</a></li>';
-        if (pageNo === 1)
-            pagNav += '<li>&#139;</li>';
-        else
-            pagNav += '<li><a href="#'+(pageNo-1)+'" class="pagItem" data-pageNo="'+(pageNo-1)+'" data-perPage="'+perPage+'">&#139;</a></li>';
+        if (pageNo === 1) {
+            pagNav += '<li class="pagItemInactive">&laquo;</li>';
+            pagNav += '<li class="pagItemInactive">&#139;</li>';
+        } else {
+            pagNav += '<li><a href="products/page/1" class="pagItem" data-pageNo="1" data-perPage="'+perPage+'">&laquo;</a></li>';
+            pagNav += '<li><a href="products/page/'+(pageNo-1)+'" class="pagItem" data-pageNo="'+(pageNo-1)+'" data-perPage="'+perPage+'">&#139;</a></li>';
+        }
 
         for(var i=0; i<pages; i++) {
             var currentPage = (i+1), active = '';
@@ -153,18 +161,22 @@ showPagination = function(pageNo, perPage) {
                 active = 'active';
 
             if (currentPage >= (pageNo-3) && currentPage <= pageNo || currentPage <= (pageNo+3) && currentPage >= pageNo)
-                pagNav += '<li><a href="#'+currentPage+'" class="pagItem '+active+'" data-pageNo="'+currentPage+'" data-perPage="'+perPage+'">' + currentPage + '</a></li>';
+                pagNav += '<li><a href="products/page/'+currentPage+'" class="pagItem '+active+'" data-pageNo="'+currentPage+'" data-perPage="'+perPage+'">' + currentPage + '</a></li>';
         }
 
-        if(pageNo === pages)
-            pagNav += '<li>&#155;</li>';
-        else
-            pagNav += '<li><a href="#'+(pageNo+1)+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
-
-        pagNav += '<li><a href="#'+pages+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
+        if(pageNo === pages) {
+            pagNav += '<li class="pagItemInactive">&#155;</li>';
+            pagNav += '<li>&raquo;</li>';
+        } else {
+            pagNav += '<li><a href="products/page/'+(pageNo+1)+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
+            pagNav += '<li><a href="products/page/'+pages+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
+        }
+        
         pagNav += '</ul>';
 
         ul.innerHTML = pagNav;
+
+        showList(pageNo, perPage, response.show, response.status);
     };
 
     stateChanged = function() {
@@ -192,12 +204,3 @@ showPagination = function(pageNo, perPage) {
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
 };
-
-if(window.addEventListener) {
-    window.addEventListener("popstate", function() {
-        var page = document.location.href.split("#").pop();
-        if(!page || 0 === page.length)
-            page = '1';
-        showProducts(page, 20);
-    });
-}

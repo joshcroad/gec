@@ -15,13 +15,36 @@ global $db;
  * The variables for the range. Start from and
  * how many to show per page.
  */
+$show = $_GET['show'];
+$status = $_GET['status'];
 $start = (int) $_GET['start'];
 $show = (int) $_GET['show'];
 
 /**
- * Run the query.
+ * Validate which table to search. Default is 'products'.
  */
-$result = $db->select("SELECT * FROM product LIMIT $start, $show");
+switch($show) {
+    case 'category':
+        $table = 'category';
+    default:
+        $table = 'product'; break;
+}
+
+/**
+ * Return on results the user has specified. Default is all.
+ */
+switch($status) {
+    case 'publish':
+        $result = $db->select("SELECT * FROM $table WHERE post_status = 'publish' LIMIT $start, $show"); break;
+    case 'trash':
+        $result = $db->select("SELECT * FROM $table WHERE post_status = 'trash' LIMIT $start, $show"); break;
+    case 'draft':
+        $result = $db->select("SELECT * FROM $table WHERE post_status = 'draft' LIMIT $start, $show"); break;
+    case 'not-trash':
+        $result = $db->select("SELECT * FROM $table WHERE post_status <> 'trash' LIMIT $start, $show"); break;
+    default:
+        $result = $db->select("SELECT * FROM $table LIMIT $start, $show"); break;
+}
 
 /**
  * Populate the products array.
