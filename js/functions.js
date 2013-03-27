@@ -1,3 +1,11 @@
+function loader(visible) {
+    var loader = document.getElementById("loader");
+    if(visible)
+        loader.style.display = 'block'; // Show loader.
+    else
+        loader.style.display = 'none'; // Hide loader.
+}
+
 /**
  * Function called if a XMLHttpRequest fails.
  */
@@ -24,7 +32,7 @@ function getPageString(href) {
 }
 
 /**
- * This gets the page as string.
+ * This gets the page as string from the URL.
  */
 function getPaginationPage(href) {
     var base = href.split(window.location.host + "/gec").pop(),
@@ -48,7 +56,7 @@ function getPaginationPage(href) {
 }
 
 /**
- * This gets the page as string.
+ * This gets the product ID from the URL.
  */
 function getProductID(href) {
     var base = href.split(window.location.host + "/gec").pop(),
@@ -72,7 +80,7 @@ function getProductID(href) {
 }
 
 /**
- * Firing event listeners to add page content.
+ * Firing functions to add page content.
  */
 function addDynamicContent() {
     var products = document.getElementById("products"),
@@ -88,3 +96,40 @@ function addDynamicContent() {
         getProduct(productID);
     }
 }
+
+/**
+ * Displays a page, given the hypertext reference.
+ */
+function getPage(href_) {
+    var success, stateChanged, url,
+        xhr = new XMLHttpRequest(),
+        content = document.getElementById("content"),
+        href = getPageString(href_);
+
+        url = "./"+href+".html";
+
+    success = function() {
+        var obj = xhr.responseText;
+        content.innerHTML = obj;
+        addDynamicContent();
+    };
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                case 404:
+                    failed("404 Not found."); break;
+                case 500:
+                    failed("500 Internal Server Error"); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+};

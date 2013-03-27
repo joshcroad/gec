@@ -1,4 +1,4 @@
-var showProducts, productsEventHandler, showPagination, eventsFired = 0;
+var updateProduct, getProduct, validateInput, showProducts, productsEventHandler, showList, showPagination;
 
 /**
  * Populates the page with the given product.
@@ -65,6 +65,89 @@ getProduct = function(productID) {
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
 };
+
+/**
+ * Call to update product.
+ */
+updateProduct = function(sku) {
+    var success, stateChanged, url, param,
+        xhr = new XMLHttpRequest(),
+        title = document.getElementById("single-title").value,
+        desc = document.getElementById("single-desc").value,
+        price = document.getElementById("single-price").value,
+        reduced = document.getElementById("single-reduced").value,
+        stock = document.getElementById("single-stock").value,
+        status_list = document.getElementById("single-status"),
+        status_value = status_list.options[status_list.selectedIndex].value;
+
+    url = '../api/v.1/edit/product.php',
+    param = 'sku='+sku+'&title='+title+'&desc='+desc+'&status='+status_value+'&price='+price+'&reduced='+reduced+'&stock='+stock+'',
+    
+    // loader(true);
+    
+    success = function() {
+        var response = JSON.parse(xhr.responseText),
+            message = document.getElementById("update-message"),
+            timeout;
+
+        // loader(false);
+
+        message.innerHTML = response.report.status;
+        timeout = setTimeout(function() { message.innerHTML = ''; }, 3000);
+    };
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                case 404:
+                    failed("404 Not found."); break;
+                case 500:
+                    failed("500 Internal Server Error"); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
+};
+
+validateProductInput = function() {
+    var isValid = 0,
+        title = document.getElementById("single-title").value,
+        desc = document.getElementById("single-desc").value,
+        price = document.getElementById("single-price").value,
+        reduced = document.getElementById("single-reduced").value,
+        stock = document.getElementById("single-stock").value,
+        updateMessage = document.getElementById("update-message");
+
+    updateMessage.innerHTML = '';
+    // Check required fields are not empty.
+    if(!title || !desc || !price || !stock) {
+        updateMessage.innerHTML += "<p>Please fill in fields with a *.</p>";
+        isValid++;
+    }
+    // Check the reduced price is not bigger than the original price.
+    if(parseInt(price) < parseInt(reduced)) {
+        updateMessage.innerHTML += "<p>Please make sure the reduced price is less than the actual price.</p>";
+        isValid++;
+    }
+    // Check the stock is positive.
+    if(parseInt(stock) < 0) {
+        updateMessage.innerHTML += "<p>Please make sure the stock is positive.</p>";
+        isValid++;
+    }
+
+    if(isValid === 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 showProducts = function(pageNo, perPage) {
@@ -114,6 +197,14 @@ productsEventHandler = function() {
     for(var i=0, len=productItems.length; i<len; i++) {
         addProductLink(productItems[i]);
     }
+
+    if(updateProductButton) {
+        updateProductButton.addEventListener("click", function(e) {
+            var valid = validateProductInput();
+            e.preventDefault();
+            if(valid)
+                updateProduct(updateProductButton.dataset.sku);
+        }, true);
     }
 };
 
@@ -188,8 +279,6 @@ showList = function(pageNo, perPage, table, status) {
                     success(); break;
                 case 404:
                     failed("404 Not found."); break;
-                case 304:
-                    failed("304 Not modified"); break;
                 case 500:
                     failed("500 Internal Server Error"); break;
                 default:
