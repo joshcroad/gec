@@ -35,7 +35,7 @@
         <!-- BEGIN scripts -->
         <script defer src="../js/functions.js"></script>
         <script defer src="../js/products.js"></script>
-        <script src="../js/history.js"></script>
+        <script src="../js/load.js"></script>
         <!-- END scripts -->
     <!-- END body -->
     </body>

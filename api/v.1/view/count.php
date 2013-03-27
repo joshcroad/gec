@@ -3,7 +3,7 @@
 /**
  * The header content.
  */
-//header("Content-type: application/json");
+header("Content-type: application/json");
 
 /**
  * Configure the API.

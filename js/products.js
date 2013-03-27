@@ -1,7 +1,70 @@
 var showProducts, productsEventHandler, showPagination, eventsFired = 0;
 
+/**
+ * Populates the page with the given product.
+ */
 getProduct = function(productID) {
-    // Ajax call to get single product information.
+    var success, stateChanged, url,
+        xhr = new XMLHttpRequest(),
+        title = document.getElementById("single-title"),
+        desc = document.getElementById("single-desc"),
+        price = document.getElementById("single-price"),
+        reduced = document.getElementById("single-reduced"),
+        stock = document.getElementById("single-stock"),
+        status = document.getElementById("single-status"),
+        postDate = document.getElementById("date-posted"),
+        updateButton = document.getElementById("update-product");
+
+    url = '../api/v.1/search/single-result.php?table=product&id='+productID;
+
+    // Show loader.
+    // loading.style.display = 'block';
+
+    success = function() {
+        var product = JSON.parse(xhr.responseText);
+
+        if(product.error.thrown) { // If API returns error.
+            failed(product.error.message);
+        } else { // Otherwise.
+            title.value = product.title;
+            desc.innerHTML = product.content;
+            price.value = product.price;
+            reduced.value = product.reduced_price;
+            stock.value = product.stock;
+            if(product.post_status === 'publish') {
+                status.selectedIndex = 0;
+            } else if(product.post_status === 'draft') {
+                status.selectedIndex = 1;
+            }
+            postDate.innerHTML = product.post_date;
+            updateButton.dataset.sku = product.sku;
+
+            productsEventHandler();
+        }
+
+        // Hide loader.
+        // loading.style.display = 'none'; 
+    }
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                case 404:
+                    failed("404 Not found."); break;
+                case 500:
+                    failed("500 Internal Server Error"); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+};
 }
 
 showProducts = function(pageNo, perPage) {
@@ -12,7 +75,9 @@ showProducts = function(pageNo, perPage) {
 productsEventHandler = function() {
     var pagItems = document.getElementsByClassName("pagItem"),
         twenty = document.getElementById("twenty"),
-        all = document.getElementById("all");
+        all = document.getElementById("all"),
+        productItems = document.getElementsByClassName("product-item"),
+        updateProductButton = document.getElementById("update-product");
 
     if(twenty)
         twenty.addEventListener("click", function(e) {
@@ -26,7 +91,7 @@ productsEventHandler = function() {
             e.preventDefault();
         }, true);
 
-    function addLink(item) {
+    function addPaginationLink(item) {
         item.addEventListener("click", function(e) {
             e.preventDefault();
             history.pushState(null, null, item.href);
@@ -35,7 +100,20 @@ productsEventHandler = function() {
     }
 
     for(var i=0, len=pagItems.length; i<len; i++) {
-        addLink(pagItems[i]);
+        addPaginationLink(pagItems[i]);
+    }
+
+    function addProductLink(item) {
+        item.addEventListener("click", function(e) {
+            e.preventDefault();
+            history.pushState(null, null, item.href);
+            getPage(item.href);
+        }, true);
+    }
+
+    for(var i=0, len=productItems.length; i<len; i++) {
+        addProductLink(productItems[i]);
+    }
     }
 };
 
@@ -64,12 +142,12 @@ showList = function(pageNo, perPage, table, status) {
         var response = JSON.parse(xhr.responseText), li = '';
 
         if(response.error.thrown) { // If API returns error.
-            failed('No results found.');
+            failed(response.error.message);
         } else { // Otherwise.
             li += '<li class="product-list thead">';
             li += '<div class="product-sku">SKU</div>';
             li += '<div class="product-title">Title</div>';
-            li += '<div class="product-price">Price</div>';
+            li += '<div class="product-price">Price (£)</div>';
             li += '<div class="product-stock">Stock</div>';
             li += '<div class="product-post-status">Status</div>';
             li += '</li>';
@@ -96,6 +174,11 @@ showList = function(pageNo, perPage, table, status) {
         // loading.style.display = 'none';
 
         content.innerHTML = li;
+
+        // Fire events for all links now presented.
+        // Has to be fired now to prevent events being fired,
+        // Before DOM has fully loaded.
+        productsEventHandler();
     };
 
     stateChanged = function() {
@@ -105,16 +188,12 @@ showList = function(pageNo, perPage, table, status) {
                     success(); break;
                 case 404:
                     failed("404 Not found."); break;
-                case 403:
-                    failed("403 Forbidden."); break;
                 case 304:
                     failed("304 Not modified"); break;
                 case 500:
                     failed("500 Internal Server Error"); break;
-                case 0:
-                    failed("Request successful, however 0 returned."); break;
                 default:
-                    failed("Unknown reason for failure."); break;
+                    failed("Status "+xhr.status+" returned."); break;
             }
         }
     };
@@ -122,9 +201,6 @@ showList = function(pageNo, perPage, table, status) {
     xhr.open("GET", url, true);
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
-
-    productsEventHandler();
-
 };
 
 // So pagination links.
@@ -186,16 +262,10 @@ showPagination = function(pageNo, perPage) {
                     success(); break;
                 case 404:
                     failed("404 Not found."); break;
-                case 403:
-                    failed("403 Forbidden."); break;
-                case 304:
-                    failed("304 Not modified"); break;
                 case 500:
                     failed("500 Internal Server Error"); break;
-                case 0:
-                    failed("Request successful, however 0 returned."); break;
                 default:
-                    failed("Unknown reason for failure."); break;
+                    failed("Status "+xhr.status+" returned."); break;
             }
         }
     };
