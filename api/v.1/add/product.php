@@ -14,7 +14,6 @@ global $db;
 if(!$db || isset($db)) {
 
     /* Unescaped parameters passed in */
-    $sku = $_POST['sku'];
     $unsafe_title = $_POST['title'];
     $unsafe_desc = $_POST['desc'];
     $unsafe_price = $_POST['price'];
@@ -33,13 +32,15 @@ if(!$db || isset($db)) {
     if($reduced_price === null)
         $reduced_price = '0.00';
 
-    $db->update("UPDATE product SET title='$title', content='$desc', post_status='$status', post_modified=NOW(), price='$price', reduced_price='$reduced_price', stock='$stock' WHERE sku='$sku'");
+    $db->insert("INSERT INTO product (title, content, post_status, post_date, price, reduced_price, stock, categoryID) VALUES ('$title', '$desc', '$status', NOW(), '$price', '$reduced_price', '$stock', '1')");
+
     /* Data returned by the API */
     if($db->errorThrown) {
         $response['error']['thrown'] = true;
         $response['report']['status'] = $db->errorMessage;
     } else {
         $response['error']['thrown'] = false;
+        $response['report']['inserted_id'] = $db->insert_id;
         $response['report']['status'] = "Update successful";
     }
 

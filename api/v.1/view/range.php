@@ -15,42 +15,32 @@ global $db;
  * The variables for the range. Start from and
  * how many to show per page.
  */
-$show = $_GET['show'];
 $status = $_GET['status'];
 $start = (int) $_GET['start'];
 $show = (int) $_GET['show'];
-
-/**
- * Validate which table to search. Default is 'products'.
- */
-switch($show) {
-    case 'category':
-        $table = 'category';
-    default:
-        $table = 'product'; break;
-}
 
 /**
  * Return on results the user has specified. Default is all.
  */
 switch($status) {
     case 'publish':
-        $result = $db->select("SELECT * FROM $table WHERE post_status = 'publish' LIMIT $start, $show"); break;
+        $products = $db->select("SELECT * FROM product WHERE post_status = 'publish' ORDER BY sku DESC LIMIT $start, $show"); break;
     case 'trash':
-        $result = $db->select("SELECT * FROM $table WHERE post_status = 'trash' LIMIT $start, $show"); break;
+        $products = $db->select("SELECT * FROM product WHERE post_status = 'trash' ORDER BY sku DESC LIMIT $start, $show"); break;
     case 'draft':
-        $result = $db->select("SELECT * FROM $table WHERE post_status = 'draft' LIMIT $start, $show"); break;
+        $products = $db->select("SELECT * FROM product WHERE post_status = 'draft' ORDER BY sku DESC LIMIT $start, $show"); break;
     case 'not-trash':
-        $result = $db->select("SELECT * FROM $table WHERE post_status <> 'trash' LIMIT $start, $show"); break;
+        $products = $db->select("SELECT * FROM product WHERE post_status <> 'trash' ORDER BY sku DESC LIMIT $start, $show"); break;
     default:
-        $result = $db->select("SELECT * FROM $table LIMIT $start, $show"); break;
+        $products = $db->select("SELECT * FROM product ORDER BY sku DESC LIMIT $start, $show"); break;
 }
 
 /**
  * Populate the products array.
  */
 $i = 0;
-while($item = $result->fetch_assoc()) {
+while($item = $products->fetch_assoc()) {
+    $id = $item['sku'];
     $response['product'][$i]['sku'] = $item['sku'];
     $response['product'][$i]['title'] = $item['title'];
     $response['product'][$i]['content'] = $item['content'];
@@ -59,8 +49,15 @@ while($item = $result->fetch_assoc()) {
     $response['product'][$i]['post_modified'] = $item['post_modified'];
     $response['product'][$i]['price'] = $item['price'];
     $response['product'][$i]['reduced_price'] = $item['reduced_price'];
-    $response['product'][$i]['stock'] = $item['stock'];
+    $response['product'][$i]['colour'] = $item['colour'];
     $response['product'][$i]['categoryID'] = $item['categoryID'];
+    $stock = $db->select("SELECT * FROM stock WHERE sku = '$id'");
+    $j = 0;
+    while($stock_item = $stock->fetch_assoc()) {
+        $response['product'][$i]['stock'][$j]['size'] = $stock_item['size'];
+        $response['product'][$i]['stock'][$j]['stock'] = $stock_item['stock'];
+        $j++;
+    }
     $i++;
 }
 
@@ -79,11 +76,6 @@ if(empty($response) || $response['product'][0]['sku'] == null) {
  * Return the start number.
  */
 $response['start'] = $start;
-
-/**
- * Return the number of items shown.
- */
-$response['show'] = $show;
 
 echo json_encode($response);
 
