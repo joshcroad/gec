@@ -22,6 +22,7 @@
                         <li><a href="">Dashboard</a></li>
                         <li><a href="products">Products</a></li>
                     </ul>
+                    <a href="add-product" id="add-product-section">Add Product</a>
                 <!-- END nav -->
                 </nav>
             <!-- END header -->
@@ -33,9 +34,9 @@
         <!-- END #jay-z -->
 
         <!-- BEGIN scripts -->
-        <script defer src="../js/functions.js"></script>
-        <script defer src="../js/products.js"></script>
-        <script src="../js/load.js"></script>
+        <script defer src="../js/admin/functions.js"></script>
+        <script defer src="../js/admin/products.js"></script>
+        <script src="../js/admin/load.js"></script>
         <!-- END scripts -->
     <!-- END body -->
     </body>
