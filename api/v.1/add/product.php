@@ -15,33 +15,52 @@ if(!$db || isset($db)) {
 
     /* Unescaped parameters passed in */
     $unsafe_title = $_POST['title'];
-    $unsafe_desc = $_POST['desc'];
+    $unsafe_content = $_POST['content'];
     $unsafe_price = $_POST['price'];
-    $unsafe_reduced_price = $_POST['reduced'];
-    $unsafe_stock = $_POST['stock'];
+    $unsafe_sale_price = $_POST['sale'];
+    $unsafe_colour = $_POST['colour'];
+    $unsafe_thumbnail = $_POST['thumbnail'];
     $unsafe_status = $_POST['status'];
+    $unsafe_category_id = $_POST['category_id'];
+
+    $unsafe_values = json_decode($_POST['values']); // Array
+    $unsafe_stocks = json_decode($_POST['stocks']); // Array
 
     /* safe to inject parameters */
     $title = $db->real_escape_string($unsafe_title);
-    $desc = $db->real_escape_string($unsafe_desc);
+    $content = $db->real_escape_string($unsafe_content);
     $price = $db->real_escape_string($unsafe_price);
-    $reduced_price = $db->real_escape_string($unsafe_reduced_price);
-    $stock = $db->real_escape_string($unsafe_stock);
+    $sale_price = $db->real_escape_string($unsafe_sale_price);
+    $colour = $db->real_escape_string($unsafe_colour);
+    $thumbnail = $db->real_escape_string($unsafe_thumbnail);
     $status = $db->real_escape_string($unsafe_status);
+    $category_id = $db->real_escape_string($unsafe_category_id);
 
-    if($reduced_price === null)
-        $reduced_price = '0.00';
+    /* Validation */
+    if($sale_price === null)
+        $sale_price = '0.00';
 
-    $db->insert("INSERT INTO product (title, content, post_status, post_date, price, reduced_price, stock, categoryID) VALUES ('$title', '$desc', '$status', NOW(), '$price', '$reduced_price', '$stock', '1')");
+    $db->insert("INSERT INTO product_group (title, content, price, sale_price, colour, thumbnail, post_status, post_date, categoryID) VALUES ('$title', '$content', '$price', '$sale_price', '$colour', '$thumbnail', '$status', NOW(), '$category_id')");
+
+    // Get the recently inserted sku number
+    $sku = $db->insert_id;
+
+    /* Add new records for values and stock in */
+    for($i=0, $len=count($unsafe_stocks); $i<$len; $i++) {
+        /* Make sure the parameters are safe to inject */
+        $value = $db->real_escape_string($unsafe_values[$i]);
+        $stock = $db->real_escape_string($unsafe_stocks[$i]);
+        $db->insert("INSERT INTO product (sku, value, stock) VALUES('$sku','$value','$stock')");
+    }
 
     /* Data returned by the API */
-    if($db->errorThrown) {
+    if($db->error_thrown) {
         $response['error']['thrown'] = true;
-        $response['report']['status'] = $db->errorMessage;
+        $response['report']['status'] = $db->error_message;
     } else {
         $response['error']['thrown'] = false;
-        $response['report']['inserted_id'] = $db->insert_id;
-        $response['report']['status'] = "Update successful";
+        $response['report']['inserted_id'] = $sku;
+        $response['report']['status'] = "Added product successfully";
     }
 
 } else {

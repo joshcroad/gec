@@ -116,30 +116,26 @@ function getPage(href_) {
     var success, stateChanged, url,
         xhr = new XMLHttpRequest(),
         content = document.getElementById("content"),
-        href = getPageString(href_);
-
-        url = "./"+href+".php";
+        href = getPageString(href_),
 
     success = function() {
         var obj = xhr.responseText;
         content.innerHTML = obj;
         addDynamicContent();
-    };
+    },
 
     stateChanged = function() {
         if(xhr.readyState === 4) {
             switch(xhr.status) {
                 case 200:
                     success(); break;
-                case 404:
-                    failed("404 Not found."); break;
-                case 500:
-                    failed("500 Internal Server Error"); break;
                 default:
                     failed("Status "+xhr.status+" returned."); break;
             }
         }
     };
+
+    url = "./"+href+".php";
 
     xhr.open("GET", url, true);
     xhr.send(null);
@@ -150,29 +146,32 @@ function getPage(href_) {
  * Function to validate product field input.
  */
 function validateProductInput() {
-    var isValid = 0,
+    var isValid = 0;
         title = document.getElementById("single-title").value,
-        desc = document.getElementById("single-desc").value,
+        content = document.getElementById("single-content").value,
         price = document.getElementById("single-price").value,
-        reduced = document.getElementById("single-reduced").value,
-        stock = document.getElementById("single-stock").value,
+        sale = document.getElementById("single-sale").value,
+        value_inputs = document.getElementsByClassName("single-values"),
+        stock_inputs = document.getElementsByClassName("single-stocks"),
         message = document.getElementById("message");
 
     message.innerHTML = '';
     // Check required fields are not empty.
-    if(!title || !desc || !price || !stock) {
+    if(!title || !content || !price || !stock_inputs[0]) {
         message.innerHTML += "<p>Please fill in fields with a *.</p>";
         isValid++;
     }
-    // Check the reduced price is not bigger than the original price.
-    if(parseInt(price) < parseInt(reduced)) {
-        message.innerHTML += "<p>Please make sure the reduced price is less than the actual price.</p>";
+    // Check the sale price is not bigger than the original price.
+    if(parseInt(price) < parseInt(sale)) {
+        message.innerHTML += "<p>Please make sure the sale price is less than the actual price.</p>";
         isValid++;
     }
     // Check the stock is positive.
-    if(parseInt(stock) < 0) {
-        message.innerHTML += "<p>Please make sure the stock is positive.</p>";
-        isValid++;
+    for(var i in stock_inputs) {
+        if(parseInt(stock_inputs[i]) < 0) {
+            message.innerHTML += "<p>Please make sure the stock is non-negative.</p>";
+            isValid++;
+        }
     }
 
     if(isValid === 0) {
@@ -181,3 +180,39 @@ function validateProductInput() {
         return false;
     }
 }
+
+function truncateDbTables() {
+    var success, stateChanged, url,
+        xhr = new XMLHttpRequest(),
+        message = document.getElementById('message'),
+
+    success = function() {
+        var product = JSON.parse(xhr.responseText);
+
+        if(product.error.thrown) { // If API returns error.
+            failed(product.error.message);
+        } else { // Otherwise.
+            message.innerHTML = product.status;
+        }
+    },
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    url = '../api/v.1/admin/delete/empty.db.php';
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+
+

@@ -12,15 +12,20 @@ require_once('../../../inc/api_config.php');
 global $db;
 
 if(!$db || isset($db)) {
+
+    /**
+     * The unsafe variables sent with the request
+     */
     $unescaped_table = $_GET['table'];
-    $unescaped_id = $_GET['id'];
+    $id = $_GET['id'];
 
+    /**
+     * The variables after they have been cleaned up
+     */
     $table = $db->real_escape_string($unescaped_table);
-    $id = $db->real_escape_string($unescaped_id);
 
-    if($table === 'product') {
-    	$result = $db->select("SELECT * FROM product WHERE sku = '$id'");
-        $stock = $db->select("SELECT * FROM stock WHERE sku = '$id'");
+    if($table === 'product_group') {
+    	$result = $db->select("SELECT * FROM product_group WHERE sku = '$id'");
     } else {
     	$result = $db->select("SELECT * FROM $table WHERE ID = '$id'");
     }
@@ -37,10 +42,11 @@ if(!$db || isset($db)) {
         $unformattedTime = strtotime($item['post_modified']);
         $item['post_modified'] = date('d F, Y', $unformattedTime);
 
+        $product_values = $db->select("SELECT * FROM product WHERE sku = '$id'");
         $i = 0;
-        while($stock_item = $stock->fetch_assoc()) {
-            $item['stock'][$i]['size'] = $stock_item['size'];
-            $item['stock'][$i]['stock'] = $stock_item['stock'];
+        while($product = $product_values->fetch_assoc()) {
+            $item['product'][$i]['value'] = $product['value'];
+            $item['product'][$i]['stock'] = $product['stock'];
             $i++;
         }
 

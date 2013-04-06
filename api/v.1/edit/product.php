@@ -16,28 +16,48 @@ if(!$db || isset($db)) {
     /* Unescaped parameters passed in */
     $sku = $_POST['sku'];
     $unsafe_title = $_POST['title'];
-    $unsafe_desc = $_POST['desc'];
+    $unsafe_content = $_POST['content'];
     $unsafe_price = $_POST['price'];
-    $unsafe_reduced_price = $_POST['reduced'];
-    $unsafe_stock = $_POST['stock'];
+    $unsafe_sale_price = $_POST['sale'];
+    $unsafe_colour = $_POST['colour'];
+    $unsafe_thumbnail = $_POST['thumbnail'];
     $unsafe_status = $_POST['status'];
+    $unsafe_category_id = $_POST['category_id'];
 
-    /* safe to inject parameters */
+    $unsafe_values = json_decode($_POST['values']); // Array
+    $unsafe_stocks = json_decode($_POST['stocks']); // Array
+
+    /* Safe to inject parameters */
     $title = $db->real_escape_string($unsafe_title);
-    $desc = $db->real_escape_string($unsafe_desc);
+    $content = $db->real_escape_string($unsafe_content);
     $price = $db->real_escape_string($unsafe_price);
-    $reduced_price = $db->real_escape_string($unsafe_reduced_price);
-    $stock = $db->real_escape_string($unsafe_stock);
+    $sale_price = $db->real_escape_string($unsafe_sale_price);
+    $colour = $db->real_escape_string($unsafe_colour);
+    $thumbnail = $db->real_escape_string($unsafe_thumbnail);
     $status = $db->real_escape_string($unsafe_status);
+    $category_id = $db->real_escape_string($unsafe_category_id);
 
-    if($reduced_price === null)
-        $reduced_price = '0.00';
+    /* Validation */
+    if($sale_price === null)
+        $sale_price = '0.00';
 
-    $db->update("UPDATE product SET title='$title', content='$desc', post_status='$status', post_modified=NOW(), price='$price', reduced_price='$reduced_price', stock='$stock' WHERE sku='$sku'");
-    /* Data returned by the API */
-    if($db->errorThrown) {
+    /* Make the update the the product group */
+    $db->update("UPDATE product_group SET title='$title', content='$content', price='$price', sale_price='$sale_price', colour='$colour', thumbnail='', post_status='$status', post_modified=NOW(), categoryID='$category_id' WHERE sku='$sku'");
+
+    /* Reset product table */
+    $db->delete("DELETE FROM product WHERE sku='$sku'");
+
+    /* Add new records for values and stock in */
+    for($i=0, $len=count($unsafe_stocks); $i<$len; $i++) {
+        /* Make sure the parameters are safe to inject */
+        $value = $db->real_escape_string($unsafe_values[$i]);
+        $stock = $db->real_escape_string($unsafe_stocks[$i]);
+        $db->insert("INSERT INTO product (sku, value, stock) VALUES('$sku','$value','$stock')");
+    }
+
+    if($db->error_thrown) {
         $response['error']['thrown'] = true;
-        $response['report']['status'] = $db->errorMessage;
+        $response['report']['status'] = $db->error_message;
     } else {
         $response['error']['thrown'] = false;
         $response['report']['status'] = "Update successful";

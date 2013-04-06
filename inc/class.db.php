@@ -85,7 +85,7 @@ class db {
             $this->initDB($db_name);
         // Echo any errors thrown.
         if(mysqli_connect_errno())
-            echo("Database connect Error : " . mysqli_connect_error($this->connection));
+            die("Database connect Error : " . mysqli_connect_error($this->connection));
     }
     
     private function create_table($query) {
@@ -118,8 +118,8 @@ class db {
      * @param string $message. The error message. Default "Unknown error".
      */
     private function errorHandler($message = "Unknown error.") {
-        $this->errorThrown = true;
-        $this->errorMessage = $message;
+        $this->error_thrown = true;
+        $this->error_message = $message;
     }
     
     /**
@@ -227,13 +227,39 @@ class db {
     }
 
     /**
+     * Function to reset all tables to an empty state.
+     *
+     * @param string $table. The table to be executed. Default is all tables.
+     */
+    function truncate($table = 'all') {
+        if($table === 'all') {
+            $this->query("TRUNCATE TABLE $this->db_name.category");
+            $this->query("TRUNCATE TABLE $this->db_name.tag");
+            $this->query("TRUNCATE TABLE $this->db_name.settings");
+            $this->query("TRUNCATE TABLE $this->db_name.order");
+            $this->query("TRUNCATE TABLE $this->db_name.product_group");
+            $this->query("TRUNCATE TABLE $this->db_name.product");
+            $this->query("TRUNCATE TABLE $this->db_name.product_order");
+            $this->query("TRUNCATE TABLE $this->db_name.product_tag");
+        } else {
+            $this->query("TRUNCATE TABLE $this->db_name.$table");
+        }
+    }
+
+    function delete($query) {
+        $this->query($query);
+    }
+
+    /**
      * Create the database.
      *
      * @uses db::query()
      * @uses db::create_table()
+     * @uses db::default_table_entries()
      */
     private function initDB() {
         $this->query("CREATE DATABASE $this->db_name COLLATE utf8_general_ci");
+
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.category 
                             (ID int NOT NULL AUTO_INCREMENT, name varchar(50), parent int, post_status varchar(50),
                             CONSTRAINT category_pk PRIMARY KEY(ID))"
@@ -251,13 +277,6 @@ class db {
                            );
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.order 
                             (ID int NOT NULL AUTO_INCREMENT, 
-                            purchase_date datetime, mail_type varchar(50), totalPrice double(10,2),
-                            sku int, 
-                            CONSTRAINT order_pk PRIMARY KEY(ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product (sku))"
-                           );
-        $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.order 
-                            (ID int NOT NULL AUTO_INCREMENT,
                             purchase_date datetime, mail_type varchar(50),
                             CONSTRAINT order_pk PRIMARY KEY(ID))"
                            );
@@ -272,7 +291,7 @@ class db {
                             (ID int NOT NULL AUTO_INCREMENT, sku int NOT NULL, value varchar(50), stock int,
                             CONSTRAINT product_pk PRIMARY KEY(ID),
                             FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE NO ACTION)"
+                                ON DELETE CASCADE)"
                            );
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_order 
                             (ID int,
@@ -293,8 +312,10 @@ class db {
         $this->default_table_entries();
     }
 
-        /**
+    /**
      * Insert default values into the database.
+     *
+     * @uses db::insert()
      */
     private function default_table_entries() {
         $this->insert("INSERT INTO $this->db_name.category (name, parent, post_status) VALUES('Uncategorized', NULL, 'publish')");
@@ -395,7 +416,7 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Zebra','This is a dummy product.','9.99','4.99','Black & White','publish',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('26','','8')");
 
-        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', 'http://localhost:8888/GEC/')");
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('description', 'This is a description.')");
         $this->insert("INSERT INTO $this->db_name.product_category (ID, sku) VALUES(1, 1)");

@@ -12,21 +12,10 @@ require_once('../../../../inc/api_config.php');
 global $db;
 
 if(!$db || isset($db)) {
-    /**
-     * The number of products in the database.
-     */
-    $results = $db->select("SELECT * FROM settings");
-
-    /**
-     * Calculate the number of pages requred.
-     */
-    while($settings = $results->fetch_assoc()) {
-        $response['ID'] = $settings['ID'];
-        $response[$settings['name']] = $settings['value'];
-    }
+    $db->truncate(); break;
 
     $response['error']['thrown'] = false;
-
+    $response['status'] = "Database reset successfully.";
 } else {
     $response['error']['thrown'] = true;
     $response['error']['message'] = 'Unable to connect to the database.';

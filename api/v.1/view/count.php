@@ -19,14 +19,14 @@ if(!$db || isset($db)) {
     $status = $_GET['status'];
 
     /**
-     * Validate which table to search. Default is 'products'.
+     * Validate which table to search. Default is 'product_group'.
      */
     switch($show) {
         case 'category':
             $table = 'category';
             $id = 'ID'; break;
         default:
-            $table = 'product';
+            $table = 'product_group';
             $id = 'sku'; break;
     }
 
