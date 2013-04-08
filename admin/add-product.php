@@ -19,7 +19,7 @@
                 <input type="text" class="single-values" placeholder="Value/Size" />
                 <input type="text" class="single-stocks" placeholder="Stock" />
             </div>
-            <a href="" id="add-value-stock">+</a>
+            <a href="" id="add-value-stock">+ more values</a>
         </div>
 
         <select id="single-status">

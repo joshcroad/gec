@@ -67,9 +67,19 @@ var productsEventHandler = function() {
 
     if(addValueStockButton) {
         addValueStockButton.addEventListener("click", function(e){
+            var inputValue = document.createElement("input"),
+                inputStock = document.createElement("input");
+
+            inputValue.type = "text";
+            inputValue.className = "single-values";
+            inputValue.placeholder = "Value/Size";
+            inputStock.type = "text";
+            inputStock.className = "single-stocks";
+            inputStock.placeholder = "Stock";
+            
+            addValueStockInput.appendChild(inputValue);
+            addValueStockInput.appendChild(inputStock);
             e.preventDefault();
-            addValueStockInput.innerHTML += '<input type="text" class="single-values" placeholder="Value/Size" />';
-            addValueStockInput.innerHTML += '<input type="text" class="single-stocks" placeholder="Stock" />';
         }, false);
     }
 },
