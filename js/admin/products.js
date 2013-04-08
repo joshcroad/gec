@@ -76,7 +76,7 @@ var productsEventHandler = function() {
             inputStock.type = "text";
             inputStock.className = "single-stocks";
             inputStock.placeholder = "Stock";
-            
+
             addValueStockInput.appendChild(inputValue);
             addValueStockInput.appendChild(inputStock);
             e.preventDefault();
@@ -341,7 +341,8 @@ showList = function(pageNo, perPage, table, status) {
     // loader(true);
 
     success = function() {
-        var response = JSON.parse(xhr.responseText), li = '', colourString;
+        var response = JSON.parse(xhr.responseText), li = '', colourString,
+            publishOption, draftOption, trashOption;
 
         if(response.error.thrown) { // If API returns error.
             failed(response.error.message);
@@ -349,7 +350,6 @@ showList = function(pageNo, perPage, table, status) {
             li += '<li class="product-list thead">';
             li += '<div class="product-sku">SKU</div>';
             li += '<div class="product-title">Title</div>';
-            li += '<div class="product-price">Price (£)</div>';
             li += '<div class="product-value">Value</div>';
             li += '<div class="product-stock">Stock</div>';
             li += '<div class="product-post-status">Status</div>';
@@ -357,18 +357,12 @@ showList = function(pageNo, perPage, table, status) {
             // Loop through each result.
             for(i in response.product_group) {
                 product_group = response.product_group[i];
+                publishOption = ""; draftOption = ""; trashOption = "";
                 // Set up table body.
                 li += '<li class="product-list '+product_group.sku+'">';
                 li += '<div class="product-sku">' + product_group.sku + '</div>';
                 colourString = product_group.colour !== "" ? ' <em>(' + product_group.colour + ')</em>' : '';
                 li += '<div class="product-title"><a href="product/'+product_group.sku+'" class="product-item" data-sku="' + product_group.sku + '">' + product_group.title + colourString + '</a></div>';
-                if (product_group.sale_price != 0.00) {
-                    li += '<div class="product-price">' + product_group.sale_price;
-                    li += ' <del>' + product_group.price + '</del></div>';
-                } else {
-                    li += '<div class="product-price">' + product_group.price + '</div>';
-                }
-
                 li += '<div class="product-value"><ul>'
                 for(i in product_group.product) {
                     product = product_group.product[i];
@@ -384,8 +378,25 @@ showList = function(pageNo, perPage, table, status) {
                     li += '<li>' + product.stock + '</li>';
                 }
                 li += '</ul></div>';
+                li += '<div class="product-post-status"><select id="status">';
 
-                li += '<div class="product-post-status">' + product_group.post_status + '</div>';
+                switch(product_group.post_status) {
+                    case 'publish':
+                        publishOption = "selected"; break;
+                    case 'draft':
+                        draftOption = "selected"; break;
+                    case 'trash':
+                        trashOption = "selected"; break;
+                    default:
+                        publishOption = "selected"; break;
+                }
+
+                console.log(product_group.post_status);
+                li += '<option value="publish" ' + publishOption + '>Publish</option>';
+                li += '<option value="draft" ' + draftOption + '>Draft</option>';
+                li += '<option value="trash"' + trashOption + '>Trash</option>';
+
+                li += '</select></div>'
                 li += '</li>';
             }
         }
