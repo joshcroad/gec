@@ -25,6 +25,7 @@
                     <a href="add-product" id="add-product-section">Add Product</a>
                 <!-- END nav -->
                 </nav>
+                <div id="request-message"></div>
             <!-- END header -->
             </header>
 

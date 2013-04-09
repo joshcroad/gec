@@ -11,7 +11,7 @@ header("Content-type: application/json");
 require_once('../../../inc/api_config.php');
 global $db;
 
-if(!$db || isset($db)) {
+if($db || isset($db)) {
     /**
      * The table to count.
      */

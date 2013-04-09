@@ -11,7 +11,7 @@ header("Content-type: application/json");
 require_once('../../../../inc/api_config.php');
 global $db;
 
-if(!$db || isset($db)) {
+if($db || isset($db)) {
     /**
      * Initialise the variables sent through $_POST.
      */
