@@ -7,7 +7,8 @@ var productsEventHandler = function() {
         updateProductButton = document.getElementById("update-product-button"),
         addProductButton = document.getElementById("add-product-button"),
         addValueStockButton = document.getElementById("add-value-stock"),
-        addValueStockInput = document.getElementById("values-and-stocks");
+        addValueStockInput = document.getElementById("values-and-stocks"),
+        productsStatus = document.getElementsByClassName("products-status");
 
     function addPaginationLink(item) {
         item.addEventListener("click", function(e) {
@@ -22,6 +23,12 @@ var productsEventHandler = function() {
             e.preventDefault();
             history.pushState(null, null, item.href);
             getPage(item.href);
+        }, false);
+    }
+
+    function addOptionChangeEvent(item) {
+        item.addEventListener("change", function(e) {
+            updateProductStatus(item);
         }, false);
     }
 
@@ -45,6 +52,10 @@ var productsEventHandler = function() {
             showProducts(1, 200);
             e.preventDefault();
         }, false);
+    }
+
+    for(var i=0, len=productsStatus.length; i<len; i++) {
+        addOptionChangeEvent(productsStatus[i]);
     }
 
     if(updateProductButton) {
@@ -82,6 +93,39 @@ var productsEventHandler = function() {
             e.preventDefault();
         }, false);
     }
+},
+
+updateProductStatus = function(elem) {
+    var success, stateChanged, url = '../api/v.1/edit/product-status.php',
+        param = 'sku='+elem.dataset.sku+'&status='+elem.options[elem.selectedIndex].value,
+        xhr = new XMLHttpRequest(), message = document.getElementById("request-message"),
+        timeout,
+
+    success = function() {
+        var response = JSON.parse(xhr.responseText);
+
+        // loader(false);
+        message.innerHTML = response.report.status;
+        timeout = setTimeout(function() {message.innerHTML = ""}, 3000);
+    },
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    // loader(true);
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
 },
 
 /**
@@ -150,8 +194,6 @@ getProduct = function(sku) {
             switch(xhr.status) {
                 case 200:
                     success(); break;
-                case 404:
-                    failed("404 Not found."); break;
                 default:
                     failed("Status "+xhr.status+" returned."); break;
             }
@@ -189,7 +231,7 @@ addProduct = function() {
     
     success = function() {
         var response = JSON.parse(xhr.responseText),
-            message = document.getElementById("message"),
+            message = document.getElementById("request-message"),
             timeout;
 
         // loader(false);
@@ -262,7 +304,7 @@ updateProduct = function(sku) {
     
     success = function() {
         var response = JSON.parse(xhr.responseText),
-            message = document.getElementById("message"),
+            message = document.getElementById("request-message"),
             timeout;
 
         // loader(false);
@@ -281,8 +323,6 @@ updateProduct = function(sku) {
             }
         }
     };
-
-    console.log(status_value);
 
     // loader(true);
 
@@ -378,7 +418,7 @@ showList = function(pageNo, perPage, table, status) {
                     li += '<li>' + product.stock + '</li>';
                 }
                 li += '</ul></div>';
-                li += '<div class="product-post-status"><select id="status">';
+                li += '<div class="product-post-status"><select class="products-status" data-sku="' + product_group.sku + '">';
 
                 switch(product_group.post_status) {
                     case 'publish':
@@ -391,7 +431,6 @@ showList = function(pageNo, perPage, table, status) {
                         publishOption = "selected"; break;
                 }
 
-                console.log(product_group.post_status);
                 li += '<option value="publish" ' + publishOption + '>Publish</option>';
                 li += '<option value="draft" ' + draftOption + '>Draft</option>';
                 li += '<option value="trash"' + trashOption + '>Trash</option>';
