@@ -2,7 +2,7 @@
  * Function to display and hide the loader.
  */
 function loader(visible) {
-    var loader = document.getElementById("loader");
+    var loader = document.getElementById("loader-container");
     if(visible)
         loader.style.display = 'block'; // Show loader.
     else
@@ -10,10 +10,19 @@ function loader(visible) {
 }
 
 /**
- * Function called if a XMLHttpRequest fails.
+ * Show message
  */
-function failed(message) {
-    content.innerHTML = '<p class="error">' + message + '.';
+function showMessage(message, classname) {
+    var requestMessage = document.getElementById("request-message"), timeout;
+    requestMessage.style.display = "block";
+    if(classname === undefined)
+        classname = "success";
+    requestMessage.setAttribute("class", classname);
+    requestMessage.innerHTML = message;
+    timeout = setTimeout(function() {
+        requestMessage.style.display = "none";
+        requestMessage.innerHTML = "";
+    }, 3000);
 }
 
 /**

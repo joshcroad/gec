@@ -11,26 +11,42 @@
 
     <!-- BEGIN body -->
     <body>
+        <div id="loader-container">
+            <div id="loader">
+                <div class="load-circle" id="load-rotate-01"></div>
+                <div class="load-circle" id="load-rotate-02"></div>
+                <div class="load-circle" id="load-rotate-03"></div>
+                <div class="load-circle" id="load-rotate-04"></div>
+                <div class="load-circle" id="load-rotate-05"></div>
+                <div class="load-circle" id="load-rotate-06"></div>
+                <div class="load-circle" id="load-rotate-07"></div>
+                <div class="load-circle" id="load-rotate-08"></div>
+            </div>
+        </div>
+
+        <!-- BEGIN header -->
+        <header>
+            <!-- BEGIN nav -->
+            <nav class="clearfix">
+                <ul>
+                    <li><a href="">Dashboard</a></li>
+                    <li><a href="products">Products</a></li>
+                    <li><a href="categories">Categories</a></li>
+                    <li><a href="tags">Tags</a></li>
+                    <li><a href="settings">Settings</a></li>
+                </ul>
+                <div class="add">
+                    <a href="add-product" id="add-product-section">Add Product</a>
+                </div>
+            <!-- END nav -->
+            </nav>
+            <div id="request-message"></div>
+        <!-- END header -->
+        </header>
+
         <!-- BEGIN #jay-z (main wrapper) -->
         <section id="jay-z">
-            <!-- BEGIN header -->
-            <header>
-                <h1>Admin Area</h1>
-                <!-- BEGIN nav -->
-                <nav>
-                    <ul>
-                        <li><a href="">Dashboard</a></li>
-                        <li><a href="products">Products</a></li>
-                    </ul>
-                    <a href="add-product" id="add-product-section">Add Product</a>
-                <!-- END nav -->
-                </nav>
-                <div id="request-message"></div>
-            <!-- END header -->
-            </header>
-
             <section id="content"></section>
-
         </section>
         <!-- END #jay-z -->
 

@@ -1,6 +1,6 @@
 <!-- BEGIN #products -->
 <div id="edit-product">
-    <h2 id="title">Edit Product</h2>
+    <h2>Edit Product</h2>
     
     <section id="fields">
         <input type="text" id="single-title" placeholder="Title *" />
@@ -16,7 +16,7 @@
 
         <div class="single-products">
             <div id="values-and-stocks"></div>
-            <a href="" id="add-value-stock">+</a>
+            <a href="" id="add-value-stock">+ <em>more values</em></a>
         </div>
 
         <select id="single-status">
@@ -26,7 +26,6 @@
         </select>
         <div id="date-posted"></div>
         <a href="" id="update-product-button">Update Product</a>
-        <div id="message"></div>
     </section>
 
 </div>

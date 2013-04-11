@@ -1,6 +1,6 @@
 <!-- BEGIN #products -->
 <div id="add-product">
-    <h2 id="title">Add Product</h2>
+    <h2>Add Product</h2>
 
     <section id="fields">
         <input type="text" id="single-title" placeholder="Title *" />
@@ -29,7 +29,6 @@
         </select>
 
         <a href="" id="add-product-button">Add Product</a>
-        <div id="message"></div>
     </section>
 
 </div>

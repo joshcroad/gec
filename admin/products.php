@@ -1,9 +1,17 @@
 <!-- BEGIN #products -->
 <div id="products">
-    <h2>View Products</h2>
-    <p>Here you can view, add, edit &amp; delete your product list.</p>
-    <div class"filter">Show: 
-        <a href="" id="twenty">10</a> | <a href="" id="all">all</a>
+    <div class="clearfix">
+        <h2>Your Products</h2>
+        <a href="add-product" id="add-product-section">Add Product</a>
+    </div>
+    <div class="filter">
+        FILTER BY: 
+        <a href="" class="filter-table" data-status="publish">PUBLISH</a> /
+        <a href="" class="filter-table" data-status="draft">DRAFT</a> / 
+        <a href="" class="filter-table" data-status="trash">TRASH</a>
+    </div>
+    <div class="view">
+        VIEW: <a href="" id="ten">10</a> / <a href="" id="all">ALL</a>
     </div>
     <ul id="products_list"></ul>
     <ul id="pagination"></ul>

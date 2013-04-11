@@ -328,16 +328,16 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','medium','10')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','large','10')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Cat','This is a dummy product.','9.99','4.99','Ginger','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Cat','This is a dummy product.','9.99','4.99','Ginger','draft',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('3','','8')");
 
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Dog','This is a dummy product.','9.99','4.99','Light Brown','publish',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('4','','6')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Elephant','This is a dummy product.','9.99','4.99','Grey','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Elephant','This is a dummy product.','9.99','4.99','Grey','trash',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('5','large','8')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Fish','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Fish','This is a dummy product.','9.99','4.99','','draft',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','','53')");
 
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Gorilla','This is a dummy product.','9.99','4.99','Black','publish',NOW(),'1')");
@@ -360,7 +360,7 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Lizard','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('12','','6')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Mop','This is a dummy product.','9.99','4.99','Blue','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Mop','This is a dummy product.','9.99','4.99','Blue','trash',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('13','','13')");
 
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Oreo','This is a dummy product.','9.99','4.99','Chocolate','publish',NOW(),'1')");
@@ -376,10 +376,10 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('16','medium','8')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('16','large','8')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Radio','This is a dummy product.','9.99','4.99','Red','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Radio','This is a dummy product.','9.99','4.99','Red','draft',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('17','','10')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Shirt','This is a dummy product.','9.99','4.99','Orange','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Shirt','This is a dummy product.','9.99','4.99','Orange','draft',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','small','14')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','medium','14')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','large','14')");
@@ -407,7 +407,7 @@ class db {
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Water Bottle','This is a dummy product.','9.99','4.99','Clear','publish',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('23','','8')");
 
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Xylophone','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Xylophone','This is a dummy product.','9.99','4.99','','draft',NOW(),'1')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('24','','8')");
 
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Yarn','This is a dummy product.','9.99','4.99','Yellow','publish',NOW(),'1')");

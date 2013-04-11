@@ -1,36 +1,18 @@
 // Add event listeners to all recently added buttons.
-var productsEventHandler = function() {
+
+// ****************************************************************
+// ***** There are multiple event listeners being added here! *****
+// ****************************************************************
+productsEventHandler = function() {
     var pagItems = document.getElementsByClassName("pagItem"),
-        twenty = document.getElementById("twenty"),
+        ten = document.getElementById("ten"),
         all = document.getElementById("all"),
         productItems = document.getElementsByClassName("product-item"),
         updateProductButton = document.getElementById("update-product-button"),
         addProductButton = document.getElementById("add-product-button"),
         addValueStockButton = document.getElementById("add-value-stock"),
-        addValueStockInput = document.getElementById("values-and-stocks"),
-        productsStatus = document.getElementsByClassName("products-status");
-
-    function addPaginationLink(item) {
-        item.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, item.href);
-            showProducts(item.dataset.pageno, item.dataset.perpage);
-        }, false);
-    }
-
-    function addProductLink(item) {
-        item.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, item.href);
-            getPage(item.href);
-        }, false);
-    }
-
-    function addOptionChangeEvent(item) {
-        item.addEventListener("change", function(e) {
-            updateProductStatus(item);
-        }, false);
-    }
+        productsStatus = document.getElementsByClassName("products-status"),
+        filterButtons = document.getElementsByClassName("filter-table");
 
     for(var i=0, len=pagItems.length; i<len; i++) {
         addPaginationLink(pagItems[i]);
@@ -40,16 +22,13 @@ var productsEventHandler = function() {
         addProductLink(productItems[i]);
     }
 
-    if(twenty) {
-        twenty.addEventListener("click", function(e) {
+    if(ten && all) {
+        ten.addEventListener("click", function(e) {
             showProducts(1, 10);
             e.preventDefault();
         }, false);
-    }
-
-    if(all) {
         all.addEventListener("click", function(e) {
-            showProducts(1, 200);
+            showProducts(1, 9999);
             e.preventDefault();
         }, false);
     }
@@ -77,36 +56,76 @@ var productsEventHandler = function() {
     }
 
     if(addValueStockButton) {
-        addValueStockButton.addEventListener("click", function(e){
-            var inputValue = document.createElement("input"),
-                inputStock = document.createElement("input");
-
-            inputValue.type = "text";
-            inputValue.className = "single-values";
-            inputValue.placeholder = "Value/Size";
-            inputStock.type = "text";
-            inputStock.className = "single-stocks";
-            inputStock.placeholder = "Stock";
-
-            addValueStockInput.appendChild(inputValue);
-            addValueStockInput.appendChild(inputStock);
+        addValueStockButton.addEventListener("click", function(e) {
+            addValueStockInputs();
             e.preventDefault();
         }, false);
+    }
+
+    for(var i=0, len=filterButtons.length; i<len; i++) {
+        filterTable(filterButtons[i]);
+    }
+
+    function addPaginationLink(elem) {
+        elem.addEventListener("click", function(e) {
+            e.preventDefault();
+            history.pushState(null, null, elem.href);
+            showProducts(elem.dataset.pageno, elem.dataset.perpage);
+        }, false);
+    }
+
+    function addProductLink(elem) {
+        elem.addEventListener("click", function(e) {
+            e.preventDefault();
+            history.pushState(null, null, elem.href);
+            getPage(elem.href);
+        }, false);
+    }
+
+    function addOptionChangeEvent(elem) {
+        elem.addEventListener("change", function(e) {
+            console.log("here");
+            updateProductStatus(elem);
+        }, false);
+    }
+
+    function filterTable(elem) {
+        elem.addEventListener("click", function(e) {
+            console.log(1, 10, null, elem.dataset.status);
+            showProducts(1, 10, null, elem.dataset.status);
+            e.preventDefault();
+        }, false);
+    }
+
+    function addValueStockInputs() {
+        var inputValue = document.createElement("input"),
+            inputStock = document.createElement("input"),
+            addValueStockInput = document.getElementById("values-and-stocks");
+
+        // Input for values and sizes
+        inputValue.type = "text";
+        inputValue.className = "single-values";
+        inputValue.placeholder = "Value/Size";
+        // Input for stock
+        inputStock.type = "text";
+        inputStock.className = "single-stocks";
+        inputStock.placeholder = "Stock";
+        // Append these to the window.
+        addValueStockInput.appendChild(inputValue);
+        addValueStockInput.appendChild(inputStock);
     }
 },
 
 updateProductStatus = function(elem) {
     var success, stateChanged, url = '../api/v.1/edit/product-status.php',
         param = 'sku='+elem.dataset.sku+'&status='+elem.options[elem.selectedIndex].value,
-        xhr = new XMLHttpRequest(), message = document.getElementById("request-message"),
-        timeout,
+        xhr = new XMLHttpRequest(),
 
     success = function() {
         var response = JSON.parse(xhr.responseText);
 
-        // loader(false);
-        message.innerHTML = response.report.status;
-        timeout = setTimeout(function() {message.innerHTML = ""}, 3000);
+        loader(false);
+        showMessage(response.report.status, "success");
     },
 
     stateChanged = function() {
@@ -115,12 +134,12 @@ updateProductStatus = function(elem) {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
 
-    // loader(true);
+    loader(true);
 
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -152,10 +171,10 @@ getProduct = function(sku) {
     success = function() {
         var product_group = JSON.parse(xhr.responseText);
 
-        // loader(false);
+        loader(false);
 
         if(product_group.error.thrown) { // If API returns error.
-            failed(product_group.error.message);
+            showMessage(product_group.error.message, "error");
         } else { // Otherwise.
             title.value = product_group.title;
             content.innerHTML = product_group.content;
@@ -195,12 +214,12 @@ getProduct = function(sku) {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
 
-    // loader(true);
+    loader(true);
 
     url = '../api/v.1/search/single-result.php?table=product_group&id='+sku;
 
@@ -230,14 +249,10 @@ addProduct = function() {
         categories = document.getElementsByClassName("category"),
     
     success = function() {
-        var response = JSON.parse(xhr.responseText),
-            message = document.getElementById("request-message"),
-            timeout;
+        var response = JSON.parse(xhr.responseText);
 
-        // loader(false);
-
-        message.innerHTML = response.report.status;
-        timeout = setTimeout(function() { message.innerHTML = ''; }, 3000);
+        loader(false);
+        showMessage(response.report.status, "success");
     },
 
     stateChanged = function() {
@@ -246,12 +261,12 @@ addProduct = function() {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
 
-    // loader(true);
+    loader(true);
 
     // Populate stocks array with stocks from page
     for(var i=0, len=stock_inputs.length; i<len; i++) {
@@ -303,14 +318,10 @@ updateProduct = function(sku) {
         categories = document.getElementsByClassName("category"),
     
     success = function() {
-        var response = JSON.parse(xhr.responseText),
-            message = document.getElementById("request-message"),
-            timeout;
+        var response = JSON.parse(xhr.responseText);
 
-        // loader(false);
-
-        message.innerHTML = response.report.status;
-        timeout = setTimeout(function() { message.innerHTML = ''; }, 3000);
+        loader(false);
+        showMessage(response.report.status, "success");
     },
 
     stateChanged = function() {
@@ -319,12 +330,12 @@ updateProduct = function(sku) {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
 
-    // loader(true);
+    loader(true);
 
     // Populate values array with values from page
     for(var i=0, len=stock_inputs.length; i<len; i++) {
@@ -357,41 +368,32 @@ updateProduct = function(sku) {
     xhr.onreadystatechange = stateChanged;
 },
 
-showProducts = function(pageNo, perPage) {
-    showPagination(pageNo, perPage);
+showProducts = function(pageNo, perPage, table, status) {
+    if(table === undefined || table === null)
+        table = "product_group"
+    if(status === undefined)
+        status = "not-trash";
+    console.log(pageNo, perPage, table, status);
+    showPagination(pageNo, perPage, table, status);
 },
 
 // Display list of products.
 showList = function(pageNo, perPage, table, status) {
     var success, stateChanged, start = '', url = '',
         xhr = new XMLHttpRequest(),
-        content = document.getElementById("products_list");
-
-    // Initialising variables if not already.
-    if(perPage === undefined)
-        perPage = 10;
-    if(pageNo === undefined)
-        start = 0;
-    else
-        start = (pageNo - 1) * perPage;
-
-    url = '../api/v.1/view/range.php';
-    url += '?show='+table+'&status='+status+'&start='+start+'&show='+perPage;
-
-    // loader(true);
+        content = document.getElementById("products_list"),
 
     success = function() {
         var response = JSON.parse(xhr.responseText), li = '', colourString,
             publishOption, draftOption, trashOption;
 
         if(response.error.thrown) { // If API returns error.
-            failed(response.error.message);
+            showMessage(response.error.message, "error");
         } else { // Otherwise.
             li += '<li class="product-list thead">';
-            li += '<div class="product-sku">SKU</div>';
+            li += '<div class="product-sku">Sku</div>';
             li += '<div class="product-title">Title</div>';
-            li += '<div class="product-value">Value</div>';
-            li += '<div class="product-stock">Stock</div>';
+            li += '<div class="product-quantity">Quantity</div>';
             li += '<div class="product-post-status">Status</div>';
             li += '</li>';
             // Loop through each result.
@@ -402,20 +404,14 @@ showList = function(pageNo, perPage, table, status) {
                 li += '<li class="product-list '+product_group.sku+'">';
                 li += '<div class="product-sku">' + product_group.sku + '</div>';
                 colourString = product_group.colour !== "" ? ' <em>(' + product_group.colour + ')</em>' : '';
-                li += '<div class="product-title"><a href="product/'+product_group.sku+'" class="product-item" data-sku="' + product_group.sku + '">' + product_group.title + colourString + '</a></div>';
-                li += '<div class="product-value"><ul>'
+                li += '<div class="product-title"><a href="product/'+product_group.sku+'" class="product-item" data-sku="' + product_group.sku + '">' + product_group.title + '</a>'+colourString+'</div>';
+                li += '<div class="product-quantity"><ul>';
                 for(i in product_group.product) {
-                    product = product_group.product[i];
-                    if(product.value === '')
-                        li += '<li>-</li>';
-                    else
-                        li += '<li>' + product.value + '</li>';
-                }
-                li += '</ul></div>';
-                li += '<div class="product-stock"><ul>';
-                for(i in product_group.product) {
-                    product = product_group.product[i];
-                    li += '<li>' + product.stock + '</li>';
+                    var product = product_group.product[i],
+                        lowClass = '';
+                    if(product.stock<10)
+                        lowClass = 'low';
+                    li += '<li class="'+lowClass+'">'+ product.stock + ' <em>' + product.value + '</em></li>';
                 }
                 li += '</ul></div>';
                 li += '<div class="product-post-status"><select class="products-status" data-sku="' + product_group.sku + '">';
@@ -440,7 +436,7 @@ showList = function(pageNo, perPage, table, status) {
             }
         }
 
-        // loader(false);
+        loader(false);
 
         content.innerHTML = li;
 
@@ -448,7 +444,7 @@ showList = function(pageNo, perPage, table, status) {
         // Has to be fired now to prevent events being fired,
         // Before DOM has fully loaded.
         productsEventHandler();
-    };
+    },
 
     stateChanged = function() {
         if(xhr.readyState === 4) {
@@ -456,10 +452,23 @@ showList = function(pageNo, perPage, table, status) {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
+
+    loader(true);
+
+    // Initialising variables if not already.
+    if(perPage === undefined)
+        perPage = 10;
+    if(pageNo === undefined)
+        start = 0;
+    else
+        start = (pageNo - 1) * perPage;
+
+    url = '../api/v.1/view/range.php';
+    url += '?show='+table+'&status='+status+'&start='+start+'&show='+perPage;
 
     xhr.open("GET", url, true);
     xhr.send(null);
@@ -467,10 +476,10 @@ showList = function(pageNo, perPage, table, status) {
 },
 
 // So pagination links.
-showPagination = function(pageNo, perPage) {
+showPagination = function(pageNo, perPage, table, status) {
     var success, stateChanged,
         url = '../api/v.1/view/count.php';
-        url += '?show=product&status=not-trash';
+        url += '?show='+table+'&status='+status;
         xhr = new XMLHttpRequest(),
         pageNo = parseInt(pageNo),
 
@@ -479,6 +488,8 @@ showPagination = function(pageNo, perPage) {
             pagNav = '',
             ul = document.getElementById('pagination'),
             pages = Math.ceil(response.count / perPage);
+
+        loader(false);
 
         if (pageNo === 1) {
             pagNav += '<li class="pagItemInactive">&laquo;</li>';
@@ -500,13 +511,11 @@ showPagination = function(pageNo, perPage) {
 
         if(pageNo === pages) {
             pagNav += '<li class="pagItemInactive">&#155;</li>';
-            pagNav += '<li>&raquo;</li>';
+            pagNav += '<li class="pagItemInactive">&raquo;</li>';
         } else {
             pagNav += '<li><a href="products/page/'+(pageNo+1)+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
             pagNav += '<li><a href="products/page/'+pages+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
         }
-        
-        pagNav += '</ul>';
 
         ul.innerHTML = pagNav;
 
@@ -519,10 +528,12 @@ showPagination = function(pageNo, perPage) {
                 case 200:
                     success(); break;
                 default:
-                    failed("Status "+xhr.status+" returned."); break;
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
             }
         }
     };
+
+    loader(true);
 
     if(perPage === undefined)
         perPage = 10; // Default items per page.
