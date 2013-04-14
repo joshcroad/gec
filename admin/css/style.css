@@ -239,32 +239,40 @@ header .error {
 #fields #single-title {
   width: 40em; }
 
-/*        <input type="text" id="single-title" placeholder="Title *" />
-        <textarea id="single-content" placeholder="Product Description *"></textarea>
-        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-price" placeholder="Price *" required />
-        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-sale" placeholder="Sale Price" />
-        <input type="text" id="single-colour" placeholder="Colour" />
-
-        <!-- Thumbnail upload
-        <input type="text" id="single-thumbnail" placeholder="Thumbnail" />
-        <a href="" id="update_image">Choose image</a>
-        -->
-
-        <div class="single-products">
-            <div id="values-and-stocks"></div>
-            <a href="" id="add-value-stock">+</a>
-        </div>
-
-        <select id="single-status">
-            <option value="publish" selected>Publish</option>
-            <option value="draft">Draft</option>
-            <option value="trash">Trash</option>
-        </select>
-        <div id="date-posted"></div>
-        <a href="" id="update-product-button">Update Product</a>*/
 /************************
  ***** LOADER STYLE *****
  ************************/
+@keyframes fadeIn {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadeIn {
+  /* Firefox */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-webkit-keyframes fadeIn {
+  /* Safari and Chrome */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadeIn {
+  /* Opera */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
 #loader-container {
   display: none;
   background: rgba(255, 255, 255, 0.7);
@@ -272,7 +280,14 @@ header .error {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0; }
+  left: 0;
+  animation: fadeIn 1s;
+  -moz-animation: fadeIn 1s;
+  /* Firefox */
+  -webkit-animation: fadeIn 1s;
+  /* Safari and Chrome */
+  -o-animation: fadeIn 1s;
+  /* Opera */ }
 
 #loader {
   position: absolute;
@@ -293,27 +308,27 @@ header .error {
   height: 12px;
   width: 12px;
   -moz-border-radius: 6px;
-  -moz-animation-name: fade;
+  -moz-animation-name: loadFade;
   -moz-animation-duration: 0.72s;
   -moz-animation-iteration-count: infinite;
   -moz-animation-direction: linear;
   -webkit-border-radius: 6px;
-  -webkit-animation-name: fade;
+  -webkit-animation-name: loadFade;
   -webkit-animation-duration: 0.72s;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-direction: linear;
   -ms-border-radius: 6px;
-  -ms-animation-name: fade;
+  -ms-animation-name: loadFade;
   -ms-animation-duration: 0.72s;
   -ms-animation-iteration-count: infinite;
   -ms-animation-direction: linear;
   -o-border-radius: 6px;
-  -o-animation-name: fade;
+  -o-animation-name: loadFade;
   -o-animation-duration: 0.72s;
   -o-animation-iteration-count: infinite;
   -o-animation-direction: linear;
   border-radius: 6px;
-  animation-name: fade;
+  animation-name: loadFade;
   animation-duration: 0.72s;
   animation-iteration-count: infinite;
   animation-direction: linear; }
@@ -390,35 +405,35 @@ header .error {
   -o-animation-delay: 0.27s;
   animation-delay: 0.27s; }
 
-@-moz-keyframes fade {
+@-moz-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-webkit-keyframes fade {
+@-webkit-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-ms-keyframes fade {
+@-ms-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-o-keyframes fade {
+@-o-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@keyframes fade {
+@keyframes loadFade {
   0% {
     background-color: #111111; }
 
