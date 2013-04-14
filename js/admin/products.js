@@ -1,134 +1,44 @@
-// Add event listeners to all recently added buttons.
+// products.js
+var 
 
-// ****************************************************************
-// ***** There are multiple event listeners being added here! *****
-// ****************************************************************
-productsEventHandler = function() {
-    var pagItems = document.getElementsByClassName("pagItem"),
-        ten = document.getElementById("ten"),
-        all = document.getElementById("all"),
-        productItems = document.getElementsByClassName("product-item"),
-        updateProductButton = document.getElementById("update-product-button"),
-        addProductButton = document.getElementById("add-product-button"),
-        addValueStockButton = document.getElementById("add-value-stock"),
-        productsStatus = document.getElementsByClassName("products-status"),
-        filterButtons = document.getElementsByClassName("filter-table");
+// Call to add product.
+addProduct = function () {
+    var url, param, xhr = new XMLHttpRequest(),
+        valuesArray = [], stocksArray = [],
+        values, stocks, category_id,
+        title = document.getElementById("single-title").value,
+        content = document.getElementById("single-content").value,
+        price = document.getElementById("single-price").value,
+        sale = document.getElementById("single-sale").value,
+        colour = document.getElementById("single-colour").value,
+        thumbnail = document.getElementById("single-thumbnail"),
+        valueInputs = document.getElementsByClassName("single-values"),
+        stockInputs = document.getElementsByClassName("single-stocks"),
+        status_list = document.getElementById("single-status"),
+        status_value = status_list.options[status_list.selectedIndex].value,
+        categories = document.getElementsByClassName("category");
 
-    for(var i=0, len=pagItems.length; i<len; i++) {
-        addPaginationLink(pagItems[i]);
-    }
-
-    for(var i=0, len=productItems.length; i<len; i++) {
-        addProductLink(productItems[i]);
-    }
-
-    if(ten && all) {
-        ten.addEventListener("click", function(e) {
-            showProducts(1, 10);
-            e.preventDefault();
-        }, false);
-        all.addEventListener("click", function(e) {
-            showProducts(1, 9999);
-            e.preventDefault();
-        }, false);
-    }
-
-    for(var i=0, len=productsStatus.length; i<len; i++) {
-        addOptionChangeEvent(productsStatus[i]);
-    }
-
-    if(updateProductButton) {
-        updateProductButton.addEventListener("click", function(e) {
-            var valid = validateProductInput();
-            e.preventDefault();
-            if(valid)
-                updateProduct(updateProductButton.dataset.sku);
-        }, false);
-    }
-
-    if(addProductButton) {
-        addProductButton.addEventListener("click", function(e) {
-            var valid = validateProductInput();
-            e.preventDefault();
-            if(valid)
-                addProduct();
-        }, false);
-    }
-
-    if(addValueStockButton) {
-        addValueStockButton.addEventListener("click", function(e) {
-            addValueStockInputs();
-            e.preventDefault();
-        }, false);
-    }
-
-    for(var i=0, len=filterButtons.length; i<len; i++) {
-        filterTable(filterButtons[i]);
-    }
-
-    function addPaginationLink(elem) {
-        elem.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, elem.href);
-            showProducts(elem.dataset.pageno, elem.dataset.perpage);
-        }, false);
-    }
-
-    function addProductLink(elem) {
-        elem.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, elem.href);
-            getPage(elem.href);
-        }, false);
-    }
-
-    function addOptionChangeEvent(elem) {
-        elem.addEventListener("change", function(e) {
-            console.log("here");
-            updateProductStatus(elem);
-        }, false);
-    }
-
-    function filterTable(elem) {
-        elem.addEventListener("click", function(e) {
-            console.log(1, 10, null, elem.dataset.status);
-            showProducts(1, 10, null, elem.dataset.status);
-            e.preventDefault();
-        }, false);
-    }
-
-    function addValueStockInputs() {
-        var inputValue = document.createElement("input"),
-            inputStock = document.createElement("input"),
-            addValueStockInput = document.getElementById("values-and-stocks");
-
-        // Input for values and sizes
-        inputValue.type = "text";
-        inputValue.className = "single-values";
-        inputValue.placeholder = "Value/Size";
-        // Input for stock
-        inputStock.type = "text";
-        inputStock.className = "single-stocks";
-        inputStock.placeholder = "Stock";
-        // Append these to the window.
-        addValueStockInput.appendChild(inputValue);
-        addValueStockInput.appendChild(inputStock);
-    }
-},
-
-updateProductStatus = function(elem) {
-    var success, stateChanged, url = '../api/v.1/edit/product-status.php',
-        param = 'sku='+elem.dataset.sku+'&status='+elem.options[elem.selectedIndex].value,
-        xhr = new XMLHttpRequest(),
-
-    success = function() {
-        var response = JSON.parse(xhr.responseText);
-
+    // Request successful, display response.
+    success = function () {
+        var response = JSON.parse(xhr.responseText),
+            addProductButton = document.getElementById("add-product-button");
+        // Hide loader.
         loader(false);
-        showMessage(response.report.status, "success");
+        // if error thrown.
+        if(response.error.thrown) {
+            // Show message of update failure.
+            showMessage(response.report.status, "error");
+        } else {
+            // Show message of update success.
+            showMessage(response.report.status, "success");
+            // 
+            addProductButton.href = addProductButton.href + response.report.inserted_id;
+            history.pushState(null, null, addProductButton.href);
+            loadPage(addProductButton.href);
+        }
     },
-
-    stateChanged = function() {
+    // Once state is changed, check status.
+    stateChanged = function () {
         if(xhr.readyState === 4) {
             switch(xhr.status) {
                 case 200:
@@ -138,62 +48,81 @@ updateProductStatus = function(elem) {
             }
         }
     };
-
+    // Show loader before request is sent.
     loader(true);
+    // Populate stocks array with stocks from page
+    for(var i=0, len=stockInputs.length; i<len; i++) {
+        if(stockInputs[i].value != "") {
+            valuesArray[i] = valueInputs[i].value;
+            stocksArray[i] = stockInputs[i].value;
+        }
+    }
+    // Stringify array ready for parameter.
+    values = JSON.stringify(valuesArray);
+    stocks = JSON.stringify(stocksArray);
 
+    // Get the ID of the category selected
+    // for(var i=0, len=categories.length; i<len; i++) {
+    //     if(categories[i].checked) {
+    //         category_id = categories[i].dataset.id;
+    //     }
+    // }
+    // Set URL and parameters to be sent.
+    url = '../api/v.1/add/product.php',
+    param = 'title='+title+'&content='+content+'&price='+price+'&sale='+sale+
+                '&colour='+colour+'&thumbnail='+thumbnail+'&values='+values+'&stocks='+stocks+
+                '&status='+status_value+'&category_id=1';
+    // Open, set headers & post request.
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send(param);
     xhr.onreadystatechange = stateChanged;
 },
 
-/**
- * Populates the page with the given product.
- */
+// Get a product, with a given sku.
 getProduct = function(sku) {
-    var success, stateChanged, url,
-        xhr = new XMLHttpRequest(),
-        values = [], stock = [], category_id,
-        title = document.getElementById("single-title"),
-        content = document.getElementById("single-content"),
-        price = document.getElementById("single-price"),
-        sale = document.getElementById("single-sale"),
-        colour = document.getElementById("single-colour"),
-        thumbnail = document.getElementById("single-thumbnail"),
-        valuesStocks = document.getElementById("values-and-stocks"),
-        value_inputs = document.getElementsByClassName("single-values"),
-        stock_inputs = document.getElementsByClassName("single-stocks"),
-        status = document.getElementById("single-status"),
-        postDate = document.getElementById("date-posted"),
-        categories = document.getElementsByClassName("category"),
-        updateButton = document.getElementById("update-product-button"),
-
-    success = function() {
-        var product_group = JSON.parse(xhr.responseText);
-
+    var xhr = new XMLHttpRequest(), url,
+        
+    // Request was successful, display retrieved data.
+    success = function () {
+        // Parse JSON array.
+        var product_group = JSON.parse(xhr.responseText),
+            updateButton = document.getElementById("update-product-button"),
+            title = document.getElementById("single-title"),
+            content = document.getElementById("single-content"),
+            price = document.getElementById("single-price"),
+            sale = document.getElementById("single-sale"),
+            colour = document.getElementById("single-colour"),
+            thumbnail = document.getElementById("single-thumbnail"),
+            valuesStocks = document.getElementById("values-and-stocks"),
+            valueInputs = document.getElementsByClassName("single-values"),
+            stockInputs = document.getElementsByClassName("single-stocks"),
+            status = document.getElementById("single-status"),
+            postDate = document.getElementById("date-posted"),
+            categories = document.getElementsByClassName("category");
+        // Hide loader.
         loader(false);
-
-        if(product_group.error.thrown) { // If API returns error.
+        // If API returns error.
+        if(product_group.error.thrown) {
             showMessage(product_group.error.message, "error");
         } else { // Otherwise.
+            // Set variables as information from request.
             title.value = product_group.title;
             content.innerHTML = product_group.content;
             price.value = product_group.price;
             sale.value = product_group.sale_price;
             colour.value = product_group.colour;
-
+            // loop through all products.
             for(var i in product_group.product) {
-                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Value/Size" />';
+                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Size" />';
                 valuesStocks.innerHTML += '<input type="text" class="single-stocks" placeholder="Stock" />';
             }
-
             for(var i in product_group.product) {
                 product = product_group.product[i];
-                value_inputs[i].value = product.value;
-                stock_inputs[i].value = product.stock;
+                valueInputs[i].value = product.value;
+                stockInputs[i].value = product.stock;
             }
-            
-
+            // Set the option that should be selected.
             if(product_group.post_status === 'publish') {
                 status.selectedIndex = 0;
             } else if(product_group.post_status === 'draft') {
@@ -201,14 +130,17 @@ getProduct = function(sku) {
             } else if(product_group.post_status === 'trash') {
                 status.selectedIndex = 2;
             }
+            // Set date to the date original product was created.
             postDate.innerHTML = product_group.post_date;
+            // Update the data-sku for the update button to reflect
+            // the current product.
             updateButton.dataset.sku = product_group.sku;
-
-            productsEventHandler();
+            // Add event listeners to new elements.
+            addEventListeners('update-product');
         }
     },
-
-    stateChanged = function() {
+    // Once state is changed, check status.
+    stateChanged = function () {
         if(xhr.readyState === 4) {
             switch(xhr.status) {
                 case 200:
@@ -218,44 +150,49 @@ getProduct = function(sku) {
             }
         }
     };
-
+    // Show loader.
     loader(true);
-
+    // Set url of API, with parameters.
     url = '../api/v.1/search/single-result.php?table=product_group&id='+sku;
-
+    // Open & send the request.
     xhr.open("GET", url, true);
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
 },
 
-/**
- * Call to update product.
- */
-addProduct = function() {
-    var success, stateChanged, url, param,
-        xhr = new XMLHttpRequest(),
+// Call to update a product, with the given sku.
+updateProduct = function (sku) {
+    var url, param, xhr = new XMLHttpRequest(),
         valuesArray = [], stocksArray = [],
-        values, stocks, category_id, 
+        values, stocks, category_id,
         title = document.getElementById("single-title").value,
         content = document.getElementById("single-content").value,
         price = document.getElementById("single-price").value,
         sale = document.getElementById("single-sale").value,
         colour = document.getElementById("single-colour").value,
         thumbnail = document.getElementById("single-thumbnail"),
-        value_inputs = document.getElementsByClassName("single-values"),
-        stock_inputs = document.getElementsByClassName("single-stocks"),
-        status_list = document.getElementById("single-status"),
-        status_value = status_list.options[status_list.selectedIndex].value,
-        categories = document.getElementsByClassName("category"),
-    
-    success = function() {
+        valueInputs = document.getElementsByClassName("single-values"),
+        stockInputs = document.getElementsByClassName("single-stocks"),
+        statusList = document.getElementById("single-status"),
+        statusValue = statusList.options[statusList.selectedIndex].value,
+        categories = document.getElementsByClassName("category");
+    // Request was successful, fill content.
+    success = function () {
+        // The retrieved data.
         var response = JSON.parse(xhr.responseText);
-
+        // Hide the loader.
         loader(false);
-        showMessage(response.report.status, "success");
+        // if error thrown.
+        if(response.error.thrown) {
+            // Show message of update failure.
+            showMessage(response.report.status, "error");
+        } else {
+            // Show message of update success.
+            showMessage(response.report.status, "success");
+        }
     },
-
-    stateChanged = function() {
+    // Once state is changed, check status.
+    stateChanged = function () {
         if(xhr.readyState === 4) {
             switch(xhr.status) {
                 case 200:
@@ -265,17 +202,17 @@ addProduct = function() {
             }
         }
     };
-
+    // Show loader.
     loader(true);
-
-    // Populate stocks array with stocks from page
-    for(var i=0, len=stock_inputs.length; i<len; i++) {
-        if(stock_inputs[i].value != "") {
-            valuesArray[i] = value_inputs[i].value;
-            stocksArray[i] = stock_inputs[i].value;
+    // Populate values array with values from document.
+    for(var i=0, len=stockInputs.length; i<len; i++) {
+        // Because stock is required, check it isn't empty.
+        if(stockInputs[i].value != "") {
+            valuesArray[i] = valueInputs[i].value;
+            stocksArray[i] = stockInputs[i].value;
         }
     }
-
+    // Stringify array to send in parameter.
     values = JSON.stringify(valuesArray);
     stocks = JSON.stringify(stocksArray);
 
@@ -286,110 +223,143 @@ addProduct = function() {
     //     }
     // }
 
-    url = '../api/v.1/add/product.php',
-    param = 'title='+title+'&content='+content+'&price='+price+'&sale='+sale+
-                '&colour='+colour+'&thumbnail='+thumbnail+'&values='+values+'&stocks='+stocks+
-                '&status='+status_value+'&category_id=1';
-
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send(param);
-    xhr.onreadystatechange = stateChanged;
-},
-
-/**
- * Call to update product.
- */
-updateProduct = function(sku) {
-    var success, stateChanged, url, param,
-        xhr = new XMLHttpRequest(),
-        valuesArray = [], stocksArray = [],
-        values, stocks, category_id, 
-        title = document.getElementById("single-title").value,
-        content = document.getElementById("single-content").value,
-        price = document.getElementById("single-price").value,
-        sale = document.getElementById("single-sale").value,
-        colour = document.getElementById("single-colour").value,
-        thumbnail = document.getElementById("single-thumbnail"),
-        value_inputs = document.getElementsByClassName("single-values"),
-        stock_inputs = document.getElementsByClassName("single-stocks"),
-        status_list = document.getElementById("single-status"),
-        status_value = status_list.options[status_list.selectedIndex].value,
-        categories = document.getElementsByClassName("category"),
-    
-    success = function() {
-        var response = JSON.parse(xhr.responseText);
-
-        loader(false);
-        showMessage(response.report.status, "success");
-    },
-
-    stateChanged = function() {
-        if(xhr.readyState === 4) {
-            switch(xhr.status) {
-                case 200:
-                    success(); break;
-                default:
-                    showMessage("Status "+xhr.status+" returned.", "error"); break;
-            }
-        }
-    };
-
-    loader(true);
-
-    // Populate values array with values from page
-    for(var i=0, len=stock_inputs.length; i<len; i++) {
-        if(stock_inputs[i].value != "") {
-            valuesArray[i] = value_inputs[i].value;
-            stocksArray[i] = stock_inputs[i].value;
-        }
-    }
-
-    values = JSON.stringify(valuesArray);
-    stocks = JSON.stringify(stocksArray);
-
-    // Get the ID of the category selected
-    // for(var i=0, len=categories.length; i<len; i++) {
-    //     if(categories[i].checked) {
-    //         category_id = categories[i].dataset.id;
-    //     }
-    // }
-
-    // Request url
+    // Request url.
     url = '../api/v.1/edit/product.php';
     // Request parameters.
     param = 'sku='+sku+'&title='+title+'&content='+content+'&price='+price+'&sale='+sale+
                 '&colour='+colour+'&thumbnail='+thumbnail+'&values='+values+'&stocks='+stocks+
-                '&status='+status_value+'&category_id=1';
-
+                '&status='+statusValue+'&category_id=1';
+    // Open, set header & post request.
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
+},
+// Quick update the status of a specific product.
+updateProductStatus = function (elem) {
+    var url = '../api/v.1/edit/product-status.php',
+        param = 'sku='+elem.dataset.sku+'&status='+elem.options[elem.selectedIndex].value,
+        xhr = new XMLHttpRequest(),
+    // If the request is successful.
+    success = function () {
+        // Response from the request.
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader as request was successful.
+        loader(false);
+        // Display a message to the user signalling update
+        // was successful.
+        showMessage(response.report.status, "success");
+        // Reload the page to update the list.
+        loadPage(document.URL);
+    },
+    // Once ready state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+    // Show loader before request is sent.
+    loader(true);
+    // Open, set header & post request.
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send(param);
     xhr.onreadystatechange = stateChanged;
 },
 
-showProducts = function(pageNo, perPage, table, status) {
-    if(table === undefined || table === null)
-        table = "product_group"
-    if(status === undefined)
-        status = "not-trash";
-    console.log(pageNo, perPage, table, status);
-    showPagination(pageNo, perPage, table, status);
+// Display products and pagination.
+showProducts = function (status, pageNo, perPage) {
+    // Load the paginaton for the products to be displayed.
+    showProductPagination(status, pageNo, perPage);
+    // Now, load the list of products.
+    showProductList(status, pageNo, perPage);
 },
-
-// Display list of products.
-showList = function(pageNo, perPage, table, status) {
-    var success, stateChanged, start = '', url = '',
+// Show product pagination.
+showProductPagination = function (status, pageNo, perPage) {
+    var pageNo = parseInt(pageNo),
+        url = '../api/v.1/view/count.php';
+        url += '?show=product_group&status='+status;
         xhr = new XMLHttpRequest(),
-        content = document.getElementById("products_list"),
 
-    success = function() {
+    // If the request is successful.
+    success = function () {
+        var response = JSON.parse(xhr.responseText),
+            pagNav = '', filter = '',
+            ul = document.getElementById('pagination'),
+            pages = Math.ceil(response.count / perPage);
+
+        // Request complete, hide loader.
+        loader(false);
+
+        // Set the filter, (if any).
+        if(status !== 'not-trash')
+            filter = '&filter='+status;
+        // If page number is 1, do NOT apply anchors to first 2 elements.
+        if (pageNo === 1) {
+            pagNav += '<li class="pagItemInactive">&laquo;</li>';
+            pagNav += '<li class="pagItemInactive">&#139;</li>';
+        } else {
+            pagNav += '<li><a href="products/page=1'+filter+'" class="pagItem" data-pageNo="1" data-perPage="'+perPage+'">&laquo;</a></li>';
+            pagNav += '<li><a href="products/page='+(pageNo-1)+filter+'" class="pagItem" data-pageNo="'+(pageNo-1)+'" data-perPage="'+perPage+'">&#139;</a></li>';
+        }
+        // Loop through pages, adding numeric anchors.
+        for(var i=0; i<pages; i++) {
+            var currentPage = (i+1), active = '';
+            // Set the current page classification.
+            if (currentPage === pageNo)
+                active = 'active';
+            // Display ONLY 3 numbers before and after the current page.
+            if (currentPage >= (pageNo-3) && currentPage <= pageNo || currentPage <= (pageNo+3) && currentPage >= pageNo)
+                pagNav += '<li><a href="products/page='+currentPage+filter+'" class="pagItem '+active+'" data-pageNo="'+currentPage+'" data-perPage="'+perPage+'">' + currentPage + '</a></li>';
+        }
+        // If page last page, do NOT apply anchors to last 2 elements.
+        if(pageNo === pages) {
+            pagNav += '<li class="pagItemInactive">&#155;</li>';
+            pagNav += '<li class="pagItemInactive">&raquo;</li>';
+        } else {
+            pagNav += '<li><a href="products/page='+(pageNo+1)+filter+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
+            pagNav += '<li><a href="products/page='+pages+filter+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
+        }
+        // Add the new list elements to the document.
+        ul.innerHTML = pagNav;
+        // Add event listeners for these newly added elements.
+        addEventListeners('products-pagination');
+    },
+    // Once ready state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+    // Before request is sent, display loader.
+    loader(true);
+    // Open & send request.
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+},
+// Show product list.
+showProductList = function (status, pageNo, perPage) {
+    var start = '', url, xhr = new XMLHttpRequest(),
+    // On success, add request response to content.
+    success = function () {
         var response = JSON.parse(xhr.responseText), li = '', colourString,
+            content = document.getElementById("products_list"),
             publishOption, draftOption, trashOption;
-
-        if(response.error.thrown) { // If API returns error.
+        // If API returns error.
+        if(response.error.thrown) {
             showMessage(response.error.message, "error");
-        } else { // Otherwise.
+        } else {
             li += '<li class="product-list thead">';
             li += '<div class="product-sku">Sku</div>';
             li += '<div class="product-title">Title</div>';
@@ -415,7 +385,7 @@ showList = function(pageNo, perPage, table, status) {
                 }
                 li += '</ul></div>';
                 li += '<div class="product-post-status"><select class="products-status" data-sku="' + product_group.sku + '">';
-
+                // Find which option should be selected.
                 switch(product_group.post_status) {
                     case 'publish':
                         publishOption = "selected"; break;
@@ -426,27 +396,22 @@ showList = function(pageNo, perPage, table, status) {
                     default:
                         publishOption = "selected"; break;
                 }
-
                 li += '<option value="publish" ' + publishOption + '>Publish</option>';
                 li += '<option value="draft" ' + draftOption + '>Draft</option>';
                 li += '<option value="trash"' + trashOption + '>Trash</option>';
-
                 li += '</select></div>'
                 li += '</li>';
             }
         }
-
+        // Hide loader before content is filled.
         loader(false);
-
+        // Fill content with new data.
         content.innerHTML = li;
-
-        // Fire events for all links now presented.
-        // Has to be fired now to prevent events being fired,
-        // Before DOM has fully loaded.
-        productsEventHandler();
+        // Add event listeners for these newly added elements.
+        addEventListeners('products-list');
     },
-
-    stateChanged = function() {
+    // Once ready state is changed, check status.
+    stateChanged = function () {
         if(xhr.readyState === 4) {
             switch(xhr.status) {
                 case 200:
@@ -456,89 +421,13 @@ showList = function(pageNo, perPage, table, status) {
             }
         }
     };
-
+    // Display loader will request is sent and retrieved.
     loader(true);
-
-    // Initialising variables if not already.
-    if(perPage === undefined)
-        perPage = 10;
-    if(pageNo === undefined)
-        start = 0;
-    else
-        start = (pageNo - 1) * perPage;
+    // Initialise where the API should start getting records from.
+    start = (pageNo - 1) * perPage;
 
     url = '../api/v.1/view/range.php';
-    url += '?show='+table+'&status='+status+'&start='+start+'&show='+perPage;
-
-    xhr.open("GET", url, true);
-    xhr.send(null);
-    xhr.onreadystatechange = stateChanged;
-},
-
-// So pagination links.
-showPagination = function(pageNo, perPage, table, status) {
-    var success, stateChanged,
-        url = '../api/v.1/view/count.php';
-        url += '?show='+table+'&status='+status;
-        xhr = new XMLHttpRequest(),
-        pageNo = parseInt(pageNo),
-
-    success = function() {
-        var response = JSON.parse(xhr.responseText),
-            pagNav = '',
-            ul = document.getElementById('pagination'),
-            pages = Math.ceil(response.count / perPage);
-
-        loader(false);
-
-        if (pageNo === 1) {
-            pagNav += '<li class="pagItemInactive">&laquo;</li>';
-            pagNav += '<li class="pagItemInactive">&#139;</li>';
-        } else {
-            pagNav += '<li><a href="products/page/1" class="pagItem" data-pageNo="1" data-perPage="'+perPage+'">&laquo;</a></li>';
-            pagNav += '<li><a href="products/page/'+(pageNo-1)+'" class="pagItem" data-pageNo="'+(pageNo-1)+'" data-perPage="'+perPage+'">&#139;</a></li>';
-        }
-
-        for(var i=0; i<pages; i++) {
-            var currentPage = (i+1), active = '';
-
-            if (currentPage === pageNo)
-                active = 'active';
-
-            if (currentPage >= (pageNo-3) && currentPage <= pageNo || currentPage <= (pageNo+3) && currentPage >= pageNo)
-                pagNav += '<li><a href="products/page/'+currentPage+'" class="pagItem '+active+'" data-pageNo="'+currentPage+'" data-perPage="'+perPage+'">' + currentPage + '</a></li>';
-        }
-
-        if(pageNo === pages) {
-            pagNav += '<li class="pagItemInactive">&#155;</li>';
-            pagNav += '<li class="pagItemInactive">&raquo;</li>';
-        } else {
-            pagNav += '<li><a href="products/page/'+(pageNo+1)+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
-            pagNav += '<li><a href="products/page/'+pages+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
-        }
-
-        ul.innerHTML = pagNav;
-
-        showList(pageNo, perPage, response.show, response.status);
-    },
-
-    stateChanged = function() {
-        if(xhr.readyState === 4) {
-            switch(xhr.status) {
-                case 200:
-                    success(); break;
-                default:
-                    showMessage("Status "+xhr.status+" returned.", "error"); break;
-            }
-        }
-    };
-
-    loader(true);
-
-    if(perPage === undefined)
-        perPage = 10; // Default items per page.
-    if(pageNo === undefined)
-        pageNo = 1; // Default page number.
+    url += '?show=product_group&status='+status+'&start='+start+'&show='+perPage;
 
     xhr.open("GET", url, true);
     xhr.send(null);

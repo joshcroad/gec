@@ -1,31 +1,21 @@
-windowLoaded = function() {
-    var navLinks = document.querySelectorAll("nav a"),
-        addProduct = document.getElementById("add-product-section");
+// load.js
 
-    if(addProduct)
-        addProduct.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, addProduct.href);
-            getPage(addProduct.href);
-        }, true);
-
-    function addLink(item) {
-        item.addEventListener("click", function(e) {
-            e.preventDefault();
-            history.pushState(null, null, item.href);
-            getPage(item.href);
-        }, true);
-    }
-
-    for(var i=0, len=navLinks.length; i<len; i++) {
-        addLink(navLinks[i]);
-    }
-};
-
+// If browser understands the .addEventListener function.
 if(window.addEventListener) {
-    window.addEventListener("load", windowLoaded, false);
+    // Listen to when the window has loaded.
+    window.addEventListener('load', function () {
+        // Set event listeners to elements ALWAYS present
+        var navigation = document.querySelectorAll('nav a');
 
-    window.addEventListener("popstate", function(e) {
-       getPage(document.URL);
+        // Loop through all navigation links, adding the listener.
+        for(var i=0, len=navigation.length; i<len; i++) {
+            addListenerGetPage(navigation[i]);
+        }
+    }, false);
+
+    // Listen to when popstate is fired.
+    window.addEventListener('popstate', function () {
+        // Retrieve the page to be displayed.
+        loadPage(document.URL);
     }, false);
 }

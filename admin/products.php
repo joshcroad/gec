@@ -6,9 +6,9 @@
     </div>
     <div class="filter">
         FILTER BY: 
-        <a href="" class="filter-table" data-status="publish">PUBLISH</a> /
-        <a href="" class="filter-table" data-status="draft">DRAFT</a> / 
-        <a href="" class="filter-table" data-status="trash">TRASH</a>
+        <a href="products/page=1&filter=publish" class="filter-table">PUBLISH</a> /
+        <a href="products/page=1&filter=draft" class="filter-table">DRAFT</a> / 
+        <a href="products/page=1&filter=trash" class="filter-table">TRASH</a>
     </div>
     <div class="view">
         VIEW: <a href="" id="ten">10</a> / <a href="" id="all">ALL</a>

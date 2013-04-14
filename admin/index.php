@@ -35,9 +35,6 @@
                     <li><a href="tags">Tags</a></li>
                     <li><a href="settings">Settings</a></li>
                 </ul>
-                <div class="add">
-                    <a href="add-product" id="add-product-section">Add Product</a>
-                </div>
             <!-- END nav -->
             </nav>
             <div id="request-message"></div>
@@ -51,9 +48,10 @@
         <!-- END #jay-z -->
 
         <!-- BEGIN scripts -->
-        <script defer src="../js/admin/functions.js"></script>
-        <script defer src="../js/admin/products.js"></script>
-        <script src="../js/admin/load.js"></script>
+        <script src="../js/admin/functions.js" async></script>
+        <script src="../js/admin/eventHandler.js" async></script>
+        <script src="../js/admin/products.js" async></script>
+        <script src="../js/admin/load.js" defer></script>
         <!-- END scripts -->
     <!-- END body -->
     </body>

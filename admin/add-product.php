@@ -4,9 +4,13 @@
 
     <section id="fields">
         <input type="text" id="single-title" placeholder="Title *" />
-        <textarea id="single-content" placeholder="Product Description *"></textarea>
+        <div id="title-message"></div>
+        <textarea id="single-content" placeholder="Product Description"></textarea>
+        <div id="content-message"></div>
         <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-price" placeholder="Price *" required />
+        <div id="price-message"></div>
         <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-sale" placeholder="Sale Price" />
+        <div id="sale-message"></div>
         <input type="text" id="single-colour" placeholder="Colour" />
 
         <!-- Thumbnail upload
@@ -18,6 +22,7 @@
             <div id="values-and-stocks">
                 <input type="text" class="single-values" placeholder="Value/Size" />
                 <input type="text" class="single-stocks" placeholder="Stock" />
+                <div id="stock-message"></div>
             </div>
             <a href="" id="add-value-stock">+ more values</a>
         </div>
@@ -28,7 +33,7 @@
             <option value="trash">Trash</option>
         </select>
 
-        <a href="" id="add-product-button">Add Product</a>
+        <a href="product/" id="add-product-button">Add Product</a>
     </section>
 
 </div>
