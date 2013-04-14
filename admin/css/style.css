@@ -1,0 +1,426 @@
+/***********************
+ ***** RESET STYLE *****
+ ***********************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/********************
+ ***** CLEARFIX *****
+ ********************/
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0; }
+
+html[xmlns] .clearfix {
+  display: block; }
+
+* html .clearfix {
+  height: 1%; }
+
+/* GLOBAL STYLES */
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  margin: 0 auto;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
+
+/* TYPOGRAPHY */
+h1 {
+  font-weight: bold;
+  font-size: 2em; }
+
+h2 {
+  font-size: 1.5em; }
+
+del {
+  text-decoration: line-through;
+  color: #c8322a; }
+
+em {
+  font-style: italic; }
+
+a {
+  color: #c8c8c8;
+  text-decoration: none; }
+
+a:hover {
+  color: whitesmoke; }
+
+/* HEADER */
+header nav {
+  background: #333;
+  color: #f5f5f5;
+  border-bottom: 1px solid #111111;
+  padding: .5em;
+  font-size: .9em; }
+  header nav ul {
+    float: left; }
+    header nav ul li {
+      display: inline;
+      padding-right: 1em; }
+  header nav .add {
+    float: right; }
+header #request-message {
+  display: none;
+  font-size: .9em;
+  font-weight: bold;
+  text-align: center;
+  position: absolute;
+  top: 1.3em;
+  left: 50%;
+  width: 25em;
+  margin-left: -12em;
+  padding: .5em; }
+header .success {
+  background: #cee6c3;
+  border: 1px solid #359545;
+  color: rgba(27, 141, 68, 0.7); }
+header .warning {
+  background: #fcf9ce;
+  border: 1px solid #dfdfde;
+  color: rgba(52, 51, 49, 0.7); }
+header .error {
+  background: #f6cbca;
+  border: 1px solid #cb2026;
+  color: rgba(203, 32, 38, 0.7); }
+
+/* W[RAPPER] */
+#jay-z {
+  width: 50em;
+  margin: 2em auto; }
+
+#content h2 {
+  margin-bottom: 1em; }
+#content p {
+  margin-bottom: .5em; }
+
+/* PRODUCTS STYLE */
+#products h2 {
+  float: left; }
+#products #add-product-section {
+  color: #333;
+  float: right;
+  margin: 0.2em 0 0;
+  padding: .2em; }
+#products #add-product-section:hover {
+  background: #333;
+  color: #f5f5f5; }
+
+.filter {
+  float: left; }
+
+.view {
+  float: right; }
+
+.filter, .view {
+  font-size: .9em;
+  margin: 0 0 0.3em; }
+  .filter a, .view a {
+    color: #333;
+    padding: .2em; }
+  .filter a:hover, .view a:hover {
+    background: #333;
+    color: #f5f5f5; }
+
+#products_list {
+  display: table;
+  color: #777;
+  width: 100%; }
+  #products_list li {
+    display: table-row; }
+    #products_list li em {
+      font-size: .9em; }
+    #products_list li .product-sku,
+    #products_list li .product-title,
+    #products_list li .product-value,
+    #products_list li .product-quantity,
+    #products_list li .product-post-status {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    #products_list li .product-sku {
+      width: 2.5em;
+      text-align: center; }
+    #products_list li .product-quantity {
+      width: 10em; }
+      #products_list li .product-quantity .low {
+        color: #c8322a; }
+    #products_list li .product-post-status {
+      width: 7em; }
+  #products_list .product-list:nth-child(odd) {
+    background: #f0f0f0; }
+  #products_list .thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  #products_list a {
+    color: #555; }
+  #products_list a:hover {
+    color: #777; }
+
+/* PAGINATION */
+#pagination {
+  margin: 0;
+  text-align: center;
+  background: #333;
+  padding: .5em; }
+  #pagination li {
+    display: inline; }
+    #pagination li a {
+      padding: .5em; }
+    #pagination li .active {
+      background: #f5f5f5;
+      color: #333;
+      padding: 0.3em 0.5em; }
+  #pagination .pagItemInactive {
+    padding: .5em;
+    color: #c8c8c8; }
+
+/* SINGLE PRODUCT */
+#add-product a, #edit-product a {
+  color: #9ebf5c; }
+#add-product a:hover, #edit-product a:hover {
+  color: #6b8c29; }
+
+#fields input, #fields textarea {
+  padding: .5em;
+  display: block; }
+#fields #single-title {
+  width: 40em; }
+
+/*        <input type="text" id="single-title" placeholder="Title *" />
+        <textarea id="single-content" placeholder="Product Description *"></textarea>
+        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-price" placeholder="Price *" required />
+        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-sale" placeholder="Sale Price" />
+        <input type="text" id="single-colour" placeholder="Colour" />
+
+        <!-- Thumbnail upload
+        <input type="text" id="single-thumbnail" placeholder="Thumbnail" />
+        <a href="" id="update_image">Choose image</a>
+        -->
+
+        <div class="single-products">
+            <div id="values-and-stocks"></div>
+            <a href="" id="add-value-stock">+</a>
+        </div>
+
+        <select id="single-status">
+            <option value="publish" selected>Publish</option>
+            <option value="draft">Draft</option>
+            <option value="trash">Trash</option>
+        </select>
+        <div id="date-posted"></div>
+        <a href="" id="update-product-button">Update Product</a>*/
+/************************
+ ***** LOADER STYLE *****
+ ************************/
+#loader-container {
+  display: none;
+  background: rgba(255, 255, 255, 0.7);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+#loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  -moz-transform: scale(0.6);
+  -webkit-transform: scale(0.6);
+  -ms-transform: scale(0.6);
+  -o-transform: scale(0.6);
+  transform: scale(0.6); }
+
+.load-circle {
+  position: absolute;
+  background-color: #FFFFFF;
+  height: 12px;
+  width: 12px;
+  -moz-border-radius: 6px;
+  -moz-animation-name: fade;
+  -moz-animation-duration: 0.72s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-direction: linear;
+  -webkit-border-radius: 6px;
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 0.72s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: linear;
+  -ms-border-radius: 6px;
+  -ms-animation-name: fade;
+  -ms-animation-duration: 0.72s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-direction: linear;
+  -o-border-radius: 6px;
+  -o-animation-name: fade;
+  -o-animation-duration: 0.72s;
+  -o-animation-iteration-count: infinite;
+  -o-animation-direction: linear;
+  border-radius: 6px;
+  animation-name: fade;
+  animation-duration: 0.72s;
+  animation-iteration-count: infinite;
+  animation-direction: linear; }
+
+#load-rotate-01 {
+  left: 0;
+  top: 26px;
+  -moz-animation-delay: 0.9s;
+  -webkit-animation-delay: 0.9s;
+  -ms-animation-delay: 0.9s;
+  -o-animation-delay: 0.9s;
+  animation-delay: 0.9s; }
+
+#load-rotate-02 {
+  left: 8px;
+  top: 8px;
+  -moz-animation-delay: 0.81s;
+  -webkit-animation-delay: 0.81s;
+  -ms-animation-delay: 0.81s;
+  -o-animation-delay: 0.81s;
+  animation-delay: 0.81s; }
+
+#load-rotate-03 {
+  left: 26px;
+  top: 0;
+  -moz-animation-delay: 0.72s;
+  -webkit-animation-delay: 0.72s;
+  -ms-animation-delay: 0.72s;
+  -o-animation-delay: 0.72s;
+  animation-delay: 0.72s; }
+
+#load-rotate-04 {
+  right: 8px;
+  top: 8px;
+  -moz-animation-delay: 0.63s;
+  -webkit-animation-delay: 0.63s;
+  -ms-animation-delay: 0.63s;
+  -o-animation-delay: 0.63s;
+  animation-delay: 0.63s; }
+
+#load-rotate-05 {
+  right: 0;
+  top: 26px;
+  -moz-animation-delay: 0.54s;
+  -webkit-animation-delay: 0.54s;
+  -ms-animation-delay: 0.54s;
+  -o-animation-delay: 0.54s;
+  animation-delay: 0.54s; }
+
+#load-rotate-06 {
+  right: 8px;
+  bottom: 8px;
+  -moz-animation-delay: 0.45s;
+  -webkit-animation-delay: 0.45s;
+  -ms-animation-delay: 0.45s;
+  -o-animation-delay: 0.45s;
+  animation-delay: 0.45s; }
+
+#load-rotate-07 {
+  left: 26px;
+  bottom: 0;
+  -moz-animation-delay: 0.36s;
+  -webkit-animation-delay: 0.36s;
+  -ms-animation-delay: 0.36s;
+  -o-animation-delay: 0.36s;
+  animation-delay: 0.36s; }
+
+#load-rotate-08 {
+  left: 8px;
+  bottom: 8px;
+  -moz-animation-delay: 0.27s;
+  -webkit-animation-delay: 0.27s;
+  -ms-animation-delay: 0.27s;
+  -o-animation-delay: 0.27s;
+  animation-delay: 0.27s; }
+
+@-moz-keyframes fade {
+  0% {
+    background-color: #111111; }
+
+  100% {
+    background-color: #FFFFFF; } }
+
+@-webkit-keyframes fade {
+  0% {
+    background-color: #111111; }
+
+  100% {
+    background-color: #FFFFFF; } }
+
+@-ms-keyframes fade {
+  0% {
+    background-color: #111111; }
+
+  100% {
+    background-color: #FFFFFF; } }
+
+@-o-keyframes fade {
+  0% {
+    background-color: #111111; }
+
+  100% {
+    background-color: #FFFFFF; } }
+
+@keyframes fade {
+  0% {
+    background-color: #111111; }
+
+  100% {
+    background-color: #FFFFFF; } }
