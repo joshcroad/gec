@@ -10,6 +10,7 @@
     <body>
         <!-- BEGIN header -->
         <header>
+            <?php if(isset($_GET['url'])) { echo $_GET['url']; } ?>
             <h1><a href="homepage">Shop Area</a></h1>
             <!-- BEGIN nav -->
             <nav>

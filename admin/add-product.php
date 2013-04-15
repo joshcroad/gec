@@ -12,12 +12,9 @@
         <input type="text" id="single-sale" placeholder="Sale Price" />
         <div id="sale-message"></div>
         <input type="text" id="single-colour" placeholder="Colour" />
+        <!-- For uploading a product thumbnail -->
+        <!-- <input type="file" id="thumbnail_upload" placeholder="Featured Image" /> -->
     </section>
-
-    <!-- Thumbnail upload
-    <input type="text" id="single-thumbnail" placeholder="Thumbnail" />
-    <a href="" id="update_image">Choose image</a>
-    -->
 
     <div class="single-product-options">
         <select id="single-status">
