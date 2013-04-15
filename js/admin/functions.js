@@ -174,7 +174,7 @@ function addValueStockInputs () {
     // Input for values and sizes
     inputValue.type = "text";
     inputValue.className = "single-values";
-    inputValue.placeholder = "Value/Size";
+    inputValue.placeholder = "Size";
     // Input for stock
     inputStock.type = "text";
     inputStock.className = "single-stocks";
@@ -237,7 +237,7 @@ function validateProductInput () {
 
     // Check required fields are not empty.
     if(!title) {
-        titleMessage.innerHTML = '<p>Please fill in title.</p>'; isValid++;
+        titleMessage.innerHTML = '<p>Please fill in product name.</p>'; isValid++;
     }
     if(!content) {
         contentMessage.innerHTML = '<p>Please fill in product description.</p>'; isValid++;

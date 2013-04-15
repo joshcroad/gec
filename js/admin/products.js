@@ -131,7 +131,7 @@ getProduct = function(sku) {
                 status.selectedIndex = 2;
             }
             // Set date to the date original product was created.
-            postDate.innerHTML = product_group.post_date;
+            postDate.innerHTML = 'Date created: <em>' + product_group.post_date + '</em>';
             // Update the data-sku for the update button to reflect
             // the current product.
             updateButton.dataset.sku = product_group.sku;

@@ -1,6 +1,4 @@
-/***********************
- ***** RESET STYLE *****
- ***********************/
+/* RESET STYLE */
 
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
@@ -51,9 +49,7 @@ table {
     border-spacing: 0;
 }
 
-/********************
- ***** CLEARFIX *****
- ********************/
+/* CLEARFIX */
 
 .clearfix:after {
     content: ".";
@@ -71,9 +67,6 @@ html[xmlns] .clearfix {
 * html .clearfix {
     height: 1%;
 }
-
-
-
 
 /* GLOBAL STYLES */
 
@@ -94,6 +87,15 @@ html, body {
     width: 100%;
     margin: 0 auto;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+input, textarea {
+    padding: .5em;
+    display: block;
+}
+
+textarea {
+    resize: vertical;
 }
 
 /* TYPOGRAPHY */
@@ -122,8 +124,6 @@ a {
 }
 
 a:hover { color: $headerLinkHover; }
-
-
 
 /* HEADER */
 
@@ -285,27 +285,128 @@ header {
 
 /* SINGLE PRODUCT */
 
-#add-product, #edit-product {
-    a { color: $green; }
-    a:hover { color: ($green - #333); }
+#fields {
+    float: left;
+    display: inline-block;
+    width: 33em;
+    #single-title {
+        width: 45em;
+        margin: 0 0 1em;
+    }
+    #single-content {
+        width: 45em;
+        height: 10em;
+        margin: 0 0 1em;
+    }
+    #single-price, #single-sale {
+        display: inline-block;
+        width: 22em;
+        margin: 0 0 1em;
+    }
+    #single-price {
+        margin-right: .6em;
+    }
+    #single-colour {
+        width: 20em;
+    }
 }
 
-#fields {
-    input, textarea {
-        padding: .5em;
+#single-thumbnail {}
+
+.single-product-options {
+    background: rgba(150,150,150,0.1);
+    border: 1px solid rgba(150,150,150,0.2);
+    width: 17em;
+    float: right;
+    margin: 0 0 1em;
+    padding: .5em;
+    #single-status {
+        display: inline;
+        margin: .3em 0;
+        width: 11em;
+    }
+    #add-product-button, #update-product-button {
+        float: right;
+    }
+    a {
+        font-size: .9em;
+        padding: .3em .5em;
+        background: $green;
+        color: rgba(250,250,250,0.8);
+    }
+    a:hover {
+        background: ($green - #222);
+        color: rgba(250,250,250,0.8);
+    }
+    #date-posted {
+        font-size: .9em;
+        color: rgba(0,0,0,0.6);
         display: block;
+        margin: .5em 0 0;
     }
-    #single-title {
-        width: 40em;
-    }
-    #single-content {}
-    #single-price {}
-    #single-sale {}
-    #single-colour {}
-    #single-thumbnail {}
-    #single-products {}
-    #single-status {}
 }
+
+.single-products {
+    position: relative;
+    float: right;
+    background: rgba(150,150,150,0.1);
+    border: 1px solid rgba(150,150,150,0.2);
+    width: 17em;
+    height: 15.3em;
+    #values-and-stocks {
+        margin: 0 0 .5em;
+        float: right;
+        display: inline;
+        width: 17em;
+        height: 13em;
+        overflow: scroll;
+    }
+    .single-values {
+        margin: 1em auto .5em;
+        width: 20em;
+    }
+    .single-stocks {
+        margin: 0 auto .5em;
+        width: 20em;
+    }
+    .single-stocks:last-child {
+        margin: 0 auto 1.5em;
+    }
+    #add-value-stock {
+        float: right;
+        padding: .3em .5em;
+        position: absolute;
+        bottom: .5em;
+        right: .5em;
+    }
+    a {
+        font-size: .9em;
+        background: rgba(50,50,50,0.7);
+        color: rgba(250,250,250,0.8);
+    }
+    a:hover {
+        background: rgba(50,50,50,0.5);
+        color: rgba(255,255,255,0.8);
+    }
+}
+
+/* SINGLE PRODUCT VALIDATION MESSAGES */
+
+#title-message, #content-message,
+#price-message, #sale-message,
+#stock-message {
+    display: none;
+    font: {
+        size: .9em;
+        style: italic;
+    }
+    background: #333;
+    color: rgba(255,255,255,0.8);
+    border: 1px solid #111;
+    float: left;
+    padding: .5em .5em 0;
+}
+
 
 /************************
  ***** LOADER STYLE *****
