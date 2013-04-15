@@ -1,34 +1,58 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>GEC - Admin</title>
+        <title>GEC - Site</title>
         <!-- BEGIN meta -->
         <meta charset="utf8" />
+        <!-- BEGIN stylesheets -->
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
     </head>
 
     <!-- BEGIN body -->
     <body>
-        <!-- BEGIN header -->
-        <header>
-            <?php if(isset($_GET['url'])) { echo $_GET['url']; } ?>
-            <h1><a href="homepage">Shop Area</a></h1>
-            <!-- BEGIN nav -->
-            <nav>
-                <ul>
-                    <li><a href="products">Products</a></li>
-                </ul>
-            <!-- END nav -->
-            </nav>
-        <!-- END header -->
-        </header>
+        <div id="loader-container">
+            <div id="loader">
+                <div class="load-circle" id="load-rotate-01"></div>
+                <div class="load-circle" id="load-rotate-02"></div>
+                <div class="load-circle" id="load-rotate-03"></div>
+                <div class="load-circle" id="load-rotate-04"></div>
+                <div class="load-circle" id="load-rotate-05"></div>
+                <div class="load-circle" id="load-rotate-06"></div>
+                <div class="load-circle" id="load-rotate-07"></div>
+                <div class="load-circle" id="load-rotate-08"></div>
+            </div>
+        </div>
 
-        <!-- BEGIN #jay-z -->
-        <section id="jay-z"></section>
+        <!-- BEGIN #jay-z (main wrapper) -->
+        <section id="jay-z">
+
+            <!-- BEGIN header -->
+            <header>
+                <h2 id="site-name">Boom!</h2>
+                <!-- BEGIN nav -->
+                <nav class="clearfix">
+                    <!-- THIS NEEDS TO BE DYNAMICALLY CREATED WITH CATEGORIES FROM DB -->
+                    <ul>
+                        <li><a href="home">Homepage</a></li>
+                        <li><a href="toys">Toys</a></li>
+                    </ul>
+                    <!-- Needs to sort out content with search results. -->
+                    <input type="text" class="searchProducts" placeholder="Search Products" />
+                <!-- END nav -->
+                </nav>
+                <div id="basket-message"></div>
+            <!-- END header -->
+            </header>
+
+            <section id="content"></section>
+
         <!-- END #jay-z -->
+        </section>
 
         <!-- BEGIN scripts -->
-        <script src="../js/functions.js"></script>
-        <script src="../js/history.js"></script>
+        <script src="js/functions.js" async></script>
+        <script src="js/eventHandler.js" async></script>
+        <script src="js/load.js" defer></script>
         <!-- END scripts -->
     <!-- END body -->
     </body>
