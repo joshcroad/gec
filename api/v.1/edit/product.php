@@ -35,14 +35,16 @@ if($db || isset($db)) {
     $status = $db->real_escape_string($unsafe_status);
     $category_id = $db->real_escape_string($unsafe_category_id);
 
+    // Get the extension of a file.
+    function findExts($filename)  { 
+        $filename = strtolower($filename); 
+        $exts = explode(".", $filename);
+        $exts = end($exts);
+        return $exts;
+    }
+
     // Thumbnail checks and validation.
     if(isset($_FILES['thumbnail'])) {
-        function findExts($filename)  { 
-            $filename = strtolower($filename); 
-            $exts = explode(".", $filename);
-            $exts = end($exts);
-            return $exts;
-        }
         //This applies the function to our file  
         $exts = findExts($_FILES['thumbnail']['name']);
         $filename = $sku.'.'.$exts;
@@ -63,18 +65,25 @@ if($db || isset($db)) {
                 // Move uploaded file into media directory.
                 move_uploaded_file($_FILES['thumbnail']['tmp_name'], $target);
             }
-
         } else {
             // Give the product default picture.
             $filename = "default.jpg";
         }
     } else {
         // Give the product default picture.
+        // Get current thumbnail from database.
         $result = $db->select("SELECT thumbnail FROM product_group WHERE sku='$sku'");
         $result = $result->fetch_assoc();
-        $old_file = $result['thumbnail'];
-        $old_file = explode("media/", $old_file);
-        $filename = $old_file[1];
+        // Explode media from the path.
+        $old_file = explode("media/", $result['thumbnail']);
+        // Get the filename.
+        $old_file = $old_file[1];
+
+        if(file_exists('../../../media/'.$old_file)) {
+            $filename = $old_file;
+        } else {
+            $filename = 'default.jpg';
+        }
     }
 
     /* Sale Validation */
