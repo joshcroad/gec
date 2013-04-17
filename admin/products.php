@@ -1,7 +1,7 @@
 <!-- BEGIN #products -->
 <div id="products">
     <div class="clearfix">
-        <h2>Your Products</h2>
+        <h2>Product Management</h2>
         <a href="add-product" id="add-product-section">Add Product</a>
     </div>
     <div class="filter">

@@ -18,6 +18,12 @@
     <input type="text" id="single-thumbnail" placeholder="Thumbnail" />
     <a href="" id="update_image">Choose image</a>
     -->
+        <div class="product-category">
+            <h3>Pick a Category</h3>
+            <ul id="single-category-list"></ul>
+            <div id="category-message"></div>
+        </div>
+    </section>
 
     <div class="single-product-options">
         <select id="single-status">
@@ -34,7 +40,6 @@
             <div id="stock-message"></div>
         </div>
         <a href="" id="add-value-stock">Add another size</a>
-        
     </div>
 
 </div>

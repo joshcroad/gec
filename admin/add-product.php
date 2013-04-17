@@ -14,6 +14,11 @@
         <input type="text" id="single-colour" placeholder="Colour" />
         <!-- For uploading a product thumbnail -->
         <!-- <input type="file" id="thumbnail_upload" placeholder="Featured Image" /> -->
+        <div class="product-category">
+            <h3>Pick a Category</h3>
+            <ul id="single-category-list"></ul>
+            <div id="category-message"></div>
+        </div>
     </section>
 
     <div class="single-product-options">

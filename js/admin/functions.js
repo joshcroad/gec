@@ -41,8 +41,6 @@ function addDynamicContent () {
         tags = document.getElementById("tags"),
         editProduct = document.getElementById("edit-product"),
         addProduct = document.getElementById("add-product"),
-        editCategory = document.getElementById("edit-category"),
-        addCategory = document.getElementById("add-category"),
         editTag = document.getElementById("edit-tag"),
         addTag = document.getElementById("add-tag"),
         pageNumber, status, view, productID;
@@ -59,12 +57,25 @@ function addDynamicContent () {
     }
 
     if(editProduct) {
+        // Populate list of categories
+        getCategories();
         // Get products from id set in url.
         getProduct(getPageNumberAsString(document.URL));
     }
 
     if(addProduct) {
+        // Populate list of categories
+        getCategories();
+        // Add listeners
         addEventListeners('add-product');
+    }
+
+    if(categories) {
+        // Display list of current categories
+        // Add event listeners.
+        addEventListeners('add-category');
+        status = getFilterCriteria(document.URL);
+        showCategoryList(status);
     }
 }
 
@@ -153,7 +164,6 @@ function getViewCriteria (_href) {
 // to get a page.
 function addListenerGetPage (elem) {
     elem.addEventListener('click', function (e) {
-        console.log('load: ' + elem.href);
         history.pushState(null, null, elem.href);
         loadPage(elem.href);
         e.preventDefault();
@@ -195,7 +205,7 @@ function showMessage (message, classname) {
     timeout = setTimeout(function() {
         requestMessage.style.display = "none";
         requestMessage.innerHTML = "";
-    }, 3000);
+    }, 4000);
 }
 
 // Sets the loader's visibility (boolean).
@@ -211,18 +221,25 @@ function loader (visible) {
 
 // Function to validate product field input.
 function validateProductInput () {
-    var isValid = 0;
+    var isValid = 0, checked,
         title = document.getElementById("single-title").value,
         content = document.getElementById("single-content").value,
         price = document.getElementById("single-price").value,
         sale = document.getElementById("single-sale").value,
         stockInputs = document.getElementsByClassName("single-stocks"),
-        requestMessage = document.getElementById("request-message"),
+        categoryRadio = document.getElementsByClassName("category-radio"),
         titleMessage = document.getElementById("title-message"),
         contentMessage = document.getElementById("content-message"),
         priceMessage = document.getElementById("price-message"),
         saleMessage = document.getElementById("sale-message"),
-        stockMessage = document.getElementById("stock-message");
+        stockMessage = document.getElementById("stock-message"),
+        categoryMessage = document.getElementById("category-message");
+
+    for(var i=0, len=categoryRadio.length; i<len; i++) {
+        if(categoryRadio[i].checked) {
+            checked = true;
+        }
+    }
 
     titleMessage.innerHTML = '';
     contentMessage.innerHTML = '';
@@ -230,6 +247,10 @@ function validateProductInput () {
     saleMessage.innerHTML = '';
     stockMessage.innerHTML = '';
 
+    // Check a catgeory is selected.
+    if(!checked) {
+        categoryMessage.innerHTML = '<p>Please check a catgeory.</p>'; isValid++;
+    }
     // Check required fields are not empty.
     if(!title) {
         titleMessage.innerHTML = '<p>Please fill in product name.</p>'; isValid++;
@@ -253,6 +274,34 @@ function validateProductInput () {
             stockMessage.innerHTML = '<p>Please make sure all stock are non-negative.</p>'; isValid++;
         }
     }
+    // If isValid equals 0, nothing has been flagged. Return True.
+    if(isValid === 0) { return true; }
+    else { return false; }
+}
+
+// Function to validate product field input.
+function validateCategoryInput () {
+    var isValid = 0;
+        name = document.getElementById("cat-name").value,
+        menuOrder = document.getElementById("cat-menu-order").value,
+        nameMessage = document.getElementById("cat-name-message"),
+        menuOrderMessage = document.getElementById("cat-menu-order-message");
+
+    nameMessage.innerHTML = '';
+    menuOrderMessage.innerHTML = '';
+
+    // Check required fields are not empty.
+    if(!name) {
+        nameMessage.innerHTML += '<p>Please fill in category name.</p>'; isValid++;
+    }
+    if(!menuOrder) {
+        menuOrderMessage.innerHTML += '<p>Please fill in menu order. This is the order in which the menu is shown.</p>'; isValid++;
+    }
+    // Check the value is an integer (including negative.) - NEEDS IMPROVING: '1w' is accepted.
+    if(isNaN(parseInt(menuOrder))) {
+        menuOrderMessage.innerHTML += '<p>Please make sure you enter an integer value.</p>'; isValid++;
+    }
+    console.log(isValid);
     // If isValid equals 0, nothing has been flagged. Return True.
     if(isValid === 0) { return true; }
     else { return false; }

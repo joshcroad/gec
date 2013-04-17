@@ -133,7 +133,6 @@ function getViewCriteria (_href) {
 // to get a page.
 function addListenerGetPage (elem) {
     elem.addEventListener('click', function (e) {
-        console.log('load: ' + elem.href);
         history.pushState(null, null, elem.href);
         loadPage(elem.href);
         e.preventDefault();

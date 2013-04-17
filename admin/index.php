@@ -51,6 +51,7 @@
         <script src="../js/admin/functions.js" async></script>
         <script src="../js/admin/eventHandler.js" async></script>
         <script src="../js/admin/products.js" async></script>
+        <script src="../js/admin/categories.js" async></script>
         <script src="../js/load.js" defer></script>
         <!-- END scripts -->
     <!-- END body -->

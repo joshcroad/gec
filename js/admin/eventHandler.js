@@ -14,11 +14,11 @@ function addEventListeners (eventsFor) {
                 addListenerGetPage(filterButtons[i]);
             }
             // Add event listeners to the other buttons on the page.
-            ten.addEventListener('click', function(e) {
+            ten.addEventListener('click', function (e) {
                 showProducts(getFilterCriteria(document.URL), 1, 10);
                 e.preventDefault();
             }, false);
-            all.addEventListener('click', function(e) {
+            all.addEventListener('click', function (e) {
                 showProducts(getFilterCriteria(document.URL), 1, 9999);
                 e.preventDefault();
             }, false);
@@ -43,8 +43,8 @@ function addEventListeners (eventsFor) {
             for(var i=0, len=productsStatus.length; i<len; i++) {
                 addOptionChangeEvent(productsStatus[i]);
             }
-            function addOptionChangeEvent(elem) {
-                elem.addEventListener('change', function(e) {
+            function addOptionChangeEvent (elem) {
+                elem.addEventListener('change', function (e) {
                     updateProductStatus(elem);
                 }, false);
             }
@@ -55,7 +55,7 @@ function addEventListeners (eventsFor) {
                 addValueStockButton = document.getElementById("add-value-stock");
             // When the user specifies the product is to be updated,
             // check the data being posted is valid, and then make the request.
-            updateProductButton.addEventListener('click', function(e) {
+            updateProductButton.addEventListener('click', function (e) {
                 var valid = validateProductInput();
                 if(valid)
                     updateProduct(updateProductButton.dataset.sku);
@@ -63,7 +63,7 @@ function addEventListeners (eventsFor) {
             }, false);
             // Add two new inputs, one for a new size and one for a new stock,
             // by calling a function to do the heavy work.
-            addValueStockButton.addEventListener("click", function(e) {
+            addValueStockButton.addEventListener("click", function (e) {
                 addValueStockInputs();
                 e.preventDefault();
             }, false);
@@ -74,7 +74,7 @@ function addEventListeners (eventsFor) {
                 addValueStockButton = document.getElementById("add-value-stock");
             // When the user specifier the product is to be added,
             // check the data being posted is valid, and then make the request.
-            addProductButton.addEventListener("click", function(e) {
+            addProductButton.addEventListener("click", function (e) {
                 var valid = validateProductInput();
                 if(valid)
                     addProduct();
@@ -82,8 +82,22 @@ function addEventListeners (eventsFor) {
             }, false);
             // Add two new inputs, one for a new size and one for a new stock,
             // by calling a function to do the heavy work.
-            addValueStockButton.addEventListener("click", function(e) {
+            addValueStockButton.addEventListener("click", function (e) {
                 addValueStockInputs();
+                e.preventDefault();
+            }, false);
+            break;
+
+        case 'categories': break;
+
+        case 'add-category':
+            var addCategoryButton = document.getElementById("add-cat-button");
+
+            // Event listener to listen for when the user wants to add a category.
+            addCategoryButton.addEventListener('click', function (e) {
+                var valid = validateCategoryInput();
+                if(valid)
+                    addCategory();
                 e.preventDefault();
             }, false);
             break;

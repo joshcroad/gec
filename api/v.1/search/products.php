@@ -16,7 +16,6 @@ if($db || isset($db)) {
     /**
      * Parse all information.
      */
-    $table = $_GET['table']; // The table.
     $unescaped_q = $_GET['q']; // The query.
 
     /**
@@ -57,10 +56,11 @@ if($db || isset($db)) {
     }
 
     if(empty($response)) {
-        $response['error'] = true;
-        $response['message'] = 'No results found.';
+        $response['error']['thrown'] = true;
+        $response['error']['message'] = 'No results found.';
     } else {
-        $response['error'] = false;
+        $response['error']['thrown'] = false;
+    }
     }
 
 } else {
