@@ -398,10 +398,27 @@ header {
         float: left;
         margin: 0 0 1em;
     }
+    .thumbnail-container {
+        background: rgba(150,150,150,0.1);
+        border: 1px solid rgba(150,150,150,0.2);
+        margin: 0.1em 2em 0 0;
+        padding: .5em 1em 0;
+        width: 14em;
+        float: right;
+        #single-thumbnail {
+            margin: 0 0 1em;
+        }
+        #single-thumbnail-preview {
+            border: 1px solid rgba(150,150,150,0.2);
+            width: 11.1em;
+            float: left;
+            margin: 0 .4em .6em;
+            img {
+                width: 100%;
+            }
+        }
     }
 }
-
-#single-thumbnail {}
 
 .single-product-options {
     background: rgba(150,150,150,0.1);

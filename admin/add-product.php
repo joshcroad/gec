@@ -12,8 +12,12 @@
         <input type="text" id="single-sale" placeholder="Sale Price" />
         <div id="sale-message"></div>
         <input type="text" id="single-colour" placeholder="Colour" />
-        <!-- For uploading a product thumbnail -->
-        <!-- <input type="file" id="thumbnail_upload" placeholder="Featured Image" /> -->
+
+        <div class="thumbnail-container">
+            <!-- For uploading a product thumbnail -->
+            <input type="file" id="single-thumbnail" placeholder="Featured Image" />
+        </div>
+
         <div class="product-category">
             <h3>Pick a Category</h3>
             <ul id="single-category-list"></ul>

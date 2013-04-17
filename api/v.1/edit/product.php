@@ -20,7 +20,6 @@ if($db || isset($db)) {
     $unsafe_price = $_POST['price'];
     $unsafe_sale_price = $_POST['sale'];
     $unsafe_colour = $_POST['colour'];
-    $unsafe_thumbnail = $_POST['thumbnail'];
     $unsafe_status = $_POST['status'];
     $unsafe_category_id = $_POST['category_id'];
 
@@ -33,16 +32,57 @@ if($db || isset($db)) {
     $price = $db->real_escape_string($unsafe_price);
     $sale_price = $db->real_escape_string($unsafe_sale_price);
     $colour = $db->real_escape_string($unsafe_colour);
-    $thumbnail = $db->real_escape_string($unsafe_thumbnail);
     $status = $db->real_escape_string($unsafe_status);
     $category_id = $db->real_escape_string($unsafe_category_id);
 
-    /* Validation */
+    // Thumbnail checks and validation.
+    if(isset($_FILES['thumbnail'])) {
+        function findExts($filename)  { 
+            $filename = strtolower($filename); 
+            $exts = explode(".", $filename);
+            $exts = end($exts);
+            return $exts;
+        }
+        //This applies the function to our file  
+        $exts = findExts($_FILES['thumbnail']['name']);
+        $filename = $sku.'.'.$exts;
+        $target = "../../../media/".$filename;
+
+        // Allowed extensions
+        $allowedExts = array("gif", "jpeg", "jpg", "png", "pjpeg");
+        // Check to make sure file type is picture, and size is < 2mb
+        if ((($_FILES["thumbnail"]["type"] == "image/gif") || ($_FILES["thumbnail"]["type"] == "image/jpeg")
+        || ($_FILES["thumbnail"]["type"] == "image/jpg") || ($_FILES["thumbnail"]["type"] == "image/png") 
+        || ($_FILES["thumbnail"]["type"] == "image/pjpeg")) && ($_FILES["thumbnail"]["size"] < 20000) 
+        && in_array($exts, $allowedExts)) {
+            // Has the file got an error?
+            if ($_FILES["thumbnail"]["error"] > 0) {
+                // Give the product default picture.
+                $filename = "default.jpg";
+            } else {
+                // Move uploaded file into media directory.
+                move_uploaded_file($_FILES['thumbnail']['tmp_name'], $target);
+            }
+
+        } else {
+            // Give the product default picture.
+            $filename = "default.jpg";
+        }
+    } else {
+        // Give the product default picture.
+        $result = $db->select("SELECT thumbnail FROM product_group WHERE sku='$sku'");
+        $result = $result->fetch_assoc();
+        $old_file = $result['thumbnail'];
+        $old_file = explode("media/", $old_file);
+        $filename = $old_file[1];
+    }
+
+    /* Sale Validation */
     if($sale_price === null)
         $sale_price = '0.00';
 
     /* Make the update the the product group */
-    $db->update("UPDATE product_group SET title='$title', content='$content', price='$price', sale_price='$sale_price', colour='$colour', thumbnail='', post_status='$status', post_modified=NOW(), categoryID='$category_id' WHERE sku='$sku'");
+    $db->update("UPDATE product_group SET title='$title', content='$content', price='$price', sale_price='$sale_price', colour='$colour', thumbnail='media/$filename', post_status='$status', post_modified=NOW(), categoryID='$category_id' WHERE sku='$sku'");
 
     /* Reset product table */
     $db->delete("DELETE FROM product WHERE sku='$sku'");

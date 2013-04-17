@@ -1,22 +1,118 @@
 // products.js
 var 
 
+// Get a product, with a given sku.
+getProduct = function(sku) {
+    var xhr = new XMLHttpRequest(), url,
+        
+    // Request was successful, display retrieved data.
+    success = function () {
+        // Parse JSON array.
+        var product_group = JSON.parse(xhr.responseText),
+            updateButton = document.getElementById("update-product-button"),
+            title = document.getElementById("single-title"),
+            content = document.getElementById("single-content"),
+            price = document.getElementById("single-price"),
+            sale = document.getElementById("single-sale"),
+            colour = document.getElementById("single-colour"),
+            thumbnail = document.getElementById("single-thumbnail"),
+            thumbnailPreview = document.getElementById('single-thumbnail-preview'),
+            valuesStocks = document.getElementById("values-and-stocks"),
+            valueInputs = document.getElementsByClassName("single-values"),
+            stockInputs = document.getElementsByClassName("single-stocks"),
+            status = document.getElementById("single-status"),
+            postDate = document.getElementById("date-posted"),
+            categoryRadio = document.getElementsByClassName("category-radio"),
+            categoryRadioArray;
+
+        // Hide loader.
+        loader(false);
+        // If API returns error.
+        if(product_group.error.thrown) {
+            showMessage(product_group.error.message, "error");
+        } else { // Otherwise.
+            // Set variables as information from request.
+            title.value = product_group.title;
+            content.innerHTML = product_group.content;
+            price.value = product_group.price;
+            sale.value = product_group.sale_price;
+            colour.value = product_group.colour;
+
+            thumbnailPreview.innerHTML = '<img src="../'+product_group.thumbnail+'" alt="'+product_group.title+'" />';
+
+            // loop through all products.
+            for(var i in product_group.product) {
+                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Size" />';
+                valuesStocks.innerHTML += '<input type="text" class="single-stocks" placeholder="Stock" />';
+            }
+            for(var i in product_group.product) {
+                product = product_group.product[i];
+                valueInputs[i].value = product.value;
+                stockInputs[i].value = product.stock;
+            }
+            // Set the option that should be selected.
+            if(product_group.post_status === 'publish') {
+                status.selectedIndex = 0;
+            } else if(product_group.post_status === 'draft') {
+                status.selectedIndex = 1;
+            } else if(product_group.post_status === 'trash') {
+                status.selectedIndex = 2;
+            }
+            // Timeout set here to fix bug of loading radio buttons
+            // once they are set on the DOM.
+            timeout = setTimeout(function() {
+                for(var i=0, len=categoryRadio.length; i<len; i++) {
+                    if(categoryRadio[i].dataset.id == product_group.categoryID) {
+                        categoryRadio[i].checked = true;
+                    }
+                }
+            }, 50);
+            // Set date to the date original product was created.
+            postDate.innerHTML = 'Date created: <em>' + product_group.post_date + '</em>';
+            // Update the data-sku for the update button to reflect
+            // the current product.
+            updateButton.dataset.sku = product_group.sku;
+            // Add event listeners to new elements.
+            addEventListeners('update-product');
+        }
+    },
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+    // Show loader.
+    loader(true);
+    // Set url of API, with parameters.
+    url = '../api/v.1/search/single-result.php?table=product_group&id='+sku;
+    // Open & send the request.
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+},
+
 // Call to add product.
 addProduct = function () {
     var url, param, xhr = new XMLHttpRequest(),
         valuesArray = [], stocksArray = [],
-        values, stocks, category_id,
+        values, stocks, categoryId, thumbnail,
         title = document.getElementById("single-title").value,
         content = document.getElementById("single-content").value,
         price = document.getElementById("single-price").value,
         sale = document.getElementById("single-sale").value,
         colour = document.getElementById("single-colour").value,
-        thumbnail = document.getElementById("single-thumbnail"),
+        thumbnailElem = document.getElementById("single-thumbnail"),
         valueInputs = document.getElementsByClassName("single-values"),
         stockInputs = document.getElementsByClassName("single-stocks"),
-        status_list = document.getElementById("single-status"),
-        status_value = status_list.options[status_list.selectedIndex].value,
-        categories = document.getElementsByClassName("category");
+        statusList = document.getElementById("single-status"),
+        statusValue = statusList.options[statusList.selectedIndex].value,
+        categoryRadio = document.getElementsByClassName("category-radio"),
 
     // Request successful, display response.
     success = function () {
@@ -50,6 +146,13 @@ addProduct = function () {
     };
     // Show loader before request is sent.
     loader(true);
+
+    // Get selected category.
+    for(var i=0, len=categoryRadio.length; i<len; i++) {
+        if(categoryRadio[i].checked) {
+            categoryId = categoryRadio[i].dataset.id;
+        }
+    }
     // Populate stocks array with stocks from page
     for(var i=0, len=stockInputs.length; i<len; i++) {
         if(stockInputs[i].value != "") {
@@ -61,102 +164,27 @@ addProduct = function () {
     values = JSON.stringify(valuesArray);
     stocks = JSON.stringify(stocksArray);
 
-    // Get the ID of the category selected
-    // for(var i=0, len=categories.length; i<len; i++) {
-    //     if(categories[i].checked) {
-    //         category_id = categories[i].dataset.id;
-    //     }
-    // }
+    // Takes the file and posts it.
+    thumbnail = thumbnailElem.files[0];
+    // Request parameters.
+    param = new FormData();
+    param.append('title', title);
+    param.append('content', content);
+    param.append('price', price);
+    param.append('sale', sale);
+    param.append('colour', colour);
+    param.append('thumbnail', thumbnail);
+    param.append('values', values);
+    param.append('stocks', stocks);
+    param.append('status', statusValue);
+    param.append('category_id', categoryId);
+
     // Set URL and parameters to be sent.
-    url = '../api/v.1/add/product.php',
-    param = 'title='+title+'&content='+content+'&price='+price+'&sale='+sale+
-                '&colour='+colour+'&thumbnail='+thumbnail+'&values='+values+'&stocks='+stocks+
-                '&status='+status_value+'&category_id=1';
+    url = '../api/v.1/add/product.php';
+
     // Open, set headers & post request.
     xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send(param);
-    xhr.onreadystatechange = stateChanged;
-},
-
-// Get a product, with a given sku.
-getProduct = function(sku) {
-    var xhr = new XMLHttpRequest(), url,
-        
-    // Request was successful, display retrieved data.
-    success = function () {
-        // Parse JSON array.
-        var product_group = JSON.parse(xhr.responseText),
-            updateButton = document.getElementById("update-product-button"),
-            title = document.getElementById("single-title"),
-            content = document.getElementById("single-content"),
-            price = document.getElementById("single-price"),
-            sale = document.getElementById("single-sale"),
-            colour = document.getElementById("single-colour"),
-            thumbnail = document.getElementById("single-thumbnail"),
-            valuesStocks = document.getElementById("values-and-stocks"),
-            valueInputs = document.getElementsByClassName("single-values"),
-            stockInputs = document.getElementsByClassName("single-stocks"),
-            status = document.getElementById("single-status"),
-            postDate = document.getElementById("date-posted"),
-            categories = document.getElementsByClassName("category");
-        // Hide loader.
-        loader(false);
-        // If API returns error.
-        if(product_group.error.thrown) {
-            showMessage(product_group.error.message, "error");
-        } else { // Otherwise.
-            // Set variables as information from request.
-            title.value = product_group.title;
-            content.innerHTML = product_group.content;
-            price.value = product_group.price;
-            sale.value = product_group.sale_price;
-            colour.value = product_group.colour;
-            // loop through all products.
-            for(var i in product_group.product) {
-                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Size" />';
-                valuesStocks.innerHTML += '<input type="text" class="single-stocks" placeholder="Stock" />';
-            }
-            for(var i in product_group.product) {
-                product = product_group.product[i];
-                valueInputs[i].value = product.value;
-                stockInputs[i].value = product.stock;
-            }
-            // Set the option that should be selected.
-            if(product_group.post_status === 'publish') {
-                status.selectedIndex = 0;
-            } else if(product_group.post_status === 'draft') {
-                status.selectedIndex = 1;
-            } else if(product_group.post_status === 'trash') {
-                status.selectedIndex = 2;
-            }
-            // Set date to the date original product was created.
-            postDate.innerHTML = 'Date created: <em>' + product_group.post_date + '</em>';
-            // Update the data-sku for the update button to reflect
-            // the current product.
-            updateButton.dataset.sku = product_group.sku;
-            // Add event listeners to new elements.
-            addEventListeners('update-product');
-        }
-    },
-    // Once state is changed, check status.
-    stateChanged = function () {
-        if(xhr.readyState === 4) {
-            switch(xhr.status) {
-                case 200:
-                    success(); break;
-                default:
-                    showMessage("Status "+xhr.status+" returned.", "error"); break;
-            }
-        }
-    };
-    // Show loader.
-    loader(true);
-    // Set url of API, with parameters.
-    url = '../api/v.1/search/single-result.php?table=product_group&id='+sku;
-    // Open & send the request.
-    xhr.open("GET", url, true);
-    xhr.send(null);
     xhr.onreadystatechange = stateChanged;
 },
 
@@ -164,18 +192,19 @@ getProduct = function(sku) {
 updateProduct = function (sku) {
     var url, param, xhr = new XMLHttpRequest(),
         valuesArray = [], stocksArray = [],
-        values, stocks, category_id,
+        values, stocks, categoryId, thumbnail,
         title = document.getElementById("single-title").value,
         content = document.getElementById("single-content").value,
         price = document.getElementById("single-price").value,
         sale = document.getElementById("single-sale").value,
         colour = document.getElementById("single-colour").value,
-        thumbnail = document.getElementById("single-thumbnail"),
+        thumbnailElem = document.getElementById("single-thumbnail"),
         valueInputs = document.getElementsByClassName("single-values"),
         stockInputs = document.getElementsByClassName("single-stocks"),
         statusList = document.getElementById("single-status"),
         statusValue = statusList.options[statusList.selectedIndex].value,
-        categories = document.getElementsByClassName("category");
+        categoryRadio = document.getElementsByClassName("category-radio");
+
     // Request was successful, fill content.
     success = function () {
         // The retrieved data.
@@ -190,6 +219,8 @@ updateProduct = function (sku) {
             // Show message of update success.
             showMessage(response.report.status, "success");
         }
+
+        loadPage(document.URL);
     },
     // Once state is changed, check status.
     stateChanged = function () {
@@ -204,6 +235,14 @@ updateProduct = function (sku) {
     };
     // Show loader.
     loader(true);
+
+    // Get selected category.
+    for(var i=0, len=categoryRadio.length; i<len; i++) {
+        if(categoryRadio[i].checked) {
+            categoryId = categoryRadio[i].dataset.id;
+        }
+    }
+
     // Populate values array with values from document.
     for(var i=0, len=stockInputs.length; i<len; i++) {
         // Because stock is required, check it isn't empty.
@@ -216,22 +255,27 @@ updateProduct = function (sku) {
     values = JSON.stringify(valuesArray);
     stocks = JSON.stringify(stocksArray);
 
-    // Get the ID of the category selected
-    // for(var i=0, len=categories.length; i<len; i++) {
-    //     if(categories[i].checked) {
-    //         category_id = categories[i].dataset.id;
-    //     }
-    // }
+    // Takes the file and posts it.
+    thumbnail = thumbnailElem.files[0];
+    // Request parameters.
+    param = new FormData();
+    param.append('sku', sku);
+    param.append('title', title);
+    param.append('content', content);
+    param.append('price', price);
+    param.append('sale', sale);
+    param.append('colour', colour);
+    param.append('thumbnail', thumbnail);
+    param.append('values', values);
+    param.append('stocks', stocks);
+    param.append('status', statusValue);
+    param.append('category_id', categoryId);
 
     // Request url.
     url = '../api/v.1/edit/product.php';
-    // Request parameters.
-    param = 'sku='+sku+'&title='+title+'&content='+content+'&price='+price+'&sale='+sale+
-                '&colour='+colour+'&thumbnail='+thumbnail+'&values='+values+'&stocks='+stocks+
-                '&status='+statusValue+'&category_id=1';
+    
     // Open, set header & post request.
     xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send(param);
     xhr.onreadystatechange = stateChanged;
 },
@@ -355,7 +399,7 @@ showProductList = function (status, pageNo, perPage) {
     success = function () {
         var response = JSON.parse(xhr.responseText), li = '', colourString,
             content = document.getElementById("products_list"),
-            publishOption, draftOption, trashOption;
+            publishOption, draftOption, trashOption, product_group;
         // If API returns error.
         if(response.error.thrown) {
             showMessage(response.error.message, "error");
