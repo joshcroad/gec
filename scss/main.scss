@@ -112,6 +112,7 @@ h2 {
 }
 
 del {
+    font-size: .9em;
     text-decoration: line-through;
     color: rgb(200, 50, 42);
 }
@@ -186,6 +187,56 @@ header {
     }
 }
 
+/* CATEGORY */
+
+#category {
+    width: 100%;
+    background: green;
+    .filter {
+        float: left;
+    }
+    .view {
+        float: right;
+    }
+    #products-list {
+        width: 100%;
+        float: left;
+        margin: 1em 0;
+        .products-list-item {
+            width: 25%;
+            display: inline-block;
+            cursor: pointer;
+            .product-image {
+                text-align: center;
+                margin: 1em auto .5em;
+                img {
+                    width: 80%;
+                    border: 1px solid rgba(150,150,150,0.2);
+                }
+            }
+            .product-name {
+                display: block;
+                text-align: center;
+                font-size: 1em;
+            }
+            .price-group {
+                text-align: center;
+                margin: 0 0 1em;
+                .product-price {
+                    display: inline-block;
+                    padding: .2em;
+                }
+                .product-sale-price {
+                    display: inline-block;
+                    padding: .2em;
+                }
+            }
+        }
+        .products-list-item:hover {
+            background: rgba(150,150,150,0.1);
+        }
+    }
+}
 
 /************************
  ***** LOADER STYLE *****

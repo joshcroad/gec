@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>GEC - Site</title>
+        <base href="/gec/" />
         <!-- BEGIN meta -->
         <meta charset="utf8" />
         <!-- BEGIN stylesheets -->
@@ -28,19 +29,15 @@
 
             <!-- BEGIN header -->
             <header>
-                <h2 id="site-name">Boom!</h2>
+                <h2 id="site-name"></h2>
                 <!-- BEGIN nav -->
                 <nav class="clearfix">
-                    <!-- THIS NEEDS TO BE DYNAMICALLY CREATED WITH CATEGORIES FROM DB -->
-                    <ul>
-                        <li><a href="home">Homepage</a></li>
-                        <li><a href="toys">Toys</a></li>
-                    </ul>
+                    <ul id="navigation"></ul>
                     <!-- Needs to sort out content with search results. -->
                     <input type="text" class="searchProducts" placeholder="Search Products" />
                 <!-- END nav -->
                 </nav>
-                <div id="basket-message"></div>
+                <div id="global-message"></div>
             <!-- END header -->
             </header>
 

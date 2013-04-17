@@ -471,7 +471,7 @@ showProductList = function (status, pageNo, perPage) {
     start = (pageNo - 1) * perPage;
 
     url = '../api/v.1/view/range.php';
-    url += '?show=product_group&status='+status+'&start='+start+'&show='+perPage;
+    url += '?status='+status+'&start='+start+'&show='+perPage;
 
     xhr.open("GET", url, true);
     xhr.send(null);

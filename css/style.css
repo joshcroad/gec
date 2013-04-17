@@ -88,6 +88,7 @@ h2 {
   font-size: 1.5em; }
 
 del {
+  font-size: .9em;
   text-decoration: line-through;
   color: #c8322a; }
 
@@ -155,6 +156,44 @@ header .error {
   margin: 2em 0 0; }
   #content p {
     margin-bottom: .5em; }
+
+/* CATEGORY */
+#category {
+  width: 100%;
+  background: green; }
+  #category .filter {
+    float: left; }
+  #category .view {
+    float: right; }
+  #category #products-list {
+    width: 100%;
+    float: left;
+    margin: 1em 0; }
+    #category #products-list .products-list-item {
+      width: 25%;
+      display: inline-block;
+      cursor: pointer; }
+      #category #products-list .products-list-item .product-image {
+        text-align: center;
+        margin: 1em auto 0.5em; }
+        #category #products-list .products-list-item .product-image img {
+          width: 80%;
+          border: 1px solid rgba(150, 150, 150, 0.2); }
+      #category #products-list .products-list-item .product-name {
+        display: block;
+        text-align: center;
+        font-size: 1em; }
+      #category #products-list .products-list-item .price-group {
+        text-align: center;
+        margin: 0 0 1em; }
+        #category #products-list .products-list-item .price-group .product-price {
+          display: inline-block;
+          padding: .2em; }
+        #category #products-list .products-list-item .price-group .product-sale-price {
+          display: inline-block;
+          padding: .2em; }
+    #category #products-list .products-list-item:hover {
+      background: rgba(150, 150, 150, 0.1); }
 
 /************************
  ***** LOADER STYLE *****
