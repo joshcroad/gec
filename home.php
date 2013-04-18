@@ -1,5 +1,5 @@
 <!-- BEGIN #home -->
 <div id="home">
-    <p>HOME: Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+    <p>Some latest products and most popular products will be displayed here, in due course.</p>
 </div>
 <!-- END #home -->

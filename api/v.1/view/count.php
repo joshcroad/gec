@@ -21,7 +21,7 @@ if($db || isset($db)) {
     // category to view.
     if(isset($_GET['category'])) {
         $category = $_GET['category'];
-        $category = 'AND categoryID='.$category;
+        $category = "AND categoryID='".$category."'";
     } else {
         $category = '';
     }

@@ -12,7 +12,9 @@ function loadPage (_href) {
     success = function () {
         var response = xhr.responseText,
             content = document.getElementById('content');
+        // Display content.
         content.innerHTML = response;
+        // Add the page content.
         addDynamicContent();
     },
     // Once ready state is changed, check status.
@@ -38,18 +40,26 @@ function loadPage (_href) {
 // Adding dynamic content and event listeners
 function addDynamicContent () {
     var navigation = document.getElementById('navigation'),
-        category = document.getElementById('category'), hold;
+        category = document.getElementById('category'), 
+        product = document.getElementById('product'), hold;
 
+    // If the navigation.
     if(navigation) {
         addEventListeners('navigation');
     }
 
+    // If a category page.
     if(category) {
         // Hold execution, just to ensure the DOM is loaded.
         hold = setTimeout(function() {
-            addEventListeners('products')
+            addEventListeners('products');
             showProducts('publish', getPageAsString(document.URL), getViewCriteria(document.URL), getCategory(document.URL));
         }, 100);
+    }
+
+    // If an individual product page.
+    if(product) {
+        getProduct(getPageAsString(document.URL));
     }
 }
 
@@ -117,29 +127,6 @@ function getPageAsString (_href) {
     }
     // Return the page number.
     return pageNumber;
-}
-
-// Returns the filter criteria (if any), from a hypertext reference.
-// If none set, returns 'not-trash'.
-function getFilterCriteria (_href) {
-    // Split and splice href, removing the host, admin & page.
-    var href = _href.split("/"), href = href.splice(5,5), filter = undefined,
-        filterCriteria, _filter;
-    // If nothing is left.
-    if(href.length < 1) {
-        filterCriteria = 'not-trash';
-    } else {
-        filter = href[0].split('&');
-        for(var i in filter) {
-            _filter = filter[i].split('=');
-            if(_filter[0] === 'filter')
-                filterCriteria = _filter[1];
-        }
-        if(filterCriteria === undefined)
-            filterCriteria = 'not-trash';
-    }
-    // Return the filter information.
-    return filterCriteria;
 }
 
 // Returns the view criteria (if any), from a hypertext reference.
@@ -280,9 +267,180 @@ function getNavigation () {
     xhr.onreadystatechange = stateChanged;
 }
 
+
+function searchProducts (query) {
+    var url = 'api/v.1/search/products.php?q='+query,
+        xhr = new XMLHttpRequest(),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+
+        console.log(response);
+    }
+
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    }
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+
+// Function get and display the product
+function getProduct (sku) {
+    var url, xhr = new XMLHttpRequest(),
+    // Request was successful, display retrieved data.
+    success = function () {
+        // Parse JSON array.
+        var product_group = JSON.parse(xhr.responseText),
+            thumbnail = document.getElementById("product-image"),
+            title = document.getElementById("product-title"),
+            sku = document.getElementById("product-sku"),
+            price = document.getElementById("product-price"),
+            colour = document.getElementById("product-colour"),
+            content = document.getElementById("product-content"),
+            size = document.getElementById("product-sizes"),
+            stock = document.getElementById("product-stock"),
+            basket = document.getElementById("product-basket"),
+            product, sizeElem, sizeElemLabel, j = 0, li = '', checked,
+            disabled, outOfStock;
+
+        loader(false);
+
+        if(product_group.error.thrown) {
+            title.innerHTML = "No product found."
+        } else {
+
+            // Get thumbnail image.
+            thumbnail.innerHTML = '<img src="'+product_group.thumbnail+'" alt="'+product_group.title+'" />';
+            // Populate title.
+            title.innerHTML = '<h2>'+product_group.title+'</h2>';
+            // Put the sku number.
+            sku.innerHTML = 'Product code: '+product_group.sku;
+            // Display the colour, if there is a colour set.
+            if(product_group.colour.length > 0)
+                colour.innerHTML = 'Colour: '+product_group.colour;
+            // Display the sale price, if one is set, else just display the normal price.
+            if(product_group.sale_price !== "0.00") {
+                price.innerHTML += 'Price: £'+product_group.sale_price;
+                price.innerHTML += ' <del>was £'+product_group.price+'</del>';
+            } else {
+                price.innerHTML = 'Price: £'+product_group.price;
+            }
+            // Put the content in.
+            content.innerHTML = '<h3>Description</h3><p>'+product_group.content+'</p>';
+
+            // SIZES.
+            if(product_group.product.length > 0) {
+                for(var i in product_group.product) {
+                    // Get individual product.
+                    product = product_group.product[i],
+                    checked = '';
+                    disabled = '';
+                    outOfStock = '';
+
+                    if(product.value.length != '') {
+                        if(j == 0 && product.stock != 0) {
+                            checked = 'checked';
+                            stock.innerHTML = 'Stock: '+product.stock;
+                            j++;
+                        }
+                        if(product.stock == 0) {
+                            disabled = ' disabled';
+                            outOfStock = ' <em>Out of Stock</em>';
+                        }
+
+                        li += '<li class="product-size">';
+
+                        li += '<div class="product-size-radio">';
+                        li += '<input type="radio" class="size-radio" data-id="'+product.id+'" name="size" '+checked+disabled+' />';
+                        li += '</div>';
+
+                        li += '<div class="size-radio-label">'+product.value+outOfStock+'</div>';
+
+                        li += '</li>';
+
+                    } else {
+                        stock.innerHTML = 'Stock: '+product.stock;
+                    }
+                }
+                size.innerHTML = li;
+            }
+        }
+
+        addEventListeners("product-item");
+    },
+
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    // Show loader.
+    loader(true);
+    // Set url of API, with parameters.
+    url = 'api/v.1/search/single-result.php?table=product_group&id='+sku+'&status=publish';
+    // Open & send the request.
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Get stock for product
+function getStock (productID) {
+    var url, xhr = new XMLHttpRequest(),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText),
+            productStock = document.getElementById('product-stock');
+
+        console.log(response);
+
+        productStock.innerHTML = 'Stock: '+response.stock;
+    },
+
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    url = 'api/v.1/search/stock.php?id='+productID;
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+
+// The function called to display both a list of products and
+// the pagination links.
 function showProducts (status, pageNo, perPage, category) {
     // Now, load the list of products.
     showProductList(status, pageNo, perPage, category);
+    //Now, load the pagination
+    showPagination(status, pageNo, perPage, category);
 }
 
 // Show product list.
@@ -307,7 +465,7 @@ function showProductList (status, pageNo, perPage, category) {
                 li += '<img src="'+product_group.thumbnail+'" alt="'+product_group.title+'" />';
                 li += '</div>';
                 if(product_group.colour !== '') {
-                    colourString = ' ('+product_group.colour+')';
+                    colourString = ' <em>('+product_group.colour+')</em>';
                 }
                 li += '<div class="product-name">'+product_group.title+colourString+'</div>';
                 li += '<div class="price-group">';
@@ -349,6 +507,78 @@ function showProductList (status, pageNo, perPage, category) {
     url = 'api/v.1/view/range.php';
     url += '?status='+status+'&start='+start+'&show='+perPage+'&category='+categoryID;
 
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Display the pagination for a category.
+function showPagination (status, pageNo, perPage, category) {
+    var pageNo = parseInt(pageNo),
+        url, xhr = new XMLHttpRequest(),
+        categoryID = document.getElementById("category-"+category),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText),
+            pagNav = '', filter = '',
+            ul = document.getElementById('pagination'),
+            pages = Math.ceil(response.count / perPage);
+
+        // Request complete, hide loader.
+        loader(false);
+
+        // If page number is 1, do NOT apply anchors to first 2 elements.
+        if (pageNo === 1) {
+            pagNav += '<li class="pagItemInactive">&laquo;</li>';
+            pagNav += '<li class="pagItemInactive">&#139;</li>';
+        } else {
+            pagNav += '<li><a href="'+category+'/page=1" class="pagItem" data-pageNo="1" data-perPage="'+perPage+'">&laquo;</a></li>';
+            pagNav += '<li><a href="'+category+'/page='+(pageNo-1)+'" class="pagItem" data-pageNo="'+(pageNo-1)+'" data-perPage="'+perPage+'">&#139;</a></li>';
+        }
+        // Loop through pages, adding numeric anchors.
+        for(var i=0; i<pages; i++) {
+            var currentPage = (i+1), active = '';
+            // Set the current page classification.
+            if (currentPage === pageNo)
+                active = 'active';
+            // Display ONLY 3 numbers before and after the current page.
+            if (currentPage >= (pageNo-3) && currentPage <= pageNo || currentPage <= (pageNo+3) && currentPage >= pageNo)
+                pagNav += '<li><a href="'+category+'/page='+currentPage+'" class="pagItem '+active+'" data-pageNo="'+currentPage+'" data-perPage="'+perPage+'">' + currentPage + '</a></li>';
+        }
+        // If page last page, do NOT apply anchors to last 2 elements.
+        if(pageNo === pages) {
+            pagNav += '<li class="pagItemInactive">&#155;</li>';
+            pagNav += '<li class="pagItemInactive">&raquo;</li>';
+        } else {
+            pagNav += '<li><a href="'+category+'/page='+(pageNo+1)+'" class="pagItem" data-pageNo="'+(pageNo+1)+'" data-perPage="'+perPage+'">&#155;</a></li>';
+            pagNav += '<li><a href="'+category+'/page='+pages+'" class="pagItem" data-pageNo="'+pages+'" data-perPage="'+perPage+'">&raquo;</a></li>';
+        }
+        // Add the new list elements to the document.
+        ul.innerHTML = pagNav;
+        // Add event listeners for these newly added elements.
+        addEventListeners('products-pagination');
+    }
+
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    }
+
+    // Get category ID from dataset.
+    categoryID = parseInt(categoryID.dataset.id);
+
+    url = 'api/v.1/view/count.php';
+    url += '?show=product_group&status='+status+'&category='+categoryID;
+
+    // Display loader.
+    loader(true);
+    // Open & send request.
     xhr.open("GET", url, true);
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;

@@ -24,8 +24,15 @@ if($db || isset($db)) {
      */
     $table = $db->real_escape_string($unescaped_table);
 
-    if($table === 'product_group') {
-    	$result = $db->select("SELECT * FROM product_group WHERE sku = '$id'");
+    if(isset($_GET['status'])) {
+        $unescaped_status = $_GET['status'];
+        $status = $db->real_escape_string($unescaped_status);
+    }
+
+    if($table === 'product_group' && isset($status)) {
+    	$result = $db->select("SELECT * FROM product_group WHERE sku = '$id' AND post_status = '$status'");
+    } else if($table === 'product_group') {
+        $result = $db->select("SELECT * FROM product_group WHERE sku = '$id'");
     } else {
     	$result = $db->select("SELECT * FROM $table WHERE ID = '$id'");
     }
@@ -45,6 +52,8 @@ if($db || isset($db)) {
         $product_values = $db->select("SELECT * FROM product WHERE sku = '$id'");
         $i = 0;
         while($product = $product_values->fetch_assoc()) {
+            $item['product'][$i]['id'] = $product['ID'];
+            $item['product'][$i]['sku'] = $product['sku'];
             $item['product'][$i]['value'] = $product['value'];
             $item['product'][$i]['stock'] = $product['stock'];
             $i++;
