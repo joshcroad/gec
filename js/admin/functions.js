@@ -222,18 +222,20 @@ function loader (visible) {
 // Function to validate product field input.
 function validateProductInput () {
     var isValid = 0, checked,
-        title = document.getElementById("single-title").value,
-        content = document.getElementById("single-content").value,
-        price = document.getElementById("single-price").value,
-        sale = document.getElementById("single-sale").value,
+        titleInput = document.getElementById("single-title"),
+        contentInput = document.getElementById("single-content"),
+        priceInput = document.getElementById("single-price"),
+        saleInput = document.getElementById("single-sale"),
         stockInputs = document.getElementsByClassName("single-stocks"),
-        categoryRadio = document.getElementsByClassName("category-radio"),
-        titleMessage = document.getElementById("title-message"),
-        contentMessage = document.getElementById("content-message"),
-        priceMessage = document.getElementById("price-message"),
-        saleMessage = document.getElementById("sale-message"),
-        stockMessage = document.getElementById("stock-message"),
-        categoryMessage = document.getElementById("category-message");
+        categorySection = document.getElementsByClassName('product-category'),
+        categoryRadio = document.getElementsByClassName("category-radio");
+
+    categorySection[0].style.border = '1px solid rgba(150,150,150,0.2)';
+    titleInput.style.border = '';
+    contentInput.style.border = '';
+    priceInput.style.border = '';
+    saleInput.style.border = '';
+    stockInputs[0].style.border = '';
 
     for(var i=0, len=categoryRadio.length; i<len; i++) {
         if(categoryRadio[i].checked) {
@@ -241,39 +243,50 @@ function validateProductInput () {
         }
     }
 
-    titleMessage.innerHTML = '';
-    contentMessage.innerHTML = '';
-    priceMessage.innerHTML = '';
-    saleMessage.innerHTML = '';
-    stockMessage.innerHTML = '';
-
     // Check a catgeory is selected.
     if(!checked) {
-        categoryMessage.innerHTML = '<p>Please check a catgeory.</p>'; isValid++;
+        categorySection[0].style.border = '1px solid red';
+        isValid++;
     }
+
     // Check required fields are not empty.
-    if(!title) {
-        titleMessage.innerHTML = '<p>Please fill in product name.</p>'; isValid++;
+    if(!titleInput.value) {
+        titleInput.style.border = '1px solid red';
+        isValid++;
     }
-    if(!content) {
-        contentMessage.innerHTML = '<p>Please fill in product description.</p>'; isValid++;
+
+
+    if(!contentInput.value) {
+        contentInput.style.border = '1px solid red';
+        isValid++;
     }
-    if(!price) {
-        priceMessage.innerHTML = '<p>Please fill in price.</p>'; isValid++;
+
+    if(!priceInput.value) {
+        priceInput.style.border = '1px solid red';
+        isValid++;
     }
+
     if(!stockInputs[0].value) {
-        stockMessage.innerHTML = '<p>Please add stock.</p>'; isValid++;
+        stockInputs[0].style.border = '1px solid red';
+        isValid++;
     }
+
     // Check the sale price is not bigger than the original price.
-    if(parseInt(price) < parseInt(sale)) {
-        saleMessage.innerHTML = '<p>Please make sure the sale price is less than the actual price.</p>'; isValid++;
+    if(parseInt(priceInput.value) < parseInt(saleInput.value)) {
+        saleInput.style.border = '1px solid red';
+        isValid++;
     }
+
     // Check the stock is positive.
-    for(var i in stockInputs) {
+    for(var i=0, len=stockInputs.length; i<len; i++) {
         if(stockInputs[i].value < 0) {
-            stockMessage.innerHTML = '<p>Please make sure all stock are non-negative.</p>'; isValid++;
+            isValid++;
+        }
+        if(isNaN(stockInputs[i].value)) {
+            isValid++;
         }
     }
+
     // If isValid equals 0, nothing has been flagged. Return True.
     if(isValid === 0) { return true; }
     else { return false; }

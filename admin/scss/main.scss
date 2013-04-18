@@ -541,19 +541,18 @@ header {
 
 #title-message, #content-message,
 #price-message, #sale-message,
-#stock-message {
-    display: none;
+#stock-message, #category-message {
     font: {
         size: .9em;
         style: italic;
     }
+    display: none;
     background: #333;
     color: rgba(255,255,255,0.8);
     border: 1px solid #111;
-    float: left;
     padding: .5em .5em 0;
+    position: absolute;
 }
-
 
 /************************
  ***** LOADER STYLE *****
