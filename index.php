@@ -34,7 +34,7 @@
                 <nav class="clearfix">
                     <ul id="navigation"></ul>
                     <!-- Needs to sort out content with search results. -->
-                    <input type="text" class="searchProducts" placeholder="Search Products" />
+                    <input type="text" id="search-products" placeholder="Search Products" />
                 <!-- END nav -->
                 </nav>
                 <div id="global-message"></div>

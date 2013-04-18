@@ -13,10 +13,19 @@ function addEventListeners (eventsFor) {
         // Events for the main navigation.
         case 'navigation-links':
             var links = document.getElementsByClassName('nav-list-link'),
+                searchBox = document.getElementById('search-products');
+            // Loop through navigation links
             for(var i=0, len=links.length; i<len; i++) {
                 addListenerGetPage(links[i]);
             }
+
+            searchBox.addEventListener('keydown', function (e) {
+                if(searchBox.value.length > 2) {
+                    searchProducts(searchBox.value);
+                }
+            }, false);
             break;
+
         // The products page, filter, view buttons.
         case 'products':
             break;
