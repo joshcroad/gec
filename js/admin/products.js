@@ -35,7 +35,10 @@ getProduct = function(sku) {
             title.value = product_group.title;
             content.innerHTML = product_group.content;
             price.value = product_group.price;
-            sale.value = product_group.sale_price;
+            // Leave blank if not set.
+            console.log(sale.value);
+            if(sale.value !== '')
+                sale.value = product_group.sale_price;
             colour.value = product_group.colour;
 
             thumbnailPreview.innerHTML = '<img src="../'+product_group.thumbnail+'" alt="'+product_group.title+'" />';

@@ -44,6 +44,42 @@ addCategory = function () {
     xhr.onreadystatechange = stateChanged;
 }
 
+// Quick update the status of a specific category.
+updateCategoryStatus = function (elem) {
+    var url = '../api/v.1/edit/category-status.php',
+        param = 'id='+elem.dataset.id+'&status='+elem.options[elem.selectedIndex].value,
+        xhr = new XMLHttpRequest();
+    // If the request is successful.
+    success = function () {
+        // Response from the request.
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader as request was successful.
+        loader(false);
+        // Display a message to the user signalling update
+        // was successful.
+        showMessage(response.report.status, "success");
+        // Reload the page to update the list.
+        loadPage(document.URL);
+    },
+    // Once ready state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+    loader(true);
+    // Open, set header & post request.
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
+},
+
 getCategories = function () {
     var url, xhr = new XMLHttpRequest(),
 

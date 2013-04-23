@@ -41,9 +41,9 @@ function addEventListeners (eventsFor) {
             }
             // EVENT FOR CHANGING OPTION ON DROPDOWN
             for(var i=0, len=productsStatus.length; i<len; i++) {
-                addOptionChangeEvent(productsStatus[i]);
+                addProductChangeEvent(productsStatus[i]);
             }
-            function addOptionChangeEvent (elem) {
+            function addProductChangeEvent (elem) {
                 elem.addEventListener('change', function (e) {
                     updateProductStatus(elem);
                 }, false);
@@ -88,7 +88,22 @@ function addEventListeners (eventsFor) {
             }, false);
             break;
 
-        case 'categories': break;
+        case 'categories': 
+            var categoryFilter = document.getElementsByClassName("filter-table"),
+                status = document.getElementsByClassName("category-status");
+            
+            for(var i=0, len=categoryFilter.length; i<len; i++) {
+                addListenerGetPage(categoryFilter[i]);
+            }
+            for(var i=0, len=status.length; i<len; i++) {
+                addCategoryChangeEvent(status[i]);
+            }
+            function addCategoryChangeEvent (elem) {
+                elem.addEventListener("change", function (e) {
+                    updateCategoryStatus(elem);
+                }, false);
+            }
+            break;
 
         case 'add-category':
             var addCategoryButton = document.getElementById("add-cat-button");

@@ -22,9 +22,9 @@
     <section class="current-cats">
         <div class="filter">
             FILTER BY: 
-            <a href="products/page=1&filter=publish" class="filter-table">PUBLISH</a> /
-            <a href="products/page=1&filter=draft" class="filter-table">DRAFT</a> / 
-            <a href="products/page=1&filter=trash" class="filter-table">TRASH</a>
+            <a href="categories/filter=publish" class="filter-table">PUBLISH</a> /
+            <a href="categories/filter=draft" class="filter-table">DRAFT</a> / 
+            <a href="categories/filter=trash" class="filter-table">TRASH</a>
         </div>
         <ul id="category-list"></ul>
     </section>
