@@ -238,9 +238,9 @@ function getNavigation () {
         } else {
             // Loop through each result.
             for(i in response.category) {
-                category = response.category[i],
+                category = response.category[i];
                 // Set up table body.
-                li += '<li class="nav-list-item"><a href="'+category.name.toLowerCase()+'" class="nav-list-link" id="category-'+category.name.toLowerCase()+'" data-id="'+category.id+'">' + category.name + '</a></li>';
+                li += '<li class="nav-list-item"><a href="'+category.slug+'" class="nav-list-link" id="category-'+category.slug+'" data-id="'+category.id+'">' + category.name + '</a></li>';
             }
         }
         // Fill content with new data.
@@ -409,8 +409,6 @@ function getStock (productID) {
     success = function () {
         var response = JSON.parse(xhr.responseText),
             productStock = document.getElementById('product-stock');
-
-        console.log(response);
 
         productStock.innerHTML = 'Stock: '+response.stock;
     },

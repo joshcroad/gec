@@ -40,6 +40,7 @@ if($db || isset($db)) {
     while($item = $result->fetch_assoc()) {
         $response['category'][$i]['id'] = $item['ID'];
         $response['category'][$i]['name'] = $item['name'];
+        $response['category'][$i]['slug'] = $item['slug'];
         $response['category'][$i]['menu_order'] = $item['menu_order'];
         $response['category'][$i]['post_status'] = $item['post_status'];
         $i++;

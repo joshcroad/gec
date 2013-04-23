@@ -261,7 +261,8 @@ class db {
         $this->query("CREATE DATABASE $this->db_name COLLATE utf8_general_ci");
 
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.category 
-                            (ID int NOT NULL AUTO_INCREMENT, name varchar(50), menu_order int, post_status varchar(50),
+                            (ID int NOT NULL AUTO_INCREMENT, name varchar(50), slug varchar(50),
+                            menu_order int, post_status varchar(50),
                             CONSTRAINT category_pk PRIMARY KEY(ID))"
                            );
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.tag 
@@ -318,12 +319,12 @@ class db {
      * @uses db::insert()
      */
     private function default_table_entries() {
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Uncategorized', -1, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Toys', 2, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Animals', 1, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Outdoors', 3, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Homeware', 4, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, menu_order, post_status) VALUES('Clothes', 5, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Toys', 'toys', 2, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Animals', 'animals', 1, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Outdoors', 'outdoors', 3, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Homeware', 'homeware', 4, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Clothes', 'clothes', 5, 'publish')");
 
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Aeroplane','This is a dummy product.','9.99','4.99','','media/default.jpg','publish',NOW(),'2')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('1','','10')");
@@ -423,8 +424,6 @@ class db {
 
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
-        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('description', 'This is a description.')");
-        $this->insert("INSERT INTO $this->db_name.product_category (ID, sku) VALUES(1, 1)");
     }
 }
 

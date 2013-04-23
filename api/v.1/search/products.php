@@ -26,7 +26,7 @@ if($db || isset($db)) {
     /**
      * Run the query.
      */
-    $result = $db->select("SELECT * FROM product_group WHERE post_status = 'publish' AND title LIKE '$q%'");
+    $result = $db->select("SELECT * FROM product_group WHERE post_status = 'publish' AND (title LIKE '%$q%' OR sku LIKE '$q')");
 
         /**
          * Loop through all records retrieved from the query.

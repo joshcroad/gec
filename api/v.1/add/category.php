@@ -23,11 +23,15 @@ if($db || isset($db)) {
     $menu_order = $db->real_escape_string($unsafe_menu_order);
     $status = $db->real_escape_string($unsafe_status);
 
+    // Makes the name lower case and replaces spaces with '-'
+    $slug = explode(' ', strtolower($name));
+    $slug = implode('-', $slug);
+
     if($menu_order < 0) {
         $menu_order = -1;
     }
 
-    $db->insert("INSERT INTO category (name, menu_order, post_status) VALUES ('$name', '$menu_order', '$status')");
+    $db->insert("INSERT INTO category (name, slug, menu_order, post_status) VALUES ('$name', '$slug', '$menu_order', '$status')");
 
     // Get the recently inserted sku number
     $id = $db->insert_id;
