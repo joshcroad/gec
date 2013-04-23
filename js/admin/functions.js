@@ -205,7 +205,7 @@ function showMessage (message, classname) {
     timeout = setTimeout(function() {
         requestMessage.style.display = "none";
         requestMessage.innerHTML = "";
-    }, 4000);
+    }, 3000);
 }
 
 // Sets the loader's visibility (boolean).
@@ -294,27 +294,29 @@ function validateProductInput () {
 
 // Function to validate product field input.
 function validateCategoryInput () {
-    var isValid = 0;
-        name = document.getElementById("cat-name").value,
-        menuOrder = document.getElementById("cat-menu-order").value,
-        nameMessage = document.getElementById("cat-name-message"),
-        menuOrderMessage = document.getElementById("cat-menu-order-message");
+    var isValid = 0,
+        name = document.getElementById("cat-name"),
+        menuOrder = document.getElementById("cat-menu-order");
+    console.log(name, menuOrder);
 
-    nameMessage.innerHTML = '';
-    menuOrderMessage.innerHTML = '';
+    // Initialise borders
+    name.style.border = '';
+    menuOrder.style.border = '';
 
     // Check required fields are not empty.
-    if(!name) {
-        nameMessage.innerHTML += '<p>Please fill in category name.</p>'; isValid++;
+    if(!name.value) {
+        name.style.border = '1px solid red';
+        isValid++;
     }
-    if(!menuOrder) {
-        menuOrderMessage.innerHTML += '<p>Please fill in menu order. This is the order in which the menu is shown.</p>'; isValid++;
+    if(!menuOrder.value) {
+        menuOrder.style.border = '1px solid red';
+        isValid++;
     }
     // Check the value is an integer (including negative.) - NEEDS IMPROVING: '1w' is accepted.
-    if(isNaN(parseInt(menuOrder))) {
-        menuOrderMessage.innerHTML += '<p>Please make sure you enter an integer value.</p>'; isValid++;
+    if(isNaN(parseInt(menuOrder.value))) {
+        menuOrder.style.border = '1px solid red';
+        isValid++;
     }
-    console.log(isValid);
     // If isValid equals 0, nothing has been flagged. Return True.
     if(isValid === 0) { return true; }
     else { return false; }

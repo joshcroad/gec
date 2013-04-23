@@ -39,11 +39,11 @@ if($db || isset($db)) {
     /* Data returned by the API */
     if($db->error_thrown) {
         $response['error']['thrown'] = true;
-        $response['report']['status'] = $db->error_message;
+        $response['report']['message'] = $db->error_message;
     } else {
         $response['error']['thrown'] = false;
         $response['report']['inserted_id'] = $id;
-        $response['report']['status'] = "Added category successfully";
+        $response['report']['message'] = "Added category successfully";
     }
 
 } else {

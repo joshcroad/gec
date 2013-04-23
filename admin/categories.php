@@ -5,10 +5,8 @@
     <section id="cat-fields">
         <h3>Add Category</h3>
         <input type="text" id="cat-name" placeholder="* Category Name" />
-        <div id="cat-name-message"></div>
-        <input type="text" id="cat-menu-order" placeholder="* Menu Order" />
+        <input type="text" id="cat-menu-order" placeholder="* Menu Order (number)" />
         <div class="clearfix">
-            <div id="cat-menu-order-message"></div>
             <select id="cat-status">
                 <option value="publish" selected>Publish</option>
                 <option value="draft">Draft</option>
