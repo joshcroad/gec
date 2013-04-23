@@ -20,9 +20,13 @@ function addEventListeners (eventsFor) {
             }
 
             searchBox.addEventListener('keydown', function (e) {
-                if(searchBox.value.length > 2) {
+                if(e.keyCode == 13) {
                     searchProducts(searchBox.value);
                 }
+                else if(searchBox.value.length > 3) {
+                    searchProducts(searchBox.value);
+                }
+
             }, false);
             break;
 
