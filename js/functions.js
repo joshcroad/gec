@@ -41,7 +41,8 @@ function loadPage (_href) {
 function addDynamicContent () {
     var navigation = document.getElementById('navigation'),
         category = document.getElementById('category'), 
-        product = document.getElementById('product'), hold;
+        product = document.getElementById('product'),
+        search = document.getElementById('search'), hold;
 
     // If the navigation.
     if(navigation) {
@@ -53,13 +54,18 @@ function addDynamicContent () {
         // Hold execution, just to ensure the DOM is loaded.
         hold = setTimeout(function() {
             addEventListeners('products');
-            showProducts('publish', getPageAsString(document.URL), getViewCriteria(document.URL), getCategory(document.URL));
+            showProducts('publish', getEntityInformation(document.URL, 'category'), getViewCriteria(document.URL), getCategory(document.URL));
         }, 100);
     }
 
     // If an individual product page.
     if(product) {
-        getProduct(getPageAsString(document.URL));
+        getProduct(getEntityInformation(document.URL, 'product'));
+    }
+
+    // If user has search for something
+    if(search) {
+        searchProducts(getEntityInformation(document.URL, 'search'));
     }
 }
 
@@ -97,17 +103,18 @@ function getEntityInformation (_href, entity) {
     // Split and splice href, removing the host, admin & page.
     var href = _href.split("/"), href = href.splice(5,5), info;
     // If nothing is left.
-    if(href.length < 1) {
+    if(href.length < 1 && entity !== 'category') {
         info = '';
     } else {
-        if(entity === 'product') {
-            info = href[0];
-        } else if(entity === 'basket') {
-            info = href[0].split("id=").pop();
-        } else if(entity === 'search') {
-            info = href[0].split("q=").pop();
-        } else if(entity === 'category') {
-            info = getPageAsString(document.URL);
+        switch(entity) {
+            case 'product':
+                info = href[0]; break;
+            case 'basket':
+                info = href[0].split("id=").pop(); break;
+            case 'search':
+                info = href[0].split("q=").pop(); break;
+            case 'category':
+                info = getPageAsString(document.URL); break;
         }
     }
     // Return the category.
@@ -226,6 +233,8 @@ function getSiteTitle () {
     xhr.onreadystatechange = stateChanged;
 }
 
+
+// Get the list of categories for the menu.
 function getNavigation () {
     var url, xhr = new XMLHttpRequest(),
 
@@ -268,14 +277,47 @@ function getNavigation () {
 }
 
 
+// API call for products based on query.
 function searchProducts (query) {
     var url = 'api/v.1/search/products.php?q='+query,
         xhr = new XMLHttpRequest(),
 
     success = function () {
-        var response = JSON.parse(xhr.responseText);
-
-        console.log(response);
+        var response = JSON.parse(xhr.responseText), li = '',
+            content = document.getElementById("products-list"),
+            product_group, colourString;
+        // If API returns error.
+        if(response.error.thrown) {
+            showMessage(response.error.message, "error");
+        } else {
+            for(var i in response.product_group) {
+                colourString = '';
+                product_group = response.product_group[i];
+                li += '<div class="products-list-item" data-sku="'+product_group.sku+'">';
+                li += '<div class="product-image">';
+                li += '<img src="'+product_group.thumbnail+'" alt="'+product_group.title+'" />';
+                li += '</div>';
+                if(product_group.colour !== '') {
+                    colourString = ' <em>('+product_group.colour+')</em>';
+                }
+                li += '<div class="product-name">'+product_group.title+colourString+'</div>';
+                li += '<div class="price-group">';
+                if(product_group.sale_price === '0.00' || product_group.sale_price == null) {
+                    li += '<div class="product-price">£'+product_group.price+'</div>';
+                } else {
+                    li += '<div class="product-sale-price">£'+product_group.sale_price+'</div>';
+                    li += '<div class="product-price"><del>£'+product_group.price+'</del></div>';
+                }
+                li += '</div>';
+                li += '</div>';
+            }
+        }
+        // Hide loader before content is filled.
+        loader(false);
+        // Paint to the document.
+        content.innerHTML = li;
+        // add events
+        addEventListeners('product-items');
     }
 
     stateChanged = function () {
@@ -553,6 +595,10 @@ function showPagination (status, pageNo, perPage, category) {
         }
         // Add the new list elements to the document.
         ul.innerHTML = pagNav;
+        // Display the pagination block after it has loaded,
+        // Without this a dark grey, empty box displays quickly
+        // before the content is added. Very annoying.
+        ul.style.display = 'block';
         // Add event listeners for these newly added elements.
         addEventListeners('products-pagination');
     }

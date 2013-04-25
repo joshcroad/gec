@@ -12,26 +12,11 @@ function addEventListeners (eventsFor) {
 
         // Events for the main navigation.
         case 'navigation-links':
-            var links = document.getElementsByClassName('nav-list-link'),
-                searchBox = document.getElementById('search-products');
+            var links = document.getElementsByClassName('nav-list-link');
             // Loop through navigation links
             for(var i=0, len=links.length; i<len; i++) {
                 addListenerGetPage(links[i]);
             }
-
-            searchBox.addEventListener('keydown', function (e) {
-                if(e.keyCode == 13) {
-                    searchProducts(searchBox.value);
-                }
-                else if(searchBox.value.length > 3) {
-                    searchProducts(searchBox.value);
-                }
-
-            }, false);
-            break;
-
-        // The products page, filter, view buttons.
-        case 'products':
             break;
 
         // The events for the individual product items.
@@ -58,6 +43,7 @@ function addEventListeners (eventsFor) {
 
         // Events for the pagination for products.
         case 'products-pagination':
+            console.log('products-pagination');
             var pagItems = document.getElementsByClassName('pagItem');
 
             function addPagLink (elem) {
@@ -74,6 +60,7 @@ function addEventListeners (eventsFor) {
             break;
 
         case 'product-item':
+            console.log('product-item');
             // When size option is changed, fire event to get stock for selected item.
             var productSizeRadio = document.getElementsByClassName('size-radio');
             // Loop through list.
