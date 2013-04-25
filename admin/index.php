@@ -1,8 +1,9 @@
+<?php $href = explode("/", dirname(__FILE__)); $base = $href[count($href)-2]; ?>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>GEC - Dashboard</title>
-        <base href="/gec/admin/" />
+        <title><?php echo $base; ?> - Admin</title>
+        <base href="/<?php echo $base; ?>/admin/" />
         <!-- BEGIN meta -->
         <meta charset="utf8" />
         <!-- BEGIN stylesheets -->
@@ -29,6 +30,7 @@
             <!-- BEGIN nav -->
             <nav class="clearfix">
                 <ul>
+                    <li><a href="/<?php echo $base; ?>" id="site">Your site</a></li>
                     <li><a href="">Dashboard</a></li>
                     <li><a href="products">Products</a></li>
                     <li><a href="categories">Categories</a></li>
