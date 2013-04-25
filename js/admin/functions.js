@@ -308,6 +308,11 @@ function validateCategoryInput () {
         name.style.border = '1px solid red';
         isValid++;
     }
+    if(name.value.toLowerCase() == 'admin') {
+        name.style.border = '1px solid red';
+        showMessage("'Admin' is a reserved word", "error");
+        isValid++;
+    }
     if(!menuOrder.value) {
         menuOrder.style.border = '1px solid red';
         isValid++;

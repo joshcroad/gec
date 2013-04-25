@@ -267,9 +267,9 @@ class db {
                             CONSTRAINT category_pk PRIMARY KEY(ID))"
                            );
         $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Toys', 'toys', 2, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Cuddly Toys', 'cuddly-toys', 1, 'publish')");
-        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Clothes', 'clothes', 5, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Toys', 'toys', 1, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Cuddly Toys', 'cuddly-toys', 2, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Clothes', 'clothes', 3, 'publish')");
         
         /*$this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.tag 
                             (ID int NOT NULL AUTO_INCREMENT, 
