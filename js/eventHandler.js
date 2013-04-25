@@ -43,7 +43,6 @@ function addEventListeners (eventsFor) {
 
         // Events for the pagination for products.
         case 'products-pagination':
-            console.log('products-pagination');
             var pagItems = document.getElementsByClassName('pagItem');
 
             function addPagLink (elem) {
@@ -59,22 +58,81 @@ function addEventListeners (eventsFor) {
             }
             break;
 
+        // The events for a single product item
         case 'product-item':
-            console.log('product-item');
             // When size option is changed, fire event to get stock for selected item.
-            var productSizeRadio = document.getElementsByClassName('size-radio');
+            var addBasket = document.getElementById('product-add-basket');
+
+            // Need to do event listener for adding to basket.
+            addBasket.addEventListener('click', function (e) {
+                addToBasket(addBasket.dataset.id, addBasket.dataset.sku);
+                e.preventDefault();
+            }, false);
+            break;
+
+        // The events that occur when a size option is changed
+        case 'size-quantity-option':
+            var productSize = document.getElementsByClassName('size-radio'),
+                quantity = document.getElementById('product-quantity'),
+                addBasket = document.getElementById('product-add-basket');
+
             // Loop through list.
-            for(var i=0, len=productSizeRadio.length; i<len; i++) {
-                onCheckedEvent(productSizeRadio[i]);
+            for(var i=0, len=productSize.length; i<len; i++) {
+                onCheckedEvent(productSize[i]);
             }
             // Add event listener for on checked.
             function onCheckedEvent (elem) {
                 elem.addEventListener('click', function () {
-                    getStock(elem.dataset.id);
-                }, false)
-            }
+                    var url, xhr = new XMLHttpRequest(),
 
-            // Need to do event listener for adding to basket.
+                    success = function () {
+                        var response = JSON.parse(xhr.responseText);
+                        // Reset options
+                        quantity.innerHTML = '';
+
+                        if(response.stock > 10) {
+                            for(var j=0; j<10; j++) {
+                                quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                            }
+                        } else {
+                            for(var j=0, jen=response.stock; j<jen; j++) {
+                                quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                            }
+                        }
+                    },
+
+                    stateChanged = function () {
+                        if(xhr.readyState === 4) {
+                            switch(xhr.status) {
+                                case 200:
+                                    success(); break;
+                                default:
+                                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+                            }
+                        }
+                    };
+
+                    addBasket.dataset.id = elem.dataset.id;
+
+                    url = 'api/v.1/search/stock.php?id='+elem.dataset.id;
+
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                    xhr.onreadystatechange = stateChanged;
+                }, false);
+            }
+            break;
+
+        case 'basket':
+            var removeChecks = document.getElementsByClassName('remove');
+            for(var i=0, len=removeChecks.length; i<len; i++) {
+                addCheckedEventListener(removeChecks[i], i);
+            }
+            function addCheckedEventListener(elem, index) {
+                elem.addEventListener('click', function () {
+                    removeProduct(sessionStorage.key((index-1)));
+                }, false);
+            }
             break;
 
         default: break;

@@ -33,7 +33,14 @@ include('inc/api_config.php'); ?>
 
             <!-- BEGIN header -->
             <header>
-                <h2 id="site-name"></h2>
+                <div class="titlebar">
+                    <h2 id="site-name"></h2>
+                    <div class="basket">
+                        <a href="basket" id="basket-link">
+                            <div id="basket-items"></div>
+                            <div id="basket-value"></div>
+                        </a>
+                    </div>
                 <!-- BEGIN nav -->
                 <nav class="clearfix">
                     <ul id="navigation"></ul>
@@ -52,6 +59,7 @@ include('inc/api_config.php'); ?>
 
         <!-- BEGIN scripts -->
         <script src="js/functions.js" async></script>
+        <script src="js/basket.js" async></script>
         <script src="js/eventHandler.js" async></script>
         <script src="js/load.js" defer></script>
         <!-- END scripts -->

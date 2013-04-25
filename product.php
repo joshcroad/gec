@@ -13,8 +13,10 @@
     </section>
 
     <section id="product-basket">
+        <!-- The list of sizes (if any) -->
         <ul id="product-sizes"></ul>
-        <section id="product-stock"></section>
+        <select id="product-quantity"></select>
+        <a href="" id="product-add-basket">Add to Basket</a>
     </section>
 </div>
 <!-- END #product -->

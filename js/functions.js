@@ -42,7 +42,8 @@ function addDynamicContent () {
     var navigation = document.getElementById('navigation'),
         category = document.getElementById('category'), 
         product = document.getElementById('product'),
-        search = document.getElementById('search'), hold;
+        search = document.getElementById('search'),
+        basket = document.getElementById('basket'), hold;
 
     // If the navigation.
     if(navigation) {
@@ -66,6 +67,11 @@ function addDynamicContent () {
     // If user has search for something
     if(search) {
         searchProducts(getEntityInformation(document.URL, 'search'));
+    }
+
+    // If the user requests to see the basket
+    if(basket) {
+        displayBasket();
     }
 }
 
@@ -353,8 +359,10 @@ function getProduct (sku) {
             size = document.getElementById("product-sizes"),
             stock = document.getElementById("product-stock"),
             basket = document.getElementById("product-basket"),
+            quantity = document.getElementById("product-quantity"),
+            addToBasket = document.getElementById("product-add-basket"),
             product, sizeElem, sizeElemLabel, j = 0, li = '', checked,
-            disabled, outOfStock;
+            disabled, outOfStock, stockLevel;
 
         loader(false);
 
@@ -389,11 +397,21 @@ function getProduct (sku) {
                     checked = '';
                     disabled = '';
                     outOfStock = '';
-
+                    // Checks to see if there is a value set (size set)
                     if(product.value.length != '') {
+                        // If the item comes in different sizes...
                         if(j == 0 && product.stock != 0) {
                             checked = 'checked';
-                            stock.innerHTML = 'Stock: '+product.stock;
+                            if(product.stock > 10) {
+                                for(var j=0; j<10; j++) {
+                                    quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                                }
+                            } else {
+                                for(var j=0, jen=product.stock; j<jen; j++) {
+                                    quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                                }
+                            }
+                            addToBasket.dataset.id = product.id;
                             j++;
                         }
                         if(product.stock == 0) {
@@ -410,13 +428,28 @@ function getProduct (sku) {
                         li += '<div class="size-radio-label">'+product.value+outOfStock+'</div>';
 
                         li += '</li>';
-
                     } else {
-                        stock.innerHTML = 'Stock: '+product.stock;
+                        // If the item does not come in different sizes.
+                        // Set up the quantity select boxes.
+                        // If stock level is greater than 10, set limit to 10, else set limit to max stock level.
+                        if(product.stock > 10) {
+                            for(var j=0; j<10; j++) {
+                                quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                            }
+                        } else {
+                            for(var j=0, jen=product.stock; j<jen; j++) {
+                                quantity.innerHTML += '<option value="'+(j+1)+'">'+(j+1)+'</option>';
+                            }
+                        }
+                        addToBasket.dataset.id = product.id;
                     }
                 }
+                addToBasket.dataset.sku = product_group.sku;
                 size.innerHTML = li;
             }
+
+            // Setting the number of options in the quantity, depending on what option is selected.
+            addEventListeners("size-quantity-option");
         }
 
         addEventListeners("product-item");
@@ -444,36 +477,6 @@ function getProduct (sku) {
     xhr.onreadystatechange = stateChanged;
 }
 
-// Get stock for product
-function getStock (productID) {
-    var url, xhr = new XMLHttpRequest(),
-
-    success = function () {
-        var response = JSON.parse(xhr.responseText),
-            productStock = document.getElementById('product-stock');
-
-        productStock.innerHTML = 'Stock: '+response.stock;
-    },
-
-    stateChanged = function () {
-        if(xhr.readyState === 4) {
-            switch(xhr.status) {
-                case 200:
-                    success(); break;
-                default:
-                    showMessage("Status "+xhr.status+" returned.", "error"); break;
-            }
-        }
-    };
-
-    url = 'api/v.1/search/stock.php?id='+productID;
-
-    xhr.open("GET", url, true);
-    xhr.send(null);
-    xhr.onreadystatechange = stateChanged;
-}
-
-
 // The function called to display both a list of products and
 // the pagination links.
 function showProducts (status, pageNo, perPage, category) {
@@ -482,6 +485,7 @@ function showProducts (status, pageNo, perPage, category) {
     //Now, load the pagination
     showPagination(status, pageNo, perPage, category);
 }
+
 
 // Show product list.
 function showProductList (status, pageNo, perPage, category) {

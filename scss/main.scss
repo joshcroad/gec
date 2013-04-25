@@ -333,10 +333,11 @@ li.pagItemInactive {
     
     #product-basket {
         float: right;
+        background: rgba(150,150,150,0.1);
+        padding: .5em;
         width: 14em;
         #product-sizes {
             display: table;
-            background: rgba(150,150,150,0.1);
             padding: .5em 1em;
             width: 100%;
             li {
@@ -358,8 +359,110 @@ li.pagItemInactive {
             }
         }
     }
+}
+
+
+
+#products_list {
+    display: table;
+    color: #777;
+    width: 100%;
+    li {
+        display: table-row;
+        em {
+            font-size: .9em;
+        }
+        .product-sku,
+        .product-title,
+        .product-value,
+        .product-quantity,
+        .product-post-status {
+            display: table-cell;
+            vertical-align: middle;
+            padding: .5em;
+        }
+        .product-sku {
+            width: 2.5em;
+            text-align: center;
+        }
+        .product-quantity {
+            width: 10em;
+            .low {
+                color: rgb(200, 50, 42);
+            }
+        }
+        .product-post-status {
+            width: 7em;
+        }
+    }
+    .product-list:nth-child(odd) {
+        background: rgba(240,240,240,1);
+    }
+    .thead:first-child {
+        background: #333;
+        color: #f5f5f5;
+    }
+    a { color: #555; }
+    a:hover { color: #777; }
+}
+
+
+/* BASKET */
+.basket-table {
+    display: table;
+    color: #777;
+    width: 100%;
+    li {
+        display: table-row;
+        em {
+            font-size: .9em;
+        }
+        .sku,
+        .name, 
+        .size, 
+        .quantity, 
+        .price,
+        .remove {
+            display: table-cell;
+            vertical-align: middle;
+            padding: .5em;
+        }
+        .sku {
+            width: 2.5em;
+            text-align: center;
+        }
+        .size {
+            width: 5em;
+        }
+        .quantity {
+            width: 8em;
+            text-align: center;
+        }
+        .price {
+            width: 5em;
+        }
+        .remove {
+            width: 4em;
+        }
+    }
+
+    li.thead:first-child {
+        background: #333;
+        color: #f5f5f5;
+    }
+
+    li.tfoot {
+        .price {
+            padding: 1em .5em 0;
+            width: 5em;
+        }
+    }
 
 }
+
+
+
+
 
 /************************
  ***** LOADER STYLE *****

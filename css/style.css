@@ -262,10 +262,11 @@ li.pagItemInactive {
     font-size: 1.2em; }
 #product #product-basket {
   float: right;
+  background: rgba(150, 150, 150, 0.1);
+  padding: .5em;
   width: 14em; }
   #product #product-basket #product-sizes {
     display: table;
-    background: rgba(150, 150, 150, 0.1);
     padding: 0.5em 1em;
     width: 100%; }
     #product #product-basket #product-sizes li {
@@ -280,6 +281,78 @@ li.pagItemInactive {
         #product #product-basket #product-sizes li .size-radio-label em {
           display: block;
           font-size: .9em; }
+
+#products_list {
+  display: table;
+  color: #777;
+  width: 100%; }
+  #products_list li {
+    display: table-row; }
+    #products_list li em {
+      font-size: .9em; }
+    #products_list li .product-sku,
+    #products_list li .product-title,
+    #products_list li .product-value,
+    #products_list li .product-quantity,
+    #products_list li .product-post-status {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    #products_list li .product-sku {
+      width: 2.5em;
+      text-align: center; }
+    #products_list li .product-quantity {
+      width: 10em; }
+      #products_list li .product-quantity .low {
+        color: #c8322a; }
+    #products_list li .product-post-status {
+      width: 7em; }
+  #products_list .product-list:nth-child(odd) {
+    background: #f0f0f0; }
+  #products_list .thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  #products_list a {
+    color: #555; }
+  #products_list a:hover {
+    color: #777; }
+
+/* BASKET */
+.basket-table {
+  display: table;
+  color: #777;
+  width: 100%; }
+  .basket-table li {
+    display: table-row; }
+    .basket-table li em {
+      font-size: .9em; }
+    .basket-table li .sku,
+    .basket-table li .name,
+    .basket-table li .size,
+    .basket-table li .quantity,
+    .basket-table li .price,
+    .basket-table li .remove {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    .basket-table li .sku {
+      width: 2.5em;
+      text-align: center; }
+    .basket-table li .size {
+      width: 5em; }
+    .basket-table li .quantity {
+      width: 8em;
+      text-align: center; }
+    .basket-table li .price {
+      width: 5em; }
+    .basket-table li .remove {
+      width: 4em; }
+  .basket-table li.thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  .basket-table li.tfoot .price {
+    padding: 1em 0.5em 0;
+    width: 5em; }
 
 /************************
  ***** LOADER STYLE *****
