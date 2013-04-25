@@ -33,7 +33,7 @@ include('inc/api_config.php'); ?>
 
             <!-- BEGIN header -->
             <header>
-                <div class="titlebar">
+                <div class="titlebar clearfix">
                     <h2 id="site-name"></h2>
                     <div class="basket">
                         <a href="basket" id="basket-link">
@@ -41,6 +41,7 @@ include('inc/api_config.php'); ?>
                             <div id="basket-value"></div>
                         </a>
                     </div>
+                </div>
                 <!-- BEGIN nav -->
                 <nav class="clearfix">
                     <ul id="navigation"></ul>
