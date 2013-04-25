@@ -1,10 +1,12 @@
+<?php $href = explode("/", dirname(__FILE__)); $base = end($href); 
+// Sets up the database, if it has not already been done.
 // Mainly for new installations.
 include('inc/api_config.php'); ?>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>GEC - Site</title>
-        <base href="/gec/" />
+        <title><?php echo $base; ?></title>
+        <base href="/<?php echo $base; ?>/" />
         <!-- BEGIN meta -->
         <meta charset="utf8" />
         <!-- BEGIN stylesheets -->
