@@ -1,3 +1,5 @@
+// Mainly for new installations.
+include('inc/api_config.php'); ?>
 <!DOCTYPE html>
 <html>
     <head>
