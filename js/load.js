@@ -14,7 +14,9 @@ if(window.addEventListener) {
 
         // Loop through all navigation links, adding the listener
         for(var i=0, len=navigation.length; i<len; i++) {
-            addListenerGetPage(navigation[i]);
+            if(navigation[i].id != 'site') {
+                addListenerGetPage(navigation[i]);
+            }
         }
 
         // Add event listener for the search box
