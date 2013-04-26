@@ -1,4 +1,7 @@
-<?php $href = explode("/", dirname(__FILE__)); $base = end($href); 
+<?php 
+$href = dirname(__FILE__);
+$array = explode("/", $href);
+$base = end($array); 
 // Sets up the database, if it has not already been done.
 // Mainly for new installations.
 include('inc/api_config.php'); ?>

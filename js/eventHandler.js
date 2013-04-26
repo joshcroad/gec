@@ -3,13 +3,6 @@
 function addEventListeners (eventsFor) {
     // If events are for product pagination, apply those.
     switch(eventsFor) {
-        // Function called on page load, loads the site title,
-        // and the navigation menu.
-        case 'navigation':
-            getSiteTitle();
-            getNavigation();
-            break;
-
         // Events for the main navigation.
         case 'navigation-links':
             var links = document.getElementsByClassName('nav-list-link');

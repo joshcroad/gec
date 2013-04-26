@@ -1,4 +1,8 @@
-<?php $href = explode("/", dirname(__FILE__)); $base = $href[count($href)-2]; ?>
+<?php 
+$href = dirname(__FILE__);
+$arr = explode("/", $href);
+$base = $arr[count($arr)-2];
+?>
 <!DOCTYPE html>
 <html>
     <head>

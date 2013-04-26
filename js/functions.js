@@ -39,17 +39,11 @@ function loadPage (_href) {
 
 // Adding dynamic content and event listeners
 function addDynamicContent () {
-    var navigation = document.getElementById('navigation'),
-        home = document.getElementById('home'),
+    var home = document.getElementById('home'),
         category = document.getElementById('category'), 
         product = document.getElementById('product'),
         search = document.getElementById('search'),
         basket = document.getElementById('basket'), hold;
-
-    // If the navigation.
-    if(navigation) {
-        addEventListeners('navigation');
-    }
 
     if(home) {
         displayRecentProducts();
@@ -270,6 +264,8 @@ function getNavigation () {
         }
         // Fill content with new data.
         content.innerHTML = li;
+        // Now the navigation has loaded, load the page.
+        loadPage(document.URL);
         // add event listeners
         addEventListeners('navigation-links');
     },

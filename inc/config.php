@@ -1,10 +1,10 @@
 <?php
 
 // Get array of location.
-$site_address = explode("/", dirname(__FILE__));
+$site_address1 = explode("/", dirname(__FILE__));
 // Find index of root (this DIR is /inc, parent DIR required).
-$index = count($site_address)-2;
-$site_address = $site_address[$index];
+$index = count($site_address1)-2;
+$site_address = $site_address1[$index];
 
 /**
  * Define global constants.

@@ -4,19 +4,30 @@
 if(window.addEventListener) {
     // Listen to when the window has loaded.
     window.addEventListener('load', function () {
+        init();
+    }, false);
+
+    // Listen to when popstate is fired
+    window.addEventListener('popstate', function () {
+        init();
+    }, false);
+
+    function init () {
         // Set event listeners to elements ALWAYS present
         var siteName = document.getElementById('site-name'),
-            navigation = document.querySelectorAll('nav a'),
+            adminNavigation = document.querySelectorAll('nav a'),
             searchBox = document.getElementById('search-products'),
             basketItems = document.getElementById('basket-items'),
             basketValue = document.getElementById('basket-value'),
             basketLink = document.getElementById('basket-link'),
+            navigation = document.getElementById('navigation'),
             totalPrice = 0.00;
 
         // Loop through all navigation links, adding the listener
-        for(var i=0, len=navigation.length; i<len; i++) {
-            if(navigation[i].id != 'site') {
-                addListenerGetPage(navigation[i]);
+        for(var i=0, len=adminNavigation.length; i<len; i++) {
+            if(adminNavigation[i].id != 'site') {
+                addListenerGetPage(adminNavigation[i]);
+                loadPage(document.URL);
             }
         }
 
@@ -38,11 +49,10 @@ if(window.addEventListener) {
             updateBasketInformation();
         }
 
-    }, false);
-
-    // Listen to when popstate is fired
-    window.addEventListener('popstate', function () {
-        // Retrieve the page to be displayed
-        loadPage(document.URL);
-    }, false);
+        // If the navigation.
+        if(navigation) {
+            getSiteTitle();
+            getNavigation();
+        }
+    }
 }
