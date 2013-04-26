@@ -20,18 +20,22 @@ if(window.addEventListener) {
         }
 
         // Add event listener for the search box
-        searchBox.addEventListener('keydown', function (e) {
-            if(e.keyCode === 13 && searchBox.value !== '') {
-                href = searchBox.baseURI+'search/q='+searchBox.value;
-                history.pushState(null, null, href);
-                loadPage(href);
-            }
-        }, false);
+        if(searchBox) {
+            searchBox.addEventListener('keydown', function (e) {
+                if(e.keyCode === 13 && searchBox.value !== '') {
+                    href = searchBox.baseURI+'search/q='+searchBox.value;
+                    history.pushState(null, null, href);
+                    loadPage(href);
+                }
+            }, false);
+        }
 
         // Add event listener for when user views basket
-        addListenerGetPage(basketLink);
-        // Update the basket information in the header.
-        updateBasketInformation();
+        if(basketLink) {
+            addListenerGetPage(basketLink);
+            // Update the basket information in the header.
+            updateBasketInformation();
+        }
 
     }, false);
 

@@ -187,7 +187,7 @@ class db {
      * @return null. Returns null if the insert was unsuccessful.
      */
     function insert($query) {
-        $this->last_result = $this->query($query);
+        $this->query($query);
         if($this->insert_id == null) {
             $this->errorHandler("No rows inserted.");
             return null;
@@ -340,10 +340,10 @@ class db {
         
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_order 
                             (ID int,
-                            quantity int, price double(10,2), sku int,
-                            CONSTRAINT product_order_pk PRIMARY KEY(ID, sku),
+                            quantity int, price double(10,2), productID int,
+                            CONSTRAINT product_order_pk PRIMARY KEY(ID, productID),
                             FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
+                            FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID)
                                 ON DELETE NO ACTION)"
                            );
 

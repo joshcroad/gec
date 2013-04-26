@@ -124,7 +124,9 @@ function addEventListeners (eventsFor) {
             break;
 
         case 'basket':
-            var removeChecks = document.getElementsByClassName('remove');
+            var removeChecks = document.getElementsByClassName('remove'),
+                confirmOrderBtn = document.getElementById('confirm-order');
+
             for(var i=0, len=removeChecks.length; i<len; i++) {
                 addCheckedEventListener(removeChecks[i], i);
             }
@@ -133,6 +135,12 @@ function addEventListeners (eventsFor) {
                     removeProduct(sessionStorage.key((index-1)));
                 }, false);
             }
+
+            confirmOrderBtn.addEventListener('click', function (e) {
+                history.pushState(null, null, confirmOrderBtn.href);
+                confirmOrder();
+                e.preventDefault();
+            }, false);
             break;
 
         default: break;

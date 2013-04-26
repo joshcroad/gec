@@ -290,11 +290,12 @@ function searchProducts (query) {
 
     success = function () {
         var response = JSON.parse(xhr.responseText), li = '',
+            container = document.getElementById("search"),
             content = document.getElementById("products-list"),
             product_group, colourString;
         // If API returns error.
         if(response.error.thrown) {
-            showMessage(response.error.message, "error");
+            container.innerHTML = "No products matching your search '" + query + "'";
         } else {
             for(var i in response.product_group) {
                 colourString = '';

@@ -8,6 +8,8 @@ function addToBasket (sessionID, productCode) {
         _productSize = document.getElementsByClassName('size-radio'), productSizeID,
         success, stateChanged;
 
+    // Check stock.
+
     if(_productSize) {
         for (var i=0, len=_productSize.length; i<len; i++) {
             if (_productSize[i].checked) {
@@ -19,8 +21,8 @@ function addToBasket (sessionID, productCode) {
     // Contain information about the product.
     product = new Object();
     product.id = sessionID;
-    product.code = productCode;
-    product.quantity = productQuantity;
+    product.sku = productCode;
+    product.quantity = parseInt(productQuantity);
 
     function addToSessionStorage () {
         // Try and find exisitng product in basket.
@@ -38,8 +40,11 @@ function addToBasket (sessionID, productCode) {
             // Add new product to the basket
             sessionStorage.setItem(sessionID, JSON.stringify(product));
         }
-
+        // Update the basket content in the header.
         updateBasketInformation();
+
+        // Update the stock on the database.
+        updateStock(sessionID, product.quantity, 'minus');
 
         showMessage('Successfully added to basket', 'success');
     }
@@ -58,9 +63,9 @@ function addToBasket (sessionID, productCode) {
         } else {
             product.price = response.sale_price;
         }
+
         for(var i=0, len=response.product.length; i<len; i++) {
             if(response.product[i].id === productSizeID) {
-                product.sizeID = response.product[i].id;
                 product.size = response.product[i].value;
             }
         }
@@ -89,18 +94,19 @@ function addToBasket (sessionID, productCode) {
 }
 
 function displayBasket () {
-    var totalPrice = 0.00, ul = '',
-        basket = document.getElementById('basket');
+    var totalPrice = 0.00, ul = '', price = '',
+        basket = document.getElementById('basket-table'),
+        subprice = document.getElementById('subprice'),
+        confirmOrderBtn = document.createElement('a');
 
     // Start basket table.
-    ul += '<ul class="basket-table">';
     ul += '<li class="thead">';
     ul += '<div class="sku">SKU</div>';
     ul += '<div class="name">Name</div>';
     ul += '<div class="size">Size</div>';
     ul += '<div class="quantity">Quantity</div>';
     ul += '<div class="price">Price</div>';
-    ul += '<div class="remove">Remove</div>';
+    ul += '<div class="remove">Delete</div>';
     ul += '</li>';
 
     // Lopp through objects in session
@@ -114,8 +120,8 @@ function displayBasket () {
             colour = ' <em>('+product.colour+')</em>';
 
         ul += '<li class="tbody">';
-        ul += '<div class="sku">'+product.code+'</div>';
-        ul += '<div class="name">'+product.name+colour+'</div>';
+        ul += '<div class="sku">'+product.sku+'</div>';
+        ul += '<div class="name"><a href="product/'+product.sku+'">'+product.name+colour+'</a></div>';
         if(product.size != undefined)
             ul += '<div class="size">'+product.size+'</div>';
         else
@@ -126,17 +132,22 @@ function displayBasket () {
         ul += '</li>';
     }
 
-    ul += '<li class="tfoot">';
-    ul += '<div class="sku"></div>';
-    ul += '<div class="name"></div>';
-    ul += '<div class="size"></div>';
-    ul += '<div class="quantity"></div>';
-    ul += '<div class="price">£'+totalPrice.toFixed(2)+'</div>';
-    ul += '<div class="remove"></div>';
-    ul += '</li>';
+    price += 'Subtotal £'+totalPrice.toFixed(2);
 
     // Display total for order.
     basket.innerHTML = ul;
+    subprice.innerHTML = price;
+
+    // Create to confirm order button to make the order.
+    confirmOrderBtn.innerHTML = 'Confirm Order';
+    confirmOrderBtn.href = 'basket';
+    confirmOrderBtn.id = 'confirm-order';
+    // Add it in after the last element on the site.
+    insertAfter(subprice, confirmOrderBtn);
+    // Inserts an element after a given element.
+    function insertAfter(referenceNode, newNode) {
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
 
     addEventListeners('basket');
 }
@@ -145,6 +156,9 @@ function displayBasket () {
 // Remove single product
 
 function removeProduct(sessionKey) {
+    var item = JSON.parse(sessionStorage.getItem(sessionKey));
+    // Update stock levels in database to reflect.
+    updateStock(sessionKey, item.quantity, 'add');
     // Remove from session storage.
     sessionStorage.removeItem(sessionKey);
     //Update the basket information in the header.
@@ -153,31 +167,103 @@ function removeProduct(sessionKey) {
     loadPage(document.URL);
 }
 
-// Begin order.
-function checkout () {
-
+// Update the stock (remove and add).
+function updateStock (productID, quantity, operation) {
+    var xhr = new XMLHttpRequest(), url, param;
+    // Set up url and parameters
+    url = 'api/v.1/edit/stock.php';
+    param = 'productID='+productID+'&quantity='+quantity+'&operation='+operation;
+    // Open & post request.
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(param);
 }
 
-// Finish order.
+// Confirm order and save to the database.
 function confirmOrder () {
-
     // Loop through objects in session
-    // adding them to the order table in the database.
+    // adding them to the order table in the database
+    var url, param, xhr = new XMLHttpRequest(),
+        id = [], quantity = [], price = [],
+        currentProduct,
+        content = document.getElementById('basket'),
 
+    // Request successful, display response
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader
+        loader(false);
+        // if error thrown
+        if(response.error.thrown) {
+            // Show message of update failure
+            content.innerHTML = "<h2>There was a problem with your order. Please try again.</h2>";
+        } else {
+            // Clear session storage
+            // Display congrates
+            content.innerHTML = "<h2>"+response.report.message+"</h2>";
+            // Clear the basket
+            sessionStorage.clear();
+            // Update the basket information in the header
+            updateBasketInformation();
+        }
+    },
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+    // Show loader before request is sent
+    loader(true);
+
+    // Add values to arrays
+    for(var i=0, len=sessionStorage.length; i<len; i++) {
+        // Get the current product from the session using the key
+        currentProduct = JSON.parse(sessionStorage.getItem(sessionStorage.key(i)));
+        // Push the data to the array
+        id.push(currentProduct.id);
+        quantity.push(currentProduct.quantity);
+        price.push(currentProduct.price);
+    }
+
+    // Stringify the arrays to allow them to be passed through AJAX.
+    id = JSON.stringify(id);
+    quantity = JSON.stringify(quantity);
+    price = JSON.stringify(price);
+
+    // Request parameters
+    param = new FormData();
+    param.append('id', id);
+    param.append('quantity', quantity);
+    param.append('price', price);
+
+    // Set URL and parameters to be sent
+    url = 'api/v.1/add/confirm-order.php';
+
+    // Open, set headers & post request
+    xhr.open("POST", url, true);
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
 }
 
+// Updates the basket content in the header.
 function updateBasketInformation () {
     var basketItems = document.getElementById('basket-items'),
         basketValue = document.getElementById('basket-value'),
-        totalPrice = 0.00;
+        totalPrice = 0.00, totalQuantity = 0;
 
-    basketItems.innerHTML = sessionStorage.length + ' items';
-
-    // Set the total price.
+    // Set the total price
     for(var i=0, len=sessionStorage.length; i<len; i++) {
         var currentId = sessionStorage.key(i),
             currentProduct = JSON.parse(sessionStorage.getItem(currentId));
         totalPrice += parseFloat(currentProduct.price) * currentProduct.quantity;
+        totalQuantity += currentProduct.quantity
     }
+    basketItems.innerHTML = totalQuantity + ' items';
     basketValue.innerHTML = '£' + totalPrice.toFixed(2);
 }
