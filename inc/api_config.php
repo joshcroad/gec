@@ -2,13 +2,14 @@
 /**
  * Require the config file. If not found, throw error.
  */
-require_once(dirname(__FILE__) . '/config.php');
+$config_path = dirname(__FILE__);
+require_once($config_path . '/config.php');
 
 /**
  * Check required file 'class.database.php' exists. Else, throw error.
  * Required to connect to the database.
  */
-require_once(ROOT . DIR_SEPERATOR . 'class.db.php');
+require_once($config_path . '/class.db.php');
 
 /**
  * Instantiate the database class, declare the new 

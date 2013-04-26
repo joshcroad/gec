@@ -2,6 +2,7 @@
 // Sets up the database, if it has not already been done.
 // Mainly for new installations.
 include('inc/api_config.php'); ?>
+
 <!DOCTYPE html>
 <html>
     <head>

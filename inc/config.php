@@ -24,7 +24,7 @@ define('DB_HOST', 'localhost', false);
 define('DB_PORT', '8889', false);
 define('DB_USER', 'root', false);
 define('DB_PASS', 'root', false);
-define('DB_NAME', 'gec_shop', false);
+define('DB_NAME', 'up612596', false);
 define('DB_CHARSET', 'utf8', false);
 
 define('DIR_SEPERATOR', '/', false);
