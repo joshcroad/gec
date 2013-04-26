@@ -5,7 +5,8 @@ if(window.addEventListener) {
     // Listen to when the window has loaded.
     window.addEventListener('load', function () {
         // Set event listeners to elements ALWAYS present
-        var navigation = document.querySelectorAll('nav a'),
+        var siteName = document.getElementById('site-name'),
+            navigation = document.querySelectorAll('nav a'),
             searchBox = document.getElementById('search-products'),
             basketItems = document.getElementById('basket-items'),
             basketValue = document.getElementById('basket-value'),

@@ -171,6 +171,32 @@ header .error {
   #content p {
     margin-bottom: .5em; }
 
+/* HOME */
+#home h3 {
+  font-size: 1.4em;
+  margin: 0 0 1em; }
+
+#recent-products {
+  width: 100%; }
+  #recent-products .products-list-item {
+    float: left;
+    padding: 0 0 0.5em;
+    width: 20%; }
+    #recent-products .products-list-item img {
+      width: 80%;
+      border: 1px solid rgba(150, 150, 150, 0.2);
+      margin: 0 auto;
+      margin: 0.5em 1em; }
+    #recent-products .products-list-item .title {
+      display: block;
+      text-align: center; }
+    #recent-products .products-list-item .price {
+      display: block;
+      text-align: center; }
+  #recent-products .products-list-item:hover {
+    background: rgba(150, 150, 150, 0.1);
+    cursor: pointer; }
+
 /* CATEGORY */
 #category, #search {
   width: 100%; }

@@ -40,6 +40,7 @@ function loadPage (_href) {
 // Adding dynamic content and event listeners
 function addDynamicContent () {
     var navigation = document.getElementById('navigation'),
+        home = document.getElementById('home'),
         category = document.getElementById('category'), 
         product = document.getElementById('product'),
         search = document.getElementById('search'),
@@ -48,6 +49,10 @@ function addDynamicContent () {
     // If the navigation.
     if(navigation) {
         addEventListeners('navigation');
+    }
+
+    if(home) {
+        displayRecentProducts();
     }
 
     // If a category page.
@@ -211,13 +216,18 @@ function getSiteTitle () {
 
     success = function () {
         var response = JSON.parse(xhr.responseText),
-            siteTitle = document.getElementById('site-name');
+            siteTitle = document.getElementById('site-name'),
+            anchor;
 
         if(response.error.thrown) {
             showMessage(response.error.message);
         } else {
-            siteTitle.innerHTML = '<a href="home">'+response.site_name+'</a>';
+            siteTitle.innerHTML = '<a href="home" id="site-name-anchor">'+response.site_name+'</a>';
         }
+
+        anchor = document.getElementById('site-name-anchor');
+
+        addListenerGetPage(anchor);
     },
 
     stateChanged = function () {
@@ -341,6 +351,64 @@ function searchProducts (query) {
     xhr.open("GET", url, true);
     xhr.send(null);
     xhr.onreadystatechange = stateChanged;
+}
+
+// Display the 5 most recently added products
+function displayRecentProducts () {
+    var xhr = new XMLHttpRequest(), url,
+    // Request was successful, display retrieved data.
+    success = function () {
+        // Parse JSON array.
+        var products = JSON.parse(xhr.responseText),
+            product, div,
+            container = document.getElementById('recent-products');
+
+        loader(false);
+
+        div = '<h3>Recently Added</h3>'
+
+        for(var i=0, len=products.product_group.length; i<len; i++) {
+            product = products.product_group[i];
+            div += '<div class="products-list-item" data-sku="'+product.sku+'">';
+
+            div += '<img src="'+product.thumbnail+'" alt="'+product.title+'" />';
+            div += '<div class="title">'+product.title+'</div>';
+            if(product.sale_price != '0.00') {
+                div += '<div class="price">£'+product.sale_price+'</div>';
+                div += '<div class="price"><del>was £'+product.price+'</del></div>';
+            } else {
+                div += '<div class="price">£'+product.price+'</div>';
+            }
+
+            div += '</div>';
+        }
+
+        container.innerHTML = div;
+        // Add events for added products.
+        addEventListeners("product-items");
+    },
+
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    // Show loader.
+    loader(true);
+    // Set url of API, with parameters.
+    url = 'api/v.1/search/recent-products.php';
+    // Open & send the request.
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+
 }
 
 

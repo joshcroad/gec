@@ -1,5 +1,6 @@
 <!-- BEGIN #home -->
 <div id="home">
-    <p>Some latest products and most popular products will be displayed here, in due course.</p>
+    <section id="on-sale"><h3>On Sale</h3></section>
+    <section id="recent-products"></section>
 </div>
 <!-- END #home -->
