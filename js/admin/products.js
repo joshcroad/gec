@@ -36,16 +36,16 @@ getProduct = function(sku) {
             content.innerHTML = product_group.content;
             price.value = product_group.price;
             // Leave blank if not set.
-            console.log(sale.value);
-            if(sale.value !== '')
+            if(product_group.sale_price != 0.00) {
                 sale.value = product_group.sale_price;
+            }
             colour.value = product_group.colour;
 
             thumbnailPreview.innerHTML = '<img src="../'+product_group.thumbnail+'" alt="'+product_group.title+'" />';
 
             // loop through all products.
             for(var i in product_group.product) {
-                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Size" />';
+                valuesStocks.innerHTML += '<input type="text" class="single-values" placeholder="Size (optional)" />';
                 valuesStocks.innerHTML += '<input type="text" class="single-stocks" placeholder="Stock" />';
             }
             for(var i in product_group.product) {
@@ -130,7 +130,7 @@ addProduct = function () {
         } else {
             // Show message of update success.
             showMessage(response.report.status, "success");
-            // 
+            // Calculate the new 'edit product' sku and send the user to that page.
             addProductButton.href = addProductButton.href + response.report.inserted_id;
             history.pushState(null, null, addProductButton.href);
             loadPage(addProductButton.href);

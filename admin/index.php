@@ -34,6 +34,7 @@
                     <li><a href="">Dashboard</a></li>
                     <li><a href="products">Products</a></li>
                     <li><a href="categories">Categories</a></li>
+                    <li><a href="orders">Orders</a></li>
                     <li><a href="settings">Settings</a></li>
                 </ul>
             <!-- END nav -->

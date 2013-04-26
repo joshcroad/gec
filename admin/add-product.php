@@ -37,7 +37,7 @@
 
     <div class="single-products">
         <div id="values-and-stocks">
-            <input type="text" class="single-values" placeholder="Size" />
+            <input type="text" class="single-values" placeholder="Size (optional)" />
             <input type="text" class="single-stocks" placeholder="* Stock" />
             <div id="stock-message"></div>
         </div>
