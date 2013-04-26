@@ -179,7 +179,7 @@ function addValueStockInputs () {
     // Input for values and sizes
     inputValue.type = "text";
     inputValue.className = "single-values";
-    inputValue.placeholder = "Size";
+    inputValue.placeholder = "Size (optional)";
     // Input for stock
     inputStock.type = "text";
     inputStock.className = "single-stocks";
@@ -268,6 +268,18 @@ function validateProductInput () {
 
     if(!stockInputs[0].value) {
         stockInputs[0].style.border = '1px solid red';
+        isValid++;
+    }
+    
+    // Check the user has not entered a '£' before.
+    if(isNaN(priceInput.value)) {
+        priceInput.style.border = '1px solid red';
+        showMessage("Please do not add symbols, such as '£'", 'error');
+        isValid++;
+    }
+    if(isNaN(saleInput.value)) {
+        saleInput.style.border = '1px solid red';
+        showMessage("Please do not add symbols, such as '£'", 'error');
         isValid++;
     }
 
