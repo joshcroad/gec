@@ -118,7 +118,8 @@ function addEventListeners (eventsFor) {
 
         case 'basket':
             var removeChecks = document.getElementsByClassName('remove'),
-                confirmOrderBtn = document.getElementById('confirm-order');
+                confirmOrderBtn = document.getElementById('confirm-order'),
+                continueShopping = document.getElementById('continue-shopping');
 
             for(var i=0, len=removeChecks.length; i<len; i++) {
                 addCheckedEventListener(removeChecks[i], i);
@@ -128,12 +129,16 @@ function addEventListeners (eventsFor) {
                     removeProduct(sessionStorage.key((index-1)));
                 }, false);
             }
-
-            confirmOrderBtn.addEventListener('click', function (e) {
-                history.pushState(null, null, confirmOrderBtn.href);
-                confirmOrder();
-                e.preventDefault();
-            }, false);
+            if(confirmOrderBtn) {
+                confirmOrderBtn.addEventListener('click', function (e) {
+                    history.pushState(null, null, confirmOrderBtn.href);
+                    confirmOrder();
+                    e.preventDefault();
+                }, false);
+            }
+            if(continueShopping) {
+                addListenerGetPage(continueShopping);
+            }
             break;
 
         default: break;

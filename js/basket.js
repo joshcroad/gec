@@ -138,12 +138,22 @@ function displayBasket () {
     basket.innerHTML = ul;
     subprice.innerHTML = price;
 
-    // Create to confirm order button to make the order.
-    confirmOrderBtn.innerHTML = 'Confirm Order';
-    confirmOrderBtn.href = 'basket';
-    confirmOrderBtn.id = 'confirm-order';
-    // Add it in after the last element on the site.
-    insertAfter(subprice, confirmOrderBtn);
+    if(sessionStorage.length > 0) {
+        // Create to confirm order button to make the order.
+        confirmOrderBtn.innerHTML = 'Confirm Order';
+        confirmOrderBtn.href = 'basket';
+        confirmOrderBtn.id = 'confirm-order';
+        // Add it in after the last element on the site.
+        insertAfter(subprice, confirmOrderBtn);
+    } else {
+        // Create to confirm order button to make the order.
+        confirmOrderBtn.innerHTML = 'Continue Shopping';
+        confirmOrderBtn.href = 'home';
+        confirmOrderBtn.id = 'continue-shopping';
+        // Add it in after the last element on the site.
+        insertAfter(subprice, confirmOrderBtn);
+    }
+    
     // Inserts an element after a given element.
     function insertAfter(referenceNode, newNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
