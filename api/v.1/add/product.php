@@ -61,7 +61,7 @@ if($db || isset($db)) {
         // Check to make sure file type is picture, and size is < 2mb
         if ((($_FILES["thumbnail"]["type"] == "image/gif") || ($_FILES["thumbnail"]["type"] == "image/jpeg")
         || ($_FILES["thumbnail"]["type"] == "image/jpg") || ($_FILES["thumbnail"]["type"] == "image/png") 
-        || ($_FILES["thumbnail"]["type"] == "image/pjpeg")) && ($_FILES["thumbnail"]["size"] < 20000) 
+        || ($_FILES["thumbnail"]["type"] == "image/pjpeg")) && ($_FILES["thumbnail"]["size"] < 200000) 
         && in_array($exts, $allowedExts)) {
             // Has the file got an error?
             if ($_FILES["thumbnail"]["error"] > 0) {

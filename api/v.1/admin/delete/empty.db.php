@@ -12,13 +12,14 @@ require_once('../../../../inc/api_config.php');
 global $db;
 
 if($db || isset($db)) {
-    $db->truncate(); break;
+
+    $db->truncate();
 
     $response['error']['thrown'] = false;
-    $response['status'] = "Database reset successfully.";
+    $response['report']['message'] = "Database reset successfully.";
 } else {
     $response['error']['thrown'] = true;
-    $response['error']['message'] = 'Unable to connect to the database.';
+    $response['report']['message'] = 'Unable to connect to the database.';
 }
 
 /**

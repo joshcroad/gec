@@ -11,7 +11,7 @@
 
         <div class="thumbnail-container">
             <!-- For uploading a product thumbnail -->
-            <input type="file" id="single-thumbnail" placeholder="Featured Image" />
+            <input type="file" id="single-thumbnail" />
             <div id="single-thumbnail-preview"></div>
         </div>
         

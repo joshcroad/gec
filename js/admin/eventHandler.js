@@ -117,6 +117,31 @@ function addEventListeners (eventsFor) {
             }, false);
             break;
 
+        case 'settings':
+            var companyName = document.getElementById('site-name'),
+                resetDB = document.getElementById("reset-database"),
+                setDefault = document.getElementById("set-default-picture");
+
+            companyName.addEventListener('keydown', function (e) {
+                if(e.keyCode === 13 && companyName.value !== '') {
+                    setCompanyName();
+                }
+            }, false);
+
+            // Event to fire when default picture is pressed.
+            setDefault.addEventListener('click', function (e) {
+                setDefaultPicture();
+                e.preventDefault();
+            }, false);
+            
+            // The event to fire when the user requests 
+            resetDB.addEventListener('click', function (e) {
+                if (confirm('You are about to wipe the database clean, are you sure?')) {
+                    truncateDbTables();
+                }
+                e.preventDefault();
+            }, false);
+
         default: break;
     }
 }

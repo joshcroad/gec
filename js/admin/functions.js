@@ -43,6 +43,7 @@ function addDynamicContent () {
         addProduct = document.getElementById("add-product"),
         editTag = document.getElementById("edit-tag"),
         addTag = document.getElementById("add-tag"),
+        settings = document.getElementById("settings"),
         pageNumber, status, view, productID;
 
     // If the page is the Products page.
@@ -76,6 +77,11 @@ function addDynamicContent () {
         addEventListeners('add-category');
         status = getFilterCriteria(document.URL);
         showCategoryList(status);
+    }
+
+    if(settings) {
+        getCompanyName();
+        addEventListeners('settings');
     }
 }
 
@@ -337,4 +343,181 @@ function validateCategoryInput () {
     // If isValid equals 0, nothing has been flagged. Return True.
     if(isValid === 0) { return true; }
     else { return false; }
+}
+
+
+// SETTINGS
+
+function getCompanyName () {
+    var url, xhr = new XMLHttpRequest(),
+        companyName = document.getElementById('site-name');
+
+    // Request successful, display response.
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader.
+        loader(false);
+        // if error thrown.
+        if(!response.error.thrown) {
+            // Show message of update failure.
+            companyName.value = response.site_name;
+        }
+    },
+
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    // Show loader before request is sent.
+    loader(true);
+
+    // Set URL and parameters to be sent.
+    url = '../api/v.1/admin/view/settings.php';
+
+    // Open, set headers & post request.
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Function to set the company name
+function setCompanyName () {
+    var url, param, xhr = new XMLHttpRequest(),
+        companyName = document.getElementById('site-name').value;
+
+    // Request successful, display response.
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader.
+        loader(false);
+        // if error thrown.
+        if(response.error.thrown) {
+            // Show message of update failure.
+            showMessage(response.report.status, "error");
+        } else {
+            // Show message of update success.
+            showMessage(response.report.status, "success");
+        }
+    },
+
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    // Show loader before request is sent.
+    loader(true);
+
+    // Request parameters.
+    param = new FormData();
+    param.append('site_name', companyName);
+
+    // Set URL and parameters to be sent.
+    url = '../api/v.1/admin/edit/site-name.php';
+
+    // Open, set headers & post request.
+    xhr.open("POST", url, true);
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Function to set the default picture.
+function setDefaultPicture () {
+    var url, param, xhr = new XMLHttpRequest(), thumbnail,
+        thumbnailElem = document.getElementById("default-picture");
+
+    // Request successful, display response.
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // Hide loader.
+        loader(false);
+        // if error thrown.
+        if(response.error.thrown) {
+            // Show message of update failure.
+            showMessage(response.report.status, "error");
+        } else {
+            // Show message of update success.
+            showMessage(response.report.status, "success");
+            // history.pushState(null, null, addProductButton.href);
+            // loadPage(addProductButton.href);
+        }
+    },
+
+    // Once state is changed, check status.
+    stateChanged = function () {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    showMessage("Status "+xhr.status+" returned.", "error"); break;
+            }
+        }
+    };
+
+    // Show loader before request is sent.
+    loader(true);
+
+    // Takes the file and posts it.
+    thumbnail = thumbnailElem.files[0];
+    // Request parameters.
+    param = new FormData();
+    param.append('thumbnail', thumbnail);
+
+    // Set URL and parameters to be sent.
+    url = '../api/v.1/admin/add/default-thumb.php';
+
+    // Open, set headers & post request.
+    xhr.open("POST", url, true);
+    xhr.send(param);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Ajax call to empty database.
+function truncateDbTables () {
+    var success, stateChanged, url,
+        xhr = new XMLHttpRequest(),
+        message = document.getElementById('message'),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // If API returns error.
+        if(response.error.thrown) {
+            showMessage(response.report.message, 'error');
+        } else {
+            showMessage(response.report.message, 'success');
+        }
+    },
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    url = '../api/v.1/admin/delete/empty.db.php';
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
 }

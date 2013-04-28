@@ -29,7 +29,7 @@ if($db || isset($db)) {
 
 } else {
     $response['error']['thrown'] = true;
-    $response['error']['message'] = 'Unable to connect to the database.';
+    $response['report']['message'] = 'Unable to connect to the database.';
 }
 
 /**

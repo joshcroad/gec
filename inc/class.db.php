@@ -231,20 +231,31 @@ class db {
      *
      * @param string $table. The table to be executed. Default is all tables.
      */
-    function truncate($table = 'all') {
-        if($table === 'all') {
-            $this->query("TRUNCATE TABLE $this->db_name.category");
-            $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
-            $this->query("TRUNCATE TABLE $this->db_name.tag");
-            $this->query("TRUNCATE TABLE $this->db_name.settings");
-            $this->query("TRUNCATE TABLE $this->db_name.order");
-            $this->query("TRUNCATE TABLE $this->db_name.product_group");
-            $this->query("TRUNCATE TABLE $this->db_name.product");
-            $this->query("TRUNCATE TABLE $this->db_name.product_order");
-            $this->query("TRUNCATE TABLE $this->db_name.product_tag");
-        } else {
-            $this->query("TRUNCATE TABLE $this->db_name.$table");
-        }
+    function truncate() {
+        // Drop all Foreign Key Constraints
+        $this->query("ALTER TABLE $this->db_name.product_order DROP FOREIGN KEY product_order_order_fk");
+        $this->query("ALTER TABLE $this->db_name.product_order DROP FOREIGN KEY product_order_product_fk");
+        $this->query("ALTER TABLE $this->db_name.product_group DROP FOREIGN KEY product_group_category_fk");
+        $this->query("ALTER TABLE $this->db_name.product DROP FOREIGN KEY product_product_group_fk");
+
+        // Truncate all tables
+        $this->query("TRUNCATE TABLE $this->db_name.product_order");
+        $this->query("TRUNCATE TABLE $this->db_name.product");
+        $this->query("TRUNCATE TABLE $this->db_name.product_group");
+        $this->query("TRUNCATE TABLE $this->db_name.order");
+        $this->query("TRUNCATE TABLE $this->db_name.settings");
+        $this->query("TRUNCATE TABLE $this->db_name.category");            
+
+        // Add all Foreign key constraints back
+        $this->query("ALTER TABLE $this->db_name.product_order ADD CONSTRAINT product_order_order_fk FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID)");
+        $this->query("ALTER TABLE $this->db_name.product_order ADD CONSTRAINT product_order_product_fk FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID)");
+        $this->query("ALTER TABLE $this->db_name.product_group ADD CONSTRAINT product_group_category_fk FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID)");
+        $this->query("ALTER TABLE $this->db_name.product ADD CONSTRAINT product_product_group_fk FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)");
+
+        // Insert basic information.
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'This needs setting')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
     }
 
     function delete($query) {
@@ -270,12 +281,6 @@ class db {
         $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Toys', 'toys', 1, 'publish')");
         $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Cuddly Toys', 'cuddly-toys', 2, 'publish')");
         $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Clothes', 'clothes', 3, 'publish')");
-        
-        /*$this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.tag 
-                            (ID int NOT NULL AUTO_INCREMENT, 
-                            name varchar(50), value longtext, parent int,
-                            CONSTRAINT tag_pk PRIMARY KEY(ID))"
-                           ); */
 
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.settings 
                             (ID int NOT NULL AUTO_INCREMENT, 
@@ -296,7 +301,7 @@ class db {
                             sale_price double(10,2), colour varchar(50), thumbnail varchar(150), post_status varchar(50), 
                             post_date datetime, post_modified datetime, categoryID int,
                             CONSTRAINT product_group_pk PRIMARY KEY(sku),
-                            FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID))"
+                            CONSTRAINT product_group_category_fk FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID))"
                            );
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Aeroplane','This is a dummy product.','9.99','4.99','','media/default.jpg','publish',NOW(),'2')");
         $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Bear','This is a dummy product.','9.99','0.00','Brown','media/default.jpg','publish',NOW(),'3')");
@@ -312,8 +317,7 @@ class db {
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product 
                             (ID int NOT NULL AUTO_INCREMENT, sku int NOT NULL, value varchar(50), stock int,
                             CONSTRAINT product_pk PRIMARY KEY(ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE CASCADE)"
+                            CONSTRAINT product_product_group_fk FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku))"
                            );
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('1','','10')");
         $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','Small','10')");
@@ -342,19 +346,9 @@ class db {
                             (ID int,
                             quantity int, price double(10,2), productID int,
                             CONSTRAINT product_order_pk PRIMARY KEY(ID, productID),
-                            FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID),
-                            FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID)
-                                ON DELETE NO ACTION)"
+                            CONSTRAINT product_order_order_fk FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID),
+                            CONSTRAINT product_order_product_fk FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID))"
                            );
-
-        $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_tag 
-                            (ID int, 
-                            sku int,
-                            CONSTRAINT product_tag_pk PRIMARY KEY(ID, sku),
-                            FOREIGN KEY (ID) REFERENCES $this->db_name.category (ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE NO ACTION)"
-                           ); 
     }
 }
 
