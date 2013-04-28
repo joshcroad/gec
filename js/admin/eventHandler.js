@@ -119,6 +119,7 @@ function addEventListeners (eventsFor) {
 
         case 'settings':
             var companyName = document.getElementById('site-name'),
+                companyNameBtn = document.getElementById('site-name-button'),
                 resetDB = document.getElementById("reset-database"),
                 setDefault = document.getElementById("set-default-picture");
 
@@ -126,6 +127,11 @@ function addEventListeners (eventsFor) {
                 if(e.keyCode === 13 && companyName.value !== '') {
                     setCompanyName();
                 }
+            }, false);
+
+            companyNameBtn.addEventListener('click', function (e) {
+                setCompanyName();
+                e.preventDefault();
             }, false);
 
             // Event to fire when default picture is pressed.

@@ -448,11 +448,12 @@ function getDefaultPicture () {
 // Function to set the default picture.
 function setDefaultPicture () {
     var url, param, xhr = new XMLHttpRequest(), thumbnail,
-        thumbnailElem = document.getElementById("default-picture");
+        thumbnailElem = document.getElementById("default-picture"),
 
     // Request successful, display response.
     success = function () {
-        var response = JSON.parse(xhr.responseText);
+        var response = JSON.parse(xhr.responseText),
+            setDefault = document.getElementById("set-default-picture");
         // Hide loader.
         loader(false);
         // if error thrown.
@@ -462,8 +463,8 @@ function setDefaultPicture () {
         } else {
             // Show message of update success.
             showMessage(response.report.status, "success");
-            // history.pushState(null, null, addProductButton.href);
-            // loadPage(addProductButton.href);
+            history.pushState(null, null, setDefault.href);
+            loadPage(setDefault.href);
         }
     },
 
