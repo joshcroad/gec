@@ -1,6 +1,6 @@
 <!-- BEGIN #home -->
 <div id="home">
     <h2>Dashboard</h2>
-    <p>Check out an overview of your product catelog and sales statistics.</p>
+    <p>Use the links above to access content management and administration.</p>
 </div>
 <!-- END #home -->
