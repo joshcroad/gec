@@ -97,7 +97,8 @@ function displayBasket () {
     var totalPrice = 0.00, ul = '', price = '',
         basket = document.getElementById('basket-table'),
         subprice = document.getElementById('subprice'),
-        confirmOrderBtn = document.createElement('a');
+        confirmOrderBtn = document.createElement('a'),
+        name = document.createElement('input');
 
     // Start basket table.
     ul += '<li class="thead">';
@@ -139,12 +140,16 @@ function displayBasket () {
     subprice.innerHTML = price;
 
     if(sessionStorage.length > 0) {
+        name.type = 'text';
+        name.placeholder = 'Please enter your name';
+        name.id = 'customer-name';
+        insertAfter(subprice, name);
         // Create to confirm order button to make the order.
         confirmOrderBtn.innerHTML = 'Confirm Order';
         confirmOrderBtn.href = 'basket';
         confirmOrderBtn.id = 'confirm-order';
         // Add it in after the last element on the site.
-        insertAfter(subprice, confirmOrderBtn);
+        insertAfter(name, confirmOrderBtn);
     } else {
         // Create to confirm order button to make the order.
         confirmOrderBtn.innerHTML = 'Continue Shopping';
@@ -195,8 +200,8 @@ function confirmOrder () {
     // adding them to the order table in the database
     var url, param, xhr = new XMLHttpRequest(),
         id = [], quantity = [], price = [],
-        currentProduct,
-        content = document.getElementById('basket'),
+        currentProduct, content = document.getElementById('basket'),
+        customerName = document.getElementById('customer-name'),
 
     // Request successful, display response
     success = function () {
@@ -251,6 +256,7 @@ function confirmOrder () {
     param.append('id', id);
     param.append('quantity', quantity);
     param.append('price', price);
+    param.append('customer_name', customerName.value);
 
     // Set URL and parameters to be sent
     url = 'api/v.1/add/confirm-order.php';

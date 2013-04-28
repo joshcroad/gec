@@ -450,6 +450,37 @@ header .error {
   padding: 0.5em 0.5em 0;
   position: absolute; }
 
+/* ORDERS PAGE */
+#undispatched-orders {
+  display: table;
+  color: #777;
+  width: 100%; }
+  #undispatched-orders li {
+    display: table-row; }
+    #undispatched-orders li .order-id,
+    #undispatched-orders li .customer-name,
+    #undispatched-orders li .order-products,
+    #undispatched-orders li .mark-dispatched {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    #undispatched-orders li .order-id {
+      width: 2.5em;
+      text-align: center; }
+    #undispatched-orders li .customer-name {
+      width: 10em; }
+    #undispatched-orders li .mark-dispatched {
+      width: 7em; }
+  #undispatched-orders .product-list:nth-child(odd) {
+    background: #f0f0f0; }
+  #undispatched-orders .thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  #undispatched-orders a {
+    color: #555; }
+  #undispatched-orders a:hover {
+    color: #777; }
+
 /* SETTINGS PAGE STYLE */
 #settings .site-information {
   margin: 0 0 2em; }

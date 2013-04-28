@@ -117,6 +117,14 @@ function addEventListeners (eventsFor) {
             }, false);
             break;
 
+        case 'orders':
+            var markDispatched = document.getElementById('mark-dispatched');
+            // Mark the order as dispatched.
+            markDispatched.addEventListener('click', function () {
+                markOrderAsDispatched(markDispatched.dataset.id);
+            }, false);
+            break;
+
         case 'settings':
             var companyName = document.getElementById('site-name'),
                 companyNameBtn = document.getElementById('site-name-button'),

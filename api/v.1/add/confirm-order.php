@@ -17,8 +17,11 @@ if($db || isset($db)) {
     $product_ids = json_decode($_POST['id']);
     $product_quantities = json_decode($_POST['quantity']);
     $product_prices = json_decode($_POST['price']);
+    $unsafe_customer_name = $_POST['customer_name'];
 
-    $db->insert("INSERT INTO $db->db_name.order (purchase_date, mail_type) VALUES (NOW(), 'standard')");
+    $customer_name = $db->real_escape_string($unsafe_customer_name);
+
+    $db->insert("INSERT INTO $db->db_name.order (customer, purchase_date, mail_type, dispatched) VALUES ('$customer_name', NOW(), 'standard', 'false')");
 
     // Get the recently inserted sku number
     $order_id = $db->insert_id;

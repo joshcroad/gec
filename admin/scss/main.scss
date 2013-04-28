@@ -555,6 +555,45 @@ header {
 }
 
 
+/* ORDERS PAGE */
+
+#undispatched-orders {
+    display: table;
+    color: #777;
+    width: 100%;
+    li {
+        display: table-row;
+        .order-id,
+        .customer-name,
+        .order-products,
+        .mark-dispatched {
+            display: table-cell;
+            vertical-align: middle;
+            padding: .5em;
+        }
+        .order-id {
+            width: 2.5em;
+            text-align: center;
+        }
+        .customer-name {
+            width: 10em;
+        }
+        .mark-dispatched {
+            width: 7em;
+        }
+    }
+    .product-list:nth-child(odd) {
+        background: rgba(240,240,240,1);
+    }
+    .thead:first-child {
+        background: #333;
+        color: #f5f5f5;
+    }
+    a { color: #555; }
+    a:hover { color: #777; }
+}
+
+
 /* SETTINGS PAGE STYLE */
 
 #settings {

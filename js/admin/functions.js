@@ -44,6 +44,7 @@ function addDynamicContent () {
         editTag = document.getElementById("edit-tag"),
         addTag = document.getElementById("add-tag"),
         settings = document.getElementById("settings"),
+        orders = document.getElementById('orders'),
         pageNumber, status, view, productID;
 
     // If the page is the Products page.
@@ -77,6 +78,10 @@ function addDynamicContent () {
         addEventListeners('add-category');
         status = getFilterCriteria(document.URL);
         showCategoryList(status);
+    }
+
+    if(orders) {
+        undispatchedOrders();
     }
 
     if(settings) {
@@ -502,7 +507,6 @@ function setDefaultPicture () {
 function truncateDbTables () {
     var success, stateChanged, url,
         xhr = new XMLHttpRequest(),
-        message = document.getElementById('message'),
 
     success = function () {
         var response = JSON.parse(xhr.responseText);
@@ -529,5 +533,106 @@ function truncateDbTables () {
 
     xhr.open("GET", url, true);
     xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+// Display all undispatched orders.
+function undispatchedOrders () {
+    var success, stateChanged, url,
+        xhr = new XMLHttpRequest(),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText), li = '',
+            undispatchedOrders = document.getElementById('undispatched-orders');
+
+        // If API returns error.
+        if(response.error.thrown) {
+            showMessage(response.error.message, "error");
+        } else {
+            li += '<li class="order-list thead">';
+            li += '<div class="order-id">Sku</div>';
+            li += '<div class="customer-name">Customer</div>';
+            li += '<div class="order-products">Products</div>';
+            li += '<div class="mark-dispatched">Dispatched</div>';
+            li += '</li>';
+            // Loop through each result.
+            for(var i in response.order) {
+                order = response.order[i];
+
+                // Set up table body.
+                li += '<li class="order-list '+order.id+'">';
+
+                li += '<div class="order-id">' + order.id + '</div>';
+
+                li += '<div class="customer-name">' + order.customer + '</a></div>';
+                
+                li += '<div class="order-products"><ul>';
+                for(var i in order.product_order) {
+                    var product = order.product_order[i];
+                    li += '<li>Product: <a href="product/'+product.sku+'" class="product-item" data-id="'+product.sku+'">'+product.productID+'</a> Quantity: '+product.quantity+'</li>';
+                }
+                li += '</ul></div>';
+
+                li += '<div class="mark-dispatched">';
+                li += '<input type="checkbox" id="mark-dispatched" data-id="'+order.id+'" />'
+                li += '</div>'
+
+                li += '</li>';
+            }
+        }
+
+        undispatchedOrders.innerHTML = li;
+
+        addEventListeners('orders');
+    },
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    url = '../api/v.1/view/orders.php';
+
+    xhr.open("GET", url, true);
+    xhr.send(null);
+    xhr.onreadystatechange = stateChanged;
+}
+
+function markOrderAsDispatched (orderID) {
+    var success, stateChanged, url, param = 'orderID='+orderID;
+        xhr = new XMLHttpRequest(),
+
+    success = function () {
+        var response = JSON.parse(xhr.responseText);
+        // If API returns error.
+        if(response.error.thrown) {
+            showMessage(response.error.message, "error");
+        } else {
+            loadPage(document.URL);
+        }
+    },
+
+    stateChanged = function() {
+        if(xhr.readyState === 4) {
+            switch(xhr.status) {
+                case 200:
+                    success(); break;
+                default:
+                    failed("Status "+xhr.status+" returned."); break;
+            }
+        }
+    };
+
+    url = '../api/v.1/admin/edit/dispatched.php';
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xhr.send(param);
     xhr.onreadystatechange = stateChanged;
 }

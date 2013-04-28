@@ -292,8 +292,10 @@ class db {
         $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
 
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.order 
-                            (ID int NOT NULL AUTO_INCREMENT, 
+                            (ID int NOT NULL AUTO_INCREMENT,
+                            customer varchar(50),
                             purchase_date datetime, mail_type varchar(50),
+                            dispatched varchar(6) NOT NULL DEFAULT 'false',
                             CONSTRAINT order_pk PRIMARY KEY(ID))"
                            );
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_group 
