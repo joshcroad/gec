@@ -1,8 +1,14 @@
 <?php 
 $href = dirname(__FILE__);
-$arr = explode("/", $href);
+$arr = explode("\\", $href);
+// If $arr has been split it will be bigger than 1,
+// if not, the system will have to split it a different
+// way. Mainly for use on OS X/Linux
+if(count($arr) == 1)
+    $arr = explode("/", $href);
 $base = $arr[count($arr)-2];
 ?>
+
 <!DOCTYPE html>
 <html>
     <head>

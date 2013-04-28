@@ -1,7 +1,12 @@
 <?php 
 $href = dirname(__FILE__);
-$array = explode("/", $href);
-$base = end($array); 
+$arr = explode("\\", $href);
+// If $arr has been split it will be bigger than 1,
+// if not, the system will have to split it a different
+// way. Mainly for use on OS X/Linux
+if(count($arr) == 1)
+    $arr = explode("/", $href);
+$base = end($arr);
 // Sets up the database, if it has not already been done.
 // Mainly for new installations.
 include('inc/api_config.php'); ?>
