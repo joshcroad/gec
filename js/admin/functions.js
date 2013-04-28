@@ -81,6 +81,7 @@ function addDynamicContent () {
 
     if(settings) {
         getCompanyName();
+        getDefaultPicture();
         addEventListeners('settings');
     }
 }
@@ -434,6 +435,14 @@ function setCompanyName () {
     xhr.open("POST", url, true);
     xhr.send(param);
     xhr.onreadystatechange = stateChanged;
+}
+
+// Function to set the company name
+function getDefaultPicture () {
+    var url, param, xhr = new XMLHttpRequest(),
+        thumbnailPreview = document.getElementById('single-thumbnail-preview');
+
+    thumbnailPreview.innerHTML = '<img src="../media/default.jpg" alt="The default picture set for products." />';
 }
 
 // Function to set the default picture.
