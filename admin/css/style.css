@@ -308,20 +308,20 @@ header .error {
   margin: 0 0 1.5em;
   /* Products */ }
   #fields #single-title {
-    width: 45em;
+    width: 38em;
     margin: 0 0 1em; }
   #fields #single-content {
-    width: 45em;
+    width: 38em;
     height: 10em;
     margin: 0 0 1em; }
   #fields #single-price, #fields #single-sale {
     display: inline-block;
-    width: 22em;
+    width: 18em;
     margin: 0 0 1em; }
   #fields #single-price {
     margin-right: .6em; }
   #fields #single-colour {
-    width: 20em;
+    width: 16em;
     float: left;
     margin: 0 0 1em; }
   #fields .thumbnail-container {
@@ -384,10 +384,10 @@ header .error {
     overflow: scroll; }
   .single-products .single-values {
     margin: 1em auto 0.5em;
-    width: 20em; }
+    width: 18em; }
   .single-products .single-stocks {
     margin: 0 auto 0.5em;
-    width: 20em; }
+    width: 18em; }
   .single-products .single-stocks:last-child {
     margin: 0 auto 1.5em; }
   .single-products #add-value-stock {
