@@ -8,7 +8,7 @@ header("Content-type: application/json");
 /**
  * Configure the API.
  */
-require_once('../../../../inc/api_config.php');
+require_once('../../../inc/api_config.php');
 global $db;
 
 if($db || isset($db)) {
@@ -29,7 +29,7 @@ if($db || isset($db)) {
 
 } else {
     $response['error']['thrown'] = true;
-    $response['report']['message'] = 'Unable to connect to the database.';
+    $response['error']['message'] = 'Unable to connect to the database.';
 }
 
 /**

@@ -20,19 +20,27 @@ if($db || isset($db)) {
     $status = $_GET['status'];
     $start = (int) $_GET['start'];
     $show = (int) $_GET['show'];
+    // Check to see if the user wants to specify a 
+    // category to view.
+    if(isset($_GET['category'])) {
+        $category = $_GET['category'];
+        $category = "AND categoryID='".$category."'";
+    } else {
+        $category = '';
+    }
 
     /**
      * Return on results the user has specified. Default is all.
      */
     switch($status) {
         case 'publish':
-            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'publish' ORDER BY sku DESC LIMIT $start, $show"); break;
+            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'publish' $category ORDER BY sku DESC LIMIT $start, $show"); break;
         case 'trash':
-            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'trash' ORDER BY sku DESC LIMIT $start, $show"); break;
+            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'trash' $category ORDER BY sku DESC LIMIT $start, $show"); break;
         case 'draft':
-            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'draft' ORDER BY sku DESC LIMIT $start, $show"); break;
+            $products = $db->select("SELECT * FROM product_group WHERE post_status = 'draft' $category ORDER BY sku DESC LIMIT $start, $show"); break;
         case 'not-trash':
-            $products = $db->select("SELECT * FROM product_group WHERE post_status <> 'trash' ORDER BY sku DESC LIMIT $start, $show"); break;
+            $products = $db->select("SELECT * FROM product_group WHERE post_status <> 'trash' $category ORDER BY sku DESC LIMIT $start, $show"); break;
         default:
             $products = $db->select("SELECT * FROM product_group ORDER BY sku DESC LIMIT $start, $show"); break;
     }
@@ -49,6 +57,7 @@ if($db || isset($db)) {
         $response['product_group'][$i]['price'] = $item['price'];
         $response['product_group'][$i]['sale_price'] = $item['sale_price'];
         $response['product_group'][$i]['colour'] = $item['colour'];
+        $response['product_group'][$i]['thumbnail'] = $item['thumbnail'];
         $response['product_group'][$i]['post_status'] = $item['post_status'];
         $response['product_group'][$i]['categoryID'] = $item['categoryID'];
         $product_values = $db->select("SELECT * FROM product WHERE sku = '$id'");

@@ -1,0 +1,6 @@
+RewriteEngine On
+
+RewriteBase /admin/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+) http://localhost:8888/gec/admin/index.php [L]

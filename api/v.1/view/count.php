@@ -17,6 +17,14 @@ if($db || isset($db)) {
      */
     $show = $_GET['show'];
     $status = $_GET['status'];
+    // Check to see if the user wants to specify a 
+    // category to view.
+    if(isset($_GET['category'])) {
+        $category = $_GET['category'];
+        $category = "AND categoryID='".$category."'";
+    } else {
+        $category = '';
+    }
 
     /**
      * Validate which table to search. Default is 'product_group'.
@@ -35,13 +43,13 @@ if($db || isset($db)) {
      */
     switch($status) {
         case 'publish':
-            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'publish'"); break;
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'publish' $category"); break;
         case 'trash':
-            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'trash'"); break;
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'trash' $category"); break;
         case 'draft':
-            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'draft'"); break;
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status = 'draft' $category"); break;
         case 'not-trash':
-            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status <> 'trash'"); break;
+            $products_query = $db->select("SELECT COUNT($id) FROM $table WHERE post_status <> 'trash' $category"); break;
         default:
             $products_query = $db->select("SELECT COUNT($id) FROM $table"); break;
     }

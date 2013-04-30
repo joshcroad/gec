@@ -82,7 +82,7 @@ class db {
             $this->ready = true;
         // initialise the database if it cannot be selected.
         if(!$this->connection->select_db($db_name))
-            $this->initDB($db_name);
+            $this->init_db();
         // Echo any errors thrown.
         if(mysqli_connect_errno())
             die("Database connect Error : " . mysqli_connect_error($this->connection));
@@ -187,7 +187,7 @@ class db {
      * @return null. Returns null if the insert was unsuccessful.
      */
     function insert($query) {
-        $this->last_result = $this->query($query);
+        $this->query($query);
         if($this->insert_id == null) {
             $this->errorHandler("No rows inserted.");
             return null;
@@ -231,19 +231,31 @@ class db {
      *
      * @param string $table. The table to be executed. Default is all tables.
      */
-    function truncate($table = 'all') {
-        if($table === 'all') {
-            $this->query("TRUNCATE TABLE $this->db_name.category");
-            $this->query("TRUNCATE TABLE $this->db_name.tag");
-            $this->query("TRUNCATE TABLE $this->db_name.settings");
-            $this->query("TRUNCATE TABLE $this->db_name.order");
-            $this->query("TRUNCATE TABLE $this->db_name.product_group");
-            $this->query("TRUNCATE TABLE $this->db_name.product");
-            $this->query("TRUNCATE TABLE $this->db_name.product_order");
-            $this->query("TRUNCATE TABLE $this->db_name.product_tag");
-        } else {
-            $this->query("TRUNCATE TABLE $this->db_name.$table");
-        }
+    function truncate() {
+        // Drop all Foreign Key Constraints
+        $this->query("ALTER TABLE $this->db_name.product_order DROP FOREIGN KEY product_order_order_fk");
+        $this->query("ALTER TABLE $this->db_name.product_order DROP FOREIGN KEY product_order_product_fk");
+        $this->query("ALTER TABLE $this->db_name.product_group DROP FOREIGN KEY product_group_category_fk");
+        $this->query("ALTER TABLE $this->db_name.product DROP FOREIGN KEY product_product_group_fk");
+
+        // Truncate all tables
+        $this->query("TRUNCATE TABLE $this->db_name.product_order");
+        $this->query("TRUNCATE TABLE $this->db_name.product");
+        $this->query("TRUNCATE TABLE $this->db_name.product_group");
+        $this->query("TRUNCATE TABLE $this->db_name.order");
+        $this->query("TRUNCATE TABLE $this->db_name.settings");
+        $this->query("TRUNCATE TABLE $this->db_name.category");            
+
+        // Add all Foreign key constraints back
+        $this->query("ALTER TABLE $this->db_name.product_order ADD CONSTRAINT product_order_order_fk FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID)");
+        $this->query("ALTER TABLE $this->db_name.product_order ADD CONSTRAINT product_order_product_fk FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID)");
+        $this->query("ALTER TABLE $this->db_name.product_group ADD CONSTRAINT product_group_category_fk FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID)");
+        $this->query("ALTER TABLE $this->db_name.product ADD CONSTRAINT product_product_group_fk FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)");
+
+        // Insert basic information.
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'This needs setting')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
     }
 
     function delete($query) {
@@ -257,27 +269,33 @@ class db {
      * @uses db::create_table()
      * @uses db::default_table_entries()
      */
-    private function initDB() {
+    private function init_db() {
         $this->query("CREATE DATABASE $this->db_name COLLATE utf8_general_ci");
 
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.category 
-                            (ID int NOT NULL AUTO_INCREMENT, name varchar(50), parent int, post_status varchar(50),
+                            (ID int NOT NULL AUTO_INCREMENT, name varchar(50), slug varchar(50),
+                            menu_order int, post_status varchar(50),
                             CONSTRAINT category_pk PRIMARY KEY(ID))"
                            );
-        $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.tag 
-                            (ID int NOT NULL AUTO_INCREMENT, 
-                            name varchar(50), value longtext, parent int,
-                            CONSTRAINT tag_pk PRIMARY KEY(ID))"
-                           );
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Uncategorized', 'uncategorized', -1, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Toys', 'toys', 1, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Cuddly Toys', 'cuddly-toys', 2, 'publish')");
+        $this->insert("INSERT INTO $this->db_name.category (name, slug, menu_order, post_status) VALUES('Clothes', 'clothes', 3, 'publish')");
+
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.settings 
                             (ID int NOT NULL AUTO_INCREMENT, 
                             name varchar(50),
                             value longtext,
                             CONSTRAINT settings_pk PRIMARY KEY(ID))"
                            );
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
+        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
+
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.order 
-                            (ID int NOT NULL AUTO_INCREMENT, 
+                            (ID int NOT NULL AUTO_INCREMENT,
+                            customer varchar(50),
                             purchase_date datetime, mail_type varchar(50),
+                            dispatched varchar(6) NOT NULL DEFAULT 'false',
                             CONSTRAINT order_pk PRIMARY KEY(ID))"
                            );
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_group 
@@ -285,141 +303,54 @@ class db {
                             sale_price double(10,2), colour varchar(50), thumbnail varchar(150), post_status varchar(50), 
                             post_date datetime, post_modified datetime, categoryID int,
                             CONSTRAINT product_group_pk PRIMARY KEY(sku),
-                            FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID))"
+                            CONSTRAINT product_group_category_fk FOREIGN KEY (categoryID) REFERENCES $this->db_name.category (ID))"
                            );
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Aeroplane','This is a dummy product.','9.99','4.99','','media/default.jpg','publish',NOW(),'2')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Bear','This is a dummy product.','9.99','0.00','Brown','media/default.jpg','publish',NOW(),'3')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Cat','This is a dummy product.','9.99','4.99','Ginger','media/default.jpg','draft',NOW(),'3')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Elephant','This is a dummy product.','9.99','0.00','Grey','media/default.jpg','trash',NOW(),'3')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Radio','This is a dummy product.','9.99','0.00','Red','media/default.jpg','draft',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Shirt','This is a dummy product.','9.99','4.99','Orange','media/default.jpg','draft',NOW(),'4')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('T-Shirt','This is a dummy product.','9.99','4.99','Navy','media/default.jpg','publish',NOW(),'4')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('T-Shirt','This is a dummy product.','9.99','0.00','Dark Green','media/default.jpg','publish',NOW(),'4')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Umbrella','This is a dummy product.','9.99','4.99','','media/default.jpg','publish',NOW(),'1')");
+        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,thumbnail,post_status,post_date,categoryID) VALUES('Zebra','This is a dummy product.','9.99','0.00','Black & White','media/default.jpg','publish',NOW(),'3')");
+        
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product 
                             (ID int NOT NULL AUTO_INCREMENT, sku int NOT NULL, value varchar(50), stock int,
                             CONSTRAINT product_pk PRIMARY KEY(ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE CASCADE)"
+                            CONSTRAINT product_product_group_fk FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku))"
                            );
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('1','','10')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','Small','10')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','Medium','11')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','Large','12')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('3','Small','8')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('3','Medium','7')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('3','Large','5')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('4','','14')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('5','','16')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','Small','14')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','Medium','14')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','Large','5')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','XLarge','12')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','XXLarge','42')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('7','Small','43')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('7','Medium','5')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('7','Large','12')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('8','Small','42')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('8','Medium','43')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('8','Large','12')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('9','','12')");
+        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('10','','23')");
+        
         $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_order 
                             (ID int,
-                            quantity int, price double(10,2), sku int,
-                            CONSTRAINT product_order_pk PRIMARY KEY(ID, sku),
-                            FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE NO ACTION)"
+                            quantity int, price double(10,2), productID int,
+                            CONSTRAINT product_order_pk PRIMARY KEY(ID, productID),
+                            CONSTRAINT product_order_order_fk FOREIGN KEY (ID) REFERENCES $this->db_name.order (ID),
+                            CONSTRAINT product_order_product_fk FOREIGN KEY (productID) REFERENCES $this->db_name.product (ID))"
                            );
-        $this->create_table("CREATE TABLE IF NOT EXISTS $this->db_name.product_tag 
-                            (ID int, 
-                            sku int,
-                            CONSTRAINT product_tag_pk PRIMARY KEY(ID, sku),
-                            FOREIGN KEY (ID) REFERENCES $this->db_name.category (ID),
-                            FOREIGN KEY (sku) REFERENCES $this->db_name.product_group (sku)
-                                ON DELETE NO ACTION)"
-                           );
-        $this->default_table_entries();
-    }
-
-    /**
-     * Insert default values into the database.
-     *
-     * @uses db::insert()
-     */
-    private function default_table_entries() {
-        $this->insert("INSERT INTO $this->db_name.category (name, parent, post_status) VALUES('Uncategorized', NULL, 'publish')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Aeroplane','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('1','','10')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Bear','This is a dummy product.','9.99','4.99','Brown','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','small','10')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','medium','10')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('2','large','10')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Cat','This is a dummy product.','9.99','4.99','Ginger','draft',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('3','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Dog','This is a dummy product.','9.99','4.99','Light Brown','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('4','','6')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Elephant','This is a dummy product.','9.99','4.99','Grey','trash',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('5','large','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Fish','This is a dummy product.','9.99','4.99','','draft',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('6','','53')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Gorilla','This is a dummy product.','9.99','4.99','Black','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('7','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Helicopter','This is a dummy product.','9.99','4.99','Red','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('8','','14')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Igloo','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('9','','2')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Jack-in-the-box','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('10','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Kite','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('11','small','42')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('11','medium','35')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('11','large','12')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Lizard','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('12','','6')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Mop','This is a dummy product.','9.99','4.99','Blue','trash',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('13','','13')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Oreo','This is a dummy product.','9.99','4.99','Chocolate','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('14','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Paper','This is a dummy product.','9.99','4.99','White','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('15','small','18')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('15','medium','18')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('15','large','18')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Quilt','This is a dummy product.','9.99','4.99','White','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('16','small','8')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('16','medium','8')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('16','large','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Radio','This is a dummy product.','9.99','4.99','Red','draft',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('17','','10')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Shirt','This is a dummy product.','9.99','4.99','Orange','draft',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','small','14')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','medium','14')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','large','14')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('18','x-large','14')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('T-Shirt','This is a dummy product.','9.99','4.99','Navy','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('19','small','5')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('19','medium','12')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('19','large','42')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('19','x-large','43')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('T-Shirt','This is a dummy product.','9.99','4.99','Dark Green','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('20','small','5')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('20','medium','12')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('20','large','42')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('20','x-large','43')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Umbrella','This is a dummy product.','9.99','4.99','','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('21','small','12')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('21','medium','12')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Vacuum Cleaner','This is a dummy product.','9.99','4.99','Red','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('22','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Water Bottle','This is a dummy product.','9.99','4.99','Clear','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('23','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Xylophone','This is a dummy product.','9.99','4.99','','draft',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('24','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Yarn','This is a dummy product.','9.99','4.99','Yellow','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('25','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.product_group (title,content,price,sale_price,colour,post_status,post_date,categoryID) VALUES('Zebra','This is a dummy product.','9.99','4.99','Black & White','publish',NOW(),'1')");
-        $this->insert("INSERT INTO $this->db_name.product (sku,value,stock) VALUES('26','','8')");
-
-        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_url', '".SITE_ADDRESS."')");
-        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('site_name', 'Shop')");
-        $this->insert("INSERT INTO $this->db_name.settings (name, value) VALUES('description', 'This is a description.')");
-        $this->insert("INSERT INTO $this->db_name.product_category (ID, sku) VALUES(1, 1)");
     }
 }
 

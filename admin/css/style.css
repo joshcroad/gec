@@ -1,6 +1,4 @@
-/***********************
- ***** RESET STYLE *****
- ***********************/
+/* RESET STYLE */
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -48,9 +46,7 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/********************
- ***** CLEARFIX *****
- ********************/
+/* CLEARFIX */
 .clearfix:after {
   content: ".";
   display: block;
@@ -76,6 +72,13 @@ html, body {
   margin: 0 auto;
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
 
+input, textarea {
+  padding: .5em;
+  display: block; }
+
+textarea {
+  resize: vertical; }
+
 /* TYPOGRAPHY */
 h1 {
   font-weight: bold;
@@ -97,6 +100,10 @@ a {
 
 a:hover {
   color: whitesmoke; }
+
+.note {
+  font-size: .9em;
+  color: rgba(150, 150, 150, 0.8); }
 
 /* HEADER */
 header nav {
@@ -209,6 +216,72 @@ header .error {
   #products_list a:hover {
     color: #777; }
 
+/* Categories */
+#cat-fields {
+  float: left;
+  display: inline-block;
+  width: 22em; }
+  #cat-fields h3 {
+    font-size: 1.3em;
+    margin: 0 0 0.8em; }
+  #cat-fields #cat-name {
+    width: 100%;
+    margin: 0 0 1em; }
+  #cat-fields #cat-menu-order {
+    width: 18em;
+    float: left;
+    margin: 0 0 0.3em; }
+  #cat-fields #cat-status {
+    width: 11em;
+    margin: 0.4em 0 0;
+    float: right; }
+  #cat-fields #add-cat-button {
+    display: block;
+    float: right;
+    margin: 1em 0 0; }
+  #cat-fields a {
+    font-size: .9em;
+    padding: 0.3em 0.5em;
+    background: #9ebf5c;
+    color: rgba(250, 250, 250, 0.8); }
+  #cat-fields a:hover {
+    background: #7c9d3a;
+    color: rgba(250, 250, 250, 0.8); }
+
+.current-cats {
+  float: right;
+  display: inline-block;
+  width: 25em;
+  height: 30em;
+  overflow: scroll; }
+
+#category-list {
+  display: table;
+  background: rgba(150, 150, 150, 0.1);
+  color: #777;
+  width: 100%; }
+  #category-list li {
+    display: table-row; }
+    #category-list li .category-id,
+    #category-list li .category-name,
+    #category-list li .category-menu-order,
+    #category-list li .category-post-status {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    #category-list li .category-id {
+      width: 2em;
+      text-align: center; }
+    #category-list li .category-post-status {
+      width: 7em; }
+  #category-list .thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  #category-list a {
+    color: #555; }
+  #category-list a:hover {
+    color: #777; }
+
 /* PAGINATION */
 #pagination {
   margin: 0;
@@ -228,43 +301,262 @@ header .error {
     color: #c8c8c8; }
 
 /* SINGLE PRODUCT */
-#add-product a, #edit-product a {
-  color: #9ebf5c; }
-#add-product a:hover, #edit-product a:hover {
-  color: #6b8c29; }
+#fields {
+  float: left;
+  display: inline-block;
+  width: 33em;
+  margin: 0 0 1.5em;
+  /* Products */ }
+  #fields #single-title {
+    width: 38em;
+    margin: 0 0 1em; }
+  #fields #single-content {
+    width: 38em;
+    height: 10em;
+    margin: 0 0 1em; }
+  #fields #single-price, #fields #single-sale {
+    display: inline-block;
+    width: 18em;
+    margin: 0 0 1em; }
+  #fields #single-price {
+    margin-right: .6em; }
+  #fields #single-colour {
+    width: 16em;
+    float: left;
+    margin: 0 0 1em; }
+  #fields .thumbnail-container {
+    background: rgba(150, 150, 150, 0.1);
+    border: 1px solid rgba(150, 150, 150, 0.2);
+    margin: 0.1em 2em 0 0;
+    padding: 0.5em 1em 0;
+    width: 14em;
+    float: right; }
+    #fields .thumbnail-container #single-thumbnail {
+      margin: 0 0 1em; }
+    #fields .thumbnail-container #single-thumbnail-preview {
+      border: 1px solid rgba(150, 150, 150, 0.2);
+      width: 11.1em;
+      float: left;
+      margin: 0 0.4em 0.6em; }
+      #fields .thumbnail-container #single-thumbnail-preview img {
+        width: 100%; }
 
-#fields input, #fields textarea {
-  padding: .5em;
-  display: block; }
-#fields #single-title {
-  width: 40em; }
+.single-product-options {
+  background: rgba(150, 150, 150, 0.1);
+  border: 1px solid rgba(150, 150, 150, 0.2);
+  width: 17em;
+  float: right;
+  margin: 0 0 1em;
+  padding: .5em; }
+  .single-product-options #single-status {
+    display: inline;
+    margin: 0.3em 0;
+    width: 11em; }
+  .single-product-options #add-product-button, .single-product-options #update-product-button {
+    float: right; }
+  .single-product-options a {
+    font-size: .9em;
+    padding: 0.3em 0.5em;
+    background: #9ebf5c;
+    color: rgba(250, 250, 250, 0.8); }
+  .single-product-options a:hover {
+    background: #7c9d3a;
+    color: rgba(250, 250, 250, 0.8); }
+  .single-product-options #date-posted {
+    font-size: .9em;
+    color: rgba(0, 0, 0, 0.6);
+    display: block;
+    margin: 0.5em 0 0; }
 
-/*        <input type="text" id="single-title" placeholder="Title *" />
-        <textarea id="single-content" placeholder="Product Description *"></textarea>
-        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-price" placeholder="Price *" required />
-        <input type="text" pattern="[0-9]+[.]?[0-9]?[0-9]?" id="single-sale" placeholder="Sale Price" />
-        <input type="text" id="single-colour" placeholder="Colour" />
+.single-products {
+  position: relative;
+  float: right;
+  background: rgba(150, 150, 150, 0.1);
+  border: 1px solid rgba(150, 150, 150, 0.2);
+  width: 17em;
+  height: 15.3em; }
+  .single-products #values-and-stocks {
+    margin: 0 0 0.5em;
+    float: right;
+    display: inline;
+    width: 17em;
+    height: 13em;
+    overflow: scroll; }
+  .single-products .single-values {
+    margin: 1em auto 0.5em;
+    width: 18em; }
+  .single-products .single-stocks {
+    margin: 0 auto 0.5em;
+    width: 18em; }
+  .single-products .single-stocks:last-child {
+    margin: 0 auto 1.5em; }
+  .single-products #add-value-stock {
+    float: right;
+    padding: 0.3em 0.5em;
+    position: absolute;
+    bottom: .5em;
+    right: .5em; }
+  .single-products a {
+    font-size: .9em;
+    background: rgba(50, 50, 50, 0.7);
+    color: rgba(250, 250, 250, 0.8); }
+  .single-products a:hover {
+    background: rgba(50, 50, 50, 0.5);
+    color: rgba(255, 255, 255, 0.8); }
 
-        <!-- Thumbnail upload
-        <input type="text" id="single-thumbnail" placeholder="Thumbnail" />
-        <a href="" id="update_image">Choose image</a>
-        -->
+.product-category {
+  float: left;
+  width: 15em;
+  height: 15em;
+  overflow: scroll;
+  background: rgba(150, 150, 150, 0.1);
+  border: 1px solid rgba(150, 150, 150, 0.2);
+  padding: .5em; }
+  .product-category h3 {
+    font-size: 1.2em;
+    color: rgba(0, 0, 0, 0.8);
+    padding: 0 0 0.2em;
+    margin: 0.2em 0; }
+  .product-category #single-category-list {
+    display: table;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.6); }
+    .product-category #single-category-list li {
+      display: table-row; }
+      .product-category #single-category-list li .category_radio_div {
+        display: table-cell;
+        vertical-align: middle;
+        width: 1.5em;
+        padding: .2em; }
+      .product-category #single-category-list li .category-menu-order {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        width: 2em; }
+      .product-category #single-category-list li .category-name {
+        display: table-cell;
+        vertical-align: middle; }
 
-        <div class="single-products">
-            <div id="values-and-stocks"></div>
-            <a href="" id="add-value-stock">+</a>
-        </div>
+/* SINGLE PRODUCT VALIDATION MESSAGES */
+#title-message, #content-message,
+#price-message, #sale-message,
+#stock-message, #category-message {
+  font-size: .9em;
+  font-style: italic;
+  display: none;
+  background: #333;
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #111111;
+  padding: 0.5em 0.5em 0;
+  position: absolute; }
 
-        <select id="single-status">
-            <option value="publish" selected>Publish</option>
-            <option value="draft">Draft</option>
-            <option value="trash">Trash</option>
-        </select>
-        <div id="date-posted"></div>
-        <a href="" id="update-product-button">Update Product</a>*/
+/* ORDERS PAGE */
+#undispatched-orders {
+  display: table;
+  color: #777;
+  width: 100%; }
+  #undispatched-orders li {
+    display: table-row; }
+    #undispatched-orders li .order-id,
+    #undispatched-orders li .customer-name,
+    #undispatched-orders li .order-products,
+    #undispatched-orders li .mark-dispatched {
+      display: table-cell;
+      vertical-align: middle;
+      padding: .5em; }
+    #undispatched-orders li .order-id {
+      width: 2.5em;
+      text-align: center; }
+    #undispatched-orders li .customer-name {
+      width: 10em; }
+    #undispatched-orders li .mark-dispatched {
+      width: 7em; }
+  #undispatched-orders .product-list:nth-child(odd) {
+    background: #f0f0f0; }
+  #undispatched-orders .thead:first-child {
+    background: #333;
+    color: #f5f5f5; }
+  #undispatched-orders a {
+    color: #555; }
+  #undispatched-orders a:hover {
+    color: #777; }
+
+/* SETTINGS PAGE STYLE */
+#settings .site-information {
+  margin: 0 0 2em; }
+  #settings .site-information #site-name {
+    margin: 1em 0; }
+  #settings .site-information a {
+    color: #FFFFFF;
+    background: #9ebf5c;
+    padding: 0.2em 0.3em; }
+  #settings .site-information a:hover {
+    background: #7c9d3a; }
+#settings .thumbnail-container {
+  width: 20em;
+  margin: 0 0 2em; }
+  #settings .thumbnail-container h3 {
+    margin-bottom: .5em; }
+  #settings .thumbnail-container img {
+    width: 10em;
+    border: 1px solid rgba(150, 150, 150, 0.2); }
+#settings .danger-zone {
+  width: 20em;
+  border: 1px solid #e24444;
+  padding: 0 0 1em; }
+  #settings .danger-zone h3 {
+    background: #e24444;
+    color: #FFFFFF;
+    padding: .5em;
+    margin: 0 0 1em; }
+  #settings .danger-zone a {
+    padding: .5em;
+    color: #FF0000; }
+  #settings .danger-zone a:hover {
+    color: #CC0000; }
+  #settings .danger-zone a {
+    margin-left: .5em;
+    color: #FFFFFF;
+    background: #e24444;
+    padding: 0.2em 0.3em; }
+  #settings .danger-zone a:hover {
+    color: #FFFFFF;
+    background: #b43731; }
+
 /************************
  ***** LOADER STYLE *****
  ************************/
+@keyframes fadeIn {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadeIn {
+  /* Firefox */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-webkit-keyframes fadeIn {
+  /* Safari and Chrome */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadeIn {
+  /* Opera */
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
 #loader-container {
   display: none;
   background: rgba(255, 255, 255, 0.7);
@@ -272,7 +564,14 @@ header .error {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0; }
+  left: 0;
+  animation: fadeIn 1s;
+  -moz-animation: fadeIn 1s;
+  /* Firefox */
+  -webkit-animation: fadeIn 1s;
+  /* Safari and Chrome */
+  -o-animation: fadeIn 1s;
+  /* Opera */ }
 
 #loader {
   position: absolute;
@@ -293,27 +592,27 @@ header .error {
   height: 12px;
   width: 12px;
   -moz-border-radius: 6px;
-  -moz-animation-name: fade;
+  -moz-animation-name: loadFade;
   -moz-animation-duration: 0.72s;
   -moz-animation-iteration-count: infinite;
   -moz-animation-direction: linear;
   -webkit-border-radius: 6px;
-  -webkit-animation-name: fade;
+  -webkit-animation-name: loadFade;
   -webkit-animation-duration: 0.72s;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-direction: linear;
   -ms-border-radius: 6px;
-  -ms-animation-name: fade;
+  -ms-animation-name: loadFade;
   -ms-animation-duration: 0.72s;
   -ms-animation-iteration-count: infinite;
   -ms-animation-direction: linear;
   -o-border-radius: 6px;
-  -o-animation-name: fade;
+  -o-animation-name: loadFade;
   -o-animation-duration: 0.72s;
   -o-animation-iteration-count: infinite;
   -o-animation-direction: linear;
   border-radius: 6px;
-  animation-name: fade;
+  animation-name: loadFade;
   animation-duration: 0.72s;
   animation-iteration-count: infinite;
   animation-direction: linear; }
@@ -390,35 +689,35 @@ header .error {
   -o-animation-delay: 0.27s;
   animation-delay: 0.27s; }
 
-@-moz-keyframes fade {
+@-moz-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-webkit-keyframes fade {
+@-webkit-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-ms-keyframes fade {
+@-ms-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@-o-keyframes fade {
+@-o-keyframes loadFade {
   0% {
     background-color: #111111; }
 
   100% {
     background-color: #FFFFFF; } }
 
-@keyframes fade {
+@keyframes loadFade {
   0% {
     background-color: #111111; }
 
