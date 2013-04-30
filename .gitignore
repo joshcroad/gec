@@ -1,7 +1,4 @@
 .DS_Store
-.HTACCESS
-<<<<<<< HEAD
-=======
 
 admin/.sass-cache/**/*
->>>>>>> dev
+.sass-cache/**/*
